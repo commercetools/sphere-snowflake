@@ -1,0 +1,32 @@
+@(paymentNetworks: List[PaymentNetwork], referredId: String, selected: String)
+
+<input type="hidden" name="referredId" value="@referredId"/>
+
+<div class="tabbable tabs-left">
+    <ul class="nav nav-tabs">
+    @for((group, networks) <- groupPaymentNetworks(paymentNetworks)) {
+        @for(network <- networks) {
+    <li class="payment-network">
+        <a href="#network-@network.networkCode" data-toggle="tab">
+            @defining(network.logoUrl, network.logoUrl.replaceAll("/logo.gif", "/logo_inactive.gif")) { case(logoActive, logoInactive) =>
+            <img src="@if(selected == network.networkCode){@logoActive} else{@logoInactive}" class="network-img"
+                 alt="@network.description"
+                 data-active="@logoActive"
+                 data-inactive="@logoInactive"/>
+            }
+        </a>
+    </li>
+        }
+    }
+    </ul>
+    <div class="tab-content">
+    @for((group, networks) <- groupPaymentNetworks(paymentNetworks)) {
+        @for(network <- networks) {
+        <div class="payment-network-form tab-pane" id="network-@network.networkCode">
+            <input type="text" name="network" value="@network.networkCode">
+            @Html(network.getFormHtml)
+        </div>
+        }
+    }
+    </div>
+</div>

@@ -1,0 +1,35 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home
+GET     /                                                   controllers.Categories.home(page: Int ?= 1)
+
+GET     /product/list/                                      controllers.Categories.listProducts(category: String ?= "", page: Int ?= 1)
+
+# Cart
+GET     /cart                                               controllers.Carts.show()
+
+POST    /cart/add                                           controllers.Carts.add()
+POST    /cart/update                                        controllers.Carts.update()
+POST    /cart/remove                                        controllers.Carts.remove()
+
+# Checkout
+GET     /checkout                                           controllers.Checkouts.show()
+POST    /checkout                                           controllers.Checkouts.submit()
+
+GET     /checkout/payment                                   controllers.Checkouts.notification(id: String)
+GET     /checkout/success                                   controllers.Checkouts.success()
+GET     /checkout/failure                                   controllers.Checkouts.failure()
+
+GET     /checkout/payment/network                           controllers.Checkouts.listPaymentNetworks(selected: String ?= "")
+POST    /checkout/submit/shipping                           controllers.Checkouts.submitShippingAddress()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file                                       controllers.Assets.at(path="/public", file)
+
+# Product
+GET     /:product-$variant<[0-9]+>.html                     controllers.Products.select(product: String, variant: String)
+
+# Category
+GET     /*categoryPath                                      controllers.Categories.select(categoryPath: String, page: Int ?= 1)

@@ -1,0 +1,31 @@
+@(cart: Cart)
+
+<div id="order-summary" class="order-summary">
+    <ul class="unstyled">
+        @if(isCustomerAddressSet(cart)) {
+        <li>
+            Item total
+            <span>@cart.getTaxedPrice.getTotalNet</span>
+        </li>
+        <li>
+            Shipping
+            <span>@getShippingCost</span>
+        </li>
+        <li>
+            @for(tax <- cart.getTaxedPrice.getTaxPortions) {
+            Tax @getPercentage(tax.getRate) %
+            <span>@tax.getAmount</span>
+            }
+        </li>
+        <li class="total">
+            Total
+            <span>@cart.getTaxedPrice.getTotalGross</span>
+        </li>
+        } else {
+        <li class="total">
+            Total
+            <span>@cart.getTotalPrice</span>
+        </li>
+        }
+    </ul>
+</div>

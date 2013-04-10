@@ -1,0 +1,56 @@
+@(title: String, bodyClass: String = "", scripts: Html = Html(""), styles: Html = Html(""))(header: Html)(content: Html)(footer: Html)(implicit lang: Lang)
+
+<!DOCTYPE html>
+<html lang="@lang.code">
+
+    <head>
+
+        <title>@title</title>
+
+        <meta content="text/html"/>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="language" content="@lang.code">
+        <meta name="description" content="Here is a description of the shop that will be shown as a search result."/>
+        <meta name="keywords" content="sport, snowboard, boots, gloves, beanies, goggles, bags"/>
+        <meta name="author" content="commercetools"/>
+
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+
+        <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.0/css/bootstrap-responsive.min.css">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        @styles
+
+    </head>
+
+    <body class="@bodyClass">
+
+        <div class="container">
+            <header>
+                @header
+            </header>
+
+            <div id="content">
+                @helper.messages()
+                @content
+            </div>
+
+            <footer>
+                @footer
+            </footer>
+        </div>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.0/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/masonry/2.1.07/jquery.masonry.min.js"></script>
+        <script src="@routes.Assets.at("javascripts/product-list.js")"></script>
+        <script src="@routes.Assets.at("javascripts/product-thumbnail.js")"></script>
+        <script src="@routes.Assets.at("javascripts/product.js")"></script>
+        <script src="@routes.Assets.at("javascripts/cart.js")"></script>
+        <script src="@routes.Assets.at("javascripts/checkout.js")"></script>
+        @scripts
+
+    </body>
+
+</html>

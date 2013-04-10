@@ -1,9 +1,13 @@
-sphere-snowflake
-================
+Sphere.IO - Snowflake
+=====================
 
-# Deployment
+This is a fully functional example web store for [Sphere.IO](http://sphere.io).
 
-## CloudBees
+Have fun!
+
+## Deployment
+
+### CloudBees
 
 To run this Sphere.IO example web shop on [CloudBees](http://cloudbees.com) just click the button:
 

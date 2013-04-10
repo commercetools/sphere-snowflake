@@ -1,0 +1,70 @@
+@import "demo/mixins";
+@import "demo/cart";
+@import "demo/category";
+@import "demo/colors";
+@import "demo/header";
+@import "demo/product";
+@import "demo/checkout";
+
+body{
+    font-family: 'Lucida Grande', sans-serif;
+    font-weight: 400;
+    background: @background;
+    color: @gray-text;
+    padding-top: 140px;
+
+    &.cart, &.checkout {
+        padding-top: 80px;
+    }
+}
+
+.container {
+    width: inherit;
+}
+
+#jump-to-top {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    right: 10px;
+    padding: 12px 10px 10px;
+    border-radius: 4px 4px 0 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar-subcategories {
+    margin-top: 40px;
+}
+
+@media (max-width: 979px) {
+    body {
+        padding-top: 0;
+        .navbar-fixed-top .navbar-inner,
+        .navbar-fixed-bottom .navbar-inner {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+    }
+}
+
+@media (min-width: 1200px) {
+    body {
+        &.category {
+
+        }
+    }
+}
+
+input[aria-invalid=true], textarea[aria-invalid=true] {
+    background-color: @light-yellow;
+}
+
+.address {
+    font-size: 12px;
+    ul {
+        .unstyled;
+    }
+}

@@ -1,0 +1,21 @@
+<div class="top-navigation navbar">
+    <div class="container">
+        <ul class="nav" role="navigation">
+            <li class="nav-link">
+                <a class="brand" href="/">Sphere</a>
+            </li>
+        </ul>
+        <ul class="nav pull-right">
+            <li class="nav-link">
+                <a href="#">Register</a>
+            </li>
+            <li class="nav-link">|</li>
+            <li class="nav-link">
+                <a href="#">Login</a>
+            </li>
+            <li id="mini-cart">
+                @helper.miniCart(getCurrentCart)
+            </li>
+        </ul>
+    </div>
+</div>

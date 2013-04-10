@@ -1,0 +1,16 @@
+@(category: Category)
+
+<ul class="breadcrumb">
+@for(ancestor <- category.getPathInTree) {
+    @if(ancestor.getId != category.getId) {
+        <li>
+            <a href="@getCategoryUrl(ancestor)">
+                @ancestor.getName
+            </a>
+            <span class="divider">/</span>
+        </li>
+    } else {
+        <li class="active">@category.getName</li>
+    }
+}
+</ul>

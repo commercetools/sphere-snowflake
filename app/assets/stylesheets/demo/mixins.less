@@ -1,0 +1,151 @@
+.popover {
+    z-index: 1030;
+}
+
+.unstyled {
+    margin-left: 0;
+    list-style: none;
+}
+
+.clearfix {
+    *zoom: 1;
+    &:before,
+    &:after {
+        display: table;
+        content: "";
+    }
+    &:after {
+        clear: both;
+    }
+}
+
+.back {
+    margin-bottom: 20px;
+}
+
+.column-detail-style {
+    box-shadow: 0 1px 1px #ddd;
+    border-radius: 4px;
+    background-color: @foreground;
+    width: 940px;
+    margin: 40px auto 70px;
+}
+
+.column-aside-style {
+    float: right;
+    width: 260px;
+}
+
+.cart-style {
+    thead th {
+        text-align: center;
+        &:first-child {
+            text-align: left;
+        }
+    }
+
+    .item-line {
+        .item-picture {
+            float: left;
+            text-align: center;
+            padding: 5px 10px;
+            margin-right: 10px;
+        }
+
+        .item-quantity, .item-price, .item-total-price {
+            text-align: center;
+        }
+    }
+}
+
+.order-summary {
+    ul {
+        .unstyled;
+
+        li {
+            border-top: 1px dotted @light-gray;
+            font-size: 12px;
+            padding: 5px 0px;
+
+            &:first-child {
+                border-top: 0;
+            }
+            &.total {
+                color: @black-text;
+                font-size: 18px;
+                font-weight: bold;
+                border-top-style: solid;
+            }
+
+            span {
+                float: right;
+                font-weight: bold;
+            }
+        }
+    }
+}
+
+.step-layout-style {
+    .step {
+        border-bottom: 2px solid @lightest-gray;
+    }
+
+    .step-header {
+        .clearfix;
+        padding: 10px 20px;
+
+        .step-number {
+            border-radius: 50%;
+            border: 2px solid @bright-blue;
+            display: inline-block;
+            text-align: center;
+            width: 20px;
+            height: 20px;
+            font-size: 20px;
+        }
+
+        h3 {
+            padding-left: 5px;
+            display: inline;
+            font-size: 20px;
+        }
+
+        .btn-edit {
+            float: right;
+            margin-top: 5px;
+        }
+    }
+
+    .step-body {
+        .clearfix;
+        padding: 0 20px 20px;
+    }
+
+    .step-footer {
+        .clearfix;
+        padding: 0 20px 20px;
+
+        .btn-next {
+            font-weight: bold;
+            float: right;
+        }
+    }
+}
+
+.product-info-variants-style {
+    ul {
+        list-style: none;
+        margin: 0;
+
+        li {
+            display: inline-block;
+            padding: 2px;
+            border: 2px solid @lightest-gray;
+            border-radius: 50%;
+
+            &.active {
+                border-color: @bright-blue;
+            }
+        }
+    }
+}

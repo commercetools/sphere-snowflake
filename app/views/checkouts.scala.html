@@ -1,0 +1,148 @@
+@(cart: Cart, checkoutId: String, submitUrl: String, addressForm: Form[AddAddress])
+
+@main("Checkout", "checkout"){
+    <div class="navigation">
+        @helper.topNavigation()
+    </div>
+}{
+    <div id="checkout">
+        <div id="checkout-cart" class="step current clearfix">
+
+            <div class="step-header">
+                <span class="step-number">1</span>
+                <h3>Shipping method</h3>
+                <button type="button" class="btn btn-edit hide">
+                    Change <i class="icon-edit"></i>
+                </button>
+            </div>
+
+            <div class="step-body">
+                <ul class="cart-content unstyled">
+                    @for(item <- cart.getLineItems) {
+                    <li id="item-line-@item.getId" class="item-line">
+                        <div class="item-container clearfix">
+                            <div class="item-picture increase">
+                                <img src="@item.getVariant.getFeaturedImage.getSize(ImageSize.SMALL).getUrl" alt="@item.getProductName" />
+                            </div>
+                            <div class="item-description">
+                                <div class="item-main">
+                                    <ul class="item-action">
+                                        @if(item.getQuantity > 1) {
+                                        <li class="item-price">
+                                            @item.getPrice.getValue
+                                        </li>
+                                        <li class="item-quantity">
+                                            @item.getQuantity
+                                        </li>
+                                        }
+                                        <li class="item-total-price">
+                                            <span id="item-total-price-@item.getId">@item.getTotalPrice</span>
+                                        </li>
+                                    </ul>
+                                    <div class="item-name">
+                                        <h5>@item.getProductName</h5>
+                                    </div>
+                                </div>
+                                <div class="item-detail show">
+                                     <ul class="unstyled">
+                                        @for(attribute <- item.getVariant.getAttributes) {
+                                        <li><strong>@capitalizeInitials(attribute.getName):</strong> @attribute.getString</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="step-footer">
+                <button type="button" class="btn btn-success btn-next">
+                    Next <i class="icon-chevron-right icon-white"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="checkout-shipping" class="step disabled clearfix">
+            <div class="step-header">
+                <span class="step-number">2</span>
+                <h3>Shipping address</h3>
+                <button type="button" class="btn btn-edit hide">
+                    Change <i class="icon-edit"></i>
+                </button>
+            </div>
+
+            <div class="step-body">
+                <div id="form-shipping-address" class="show">
+                    @form.address(addressForm)
+                </div>
+
+                <div class="address hide">
+                    <ul>
+                        <li>
+                            <span class="first-name">@addressForm.field("firstName").value</span>
+                            <span class="last-name">@addressForm.field("LastName").value</span>
+                        </li>
+                        <li><span class="street">@addressForm.field("street").value</span></li>
+                        <li><span class="street">@addressForm.field("street2").value</span></li>
+                        <li>
+                            <span class="postal-code">@addressForm.field("postalCode").value</span>
+                            <span class="city">@addressForm.field("city").value</span>
+                        </li>
+                        <li><span class="country">@getCountryName(addressForm.field("country").value)</span></li>
+                        <li><span class="phone">@addressForm.field("phone").value</span></li>
+                        <li><span class="mobile">@addressForm.field("mobile").value</span></li>
+                        <li><span class="email">@addressForm.field("email").value</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="step-footer">
+                <button type="button" class="btn btn-success btn-next">
+                    Next <i class="icon-chevron-right icon-white"></i>
+                </button>
+            </div>
+        </div>
+
+        @* Sending last step of the form to payment platform *@
+        <form id="form-billing-method" method="post" action="@submitUrl" autocomplete="off">
+            <input type="hidden" name="checkoutId" value="@checkoutId" />
+
+            <div id="checkout-billing" class="step disabled clearfix">
+                <div class="step-header">
+                    <span class="step-number">3</span>
+                    <h3>Payment</h3>
+                    <button type="button" class="btn btn-edit hide">
+                        Change <i class="icon-edit"></i>
+                    </button>
+                </div>
+
+                <div class="step-body">
+                    <div id="payment-networks">
+                        @* Loading asynchronously *@
+                    </div>
+                </div>
+
+                <div class="step-footer">
+                    <button type="button" class="btn btn-success btn-next">
+                        Next <i class="icon-chevron-right icon-white"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="checkout-footer" class="clearfix">
+                <div class="summary">
+                    @helper.orderSummary(cart)
+
+                    <button type="submit" class="btn btn-primary btn-large">
+                        Complete payment <i class="icon-shopping-cart icon-white"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+}{
+
+
+}

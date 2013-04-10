@@ -1,0 +1,89 @@
+@(product: Product, variant: Variant, category: Category)
+
+@main(product.getName, "product"){
+    <div class="navigation">
+        @helper.topNavigation()
+        @helper.mainNavigation(category.getId)
+    </div>
+    @helper.breadcrumb(category)
+}{
+    <div id="product-detail" class="product-detail clearfix">
+        <div class="detail">
+            <div class="info">
+                <img class="img-polaroid" src="@variant.getFeaturedImage.getSize(ImageSize.LARGE).getUrl"/>
+                <div class="product-name">
+                    <p>@product.getName</p>
+                </div>
+                <p>@Html(product.getDescription)</p>
+            </div>
+        </div>
+
+        <aside class="action">
+
+            <h5>@product.getName</h5>
+
+            <h4>@variant.getPrice.getValue</h4>
+
+            <div class="product-info-variants">
+                @if(hasMoreColors(product)) {
+                <div class="product-info-variants-color">
+                    <ul>
+                        @for(matchedVariant <- getPossibleVariants(product, variant, "color")) {
+                        <li class="@if(matchedVariant.getId == variant.getId){active}">
+                            <a href="@getProductUrl(product, matchedVariant, category)">
+                                <img src="@matchedVariant.getFeaturedImage.getSize(ImageSize.THUMBNAIL).getUrl" class="img-circle" title="@matchedVariant.getString("color")" />
+                            </a>
+                        </li>
+                        }
+                    </ul>
+                </div>
+                }
+
+                @if(hasMoreSizes(product)) {
+                <div class="product-info-variant product-info-variant-size">
+                    <label>Size</label>
+                    <ul>
+                        @for(matchedVariant <- getPossibleVariants(product, variant, "size")) {
+                        <li class="@if(matchedVariant.getId == variant.getId){active}">
+                            <a href="@getProductUrl(product, matchedVariant, category)" data-variant="@matchedVariant.getId">
+                                @matchedVariant.getString("size")
+                            </a>
+                        </li>
+                        }
+                    </ul>
+                </div>
+                }
+
+            @for(attribute <- product.getAttributes) {
+                @if(attribute.getName != "color" && attribute.getName != "size") {
+                @if(hasMoreAttributeValues(product, attribute.getName)) {
+                <div class="product-info-variant">
+                    <label>@capitalizeInitials(attribute.getName) option</label>
+                    <ul>
+                        @for(matchedVariant <- getPossibleVariants(product, variant, attribute.getName)) {
+                        <li class="@if(matchedVariant.getId == variant.getId){active}">
+                            <a href="@getProductUrl(product, matchedVariant, category)">
+                                @matchedVariant.getString(attribute.getName)
+                            </a>
+                        </li>
+                        }
+                    </ul>
+                </div>
+                }
+                }
+            }
+            </div>
+
+            <div class="product-info-buy">
+                <input id="addToCart-quantity" type="number" name="quantity" value="1" min="1" max="10" class="input-mini" />
+                <button type="button" name="addToCart-product" data-product="@product.getId" data-variant="@variant.getId" data-loading-text="Loading..." class="btn btn-success btn-large">
+                    <i class="icon-shopping-cart icon-white"></i> Add to Cart
+                </button>
+            </div>
+
+        </aside>
+
+    </div>
+}{
+
+}

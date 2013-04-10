@@ -1,0 +1,134 @@
+#cart {
+    .column-detail-style;
+    .step-layout-style;
+}
+
+#cart-cart {
+    .cart-content {
+        .unstyled;
+
+        .item-container {
+            padding: 10px 5px;
+            border-top: 1px solid @light-gray;
+            font-size: 12px;
+
+            .item-picture {
+                float: left;
+                padding: 10px 0;
+            }
+
+            .item-description {
+                padding-left: 170px;
+            }
+
+            .item-main {
+
+                .item-name {
+                    display: table-cell;
+                }
+
+                .item-action {
+                    float: right;
+                    display: table;
+
+                    li {
+                        padding: 0 20px;
+                        display: table-cell;
+                    }
+                }
+            }
+
+            .item-detail {
+                margin-top: 10px;
+                padding-top: 10px;
+                border-top: 1px solid @lightest-gray;
+
+                .item-remove {
+                    float: right;
+                }
+            }
+
+            .item-total-price {
+                color: @darkest-gray;
+                font-size: 14px;
+                font-weight: bold;
+            }
+        }
+    }
+}
+
+#cart-footer {
+    .summary {
+         float: right;
+         width: 350px;
+         padding: 20px;
+    }
+}
+
+#mini-cart-popover {
+    .cart-style;
+    width: 450px;
+    max-width: 450px;
+    margin-top: 60px;
+    position: absolute;
+    left: -160px;
+
+    .arrow {
+        position: absolute;
+        top: -11px;
+        right: 50px;
+        width: 0;
+        height: 0;
+        margin-left: -11px;
+        border-width: 11px;
+        border-color: transparent;
+        border-style: solid;
+        border-top-width: 0;
+        border-bottom-color: rgba(0, 0, 0, 0.25);
+
+        &:after {
+            display: block;
+            position: absolute;
+            top: 1px;
+            width: 0;
+            height: 0;
+            margin-left: -10px;
+            border-width: 10px;
+            border-color: transparent;
+            border-style: solid;
+            border-top-width: 0;
+            border-bottom-color: @foreground;
+            content: "";
+        }
+    }
+
+    table {
+        font-size: 11px;
+        margin-bottom: 0;
+
+        .item-picture img {
+            width: 30px;
+            height: 30px;
+        }
+    }
+
+    h6, li {
+        margin: 0;
+        line-height: 15px;
+    }
+
+    .subtotal {
+        padding: 5px;
+        background-color: @dark-gray;
+        color: @white-text;
+        font-weight: bold;
+        border-radius: 2px;
+        border: 1px solid @dark-gray;
+    }
+
+    .bottom {
+        text-align: center;
+        padding: 10px;
+        font-weight: bold;
+    }
+}

@@ -1,0 +1,60 @@
+@(cart: Cart)
+
+<a id="link-cart" href="@routes.Carts.show">
+    <div class="btn-mini-cart">
+        <i class="icon-shopping-cart"></i>
+    </div>
+</a>
+
+<div id="mini-cart-popover" class="popover">
+    <div class="arrow"></div>
+    <div class="popover-inner">
+        <h3 class="popover-title"></h3>
+        <div class="popover-content">
+            <table id="mini-cart-content" class="table">
+                <thead>
+                <tr>
+                    <th>DESCRIPTION</th>
+                    <th>QTY</th>
+                    <th>PRICE</th>
+                </tr>
+                </thead>
+                <tbody>
+                @for(item <- cart.getLineItems) {
+                <tr class="item-line">
+                    <td class="item-description">
+                        <div class="item-picture">
+                            <img src="@item.getVariant.getFeaturedImage.getSize(ImageSize.THUMBNAIL).getUrl" />
+                        </div>
+                        <div class="clearfix">
+                            <h6><strong>@item.getProductName</strong></h6>
+                            <ul class="unstyled">
+                                @if(item.getVariant.hasAttribute("color")) {
+                                <li>@item.getVariant.getString("color")</li>
+                                }
+                                @if(item.getVariant.hasAttribute("size")) {
+                                <li>@item.getVariant.getString("size")</li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+                    <td class="item-quantity">
+                        @item.getQuantity
+                    </td>
+                    <td class="item-total-price">
+                        @item.getTotalPrice
+                    </td>
+                </tr>
+                }
+                </tbody>
+            </table>
+            <div class="subtotal">
+                Order Sub Total
+                <span class="pull-right">@cart.getTotalPrice</span>
+            </div>
+            <div class="bottom">
+                <a href="@routes.Checkouts.show">Proceed to Checkout</a>
+            </div>
+        </div>
+    </div>
+</div>

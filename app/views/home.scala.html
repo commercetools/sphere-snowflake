@@ -1,0 +1,14 @@
+@(search: SearchResult[Product])
+
+@main("Home", "home"){
+    <div class="navigation">
+        @helper.topNavigation()
+        @helper.mainNavigation()
+    </div>
+}{
+    <div id="featured-product-list" class="clearfix">
+        @ajax.listProducts(search)
+    </div>
+}{
+    @helper.jumpToTop()
+}

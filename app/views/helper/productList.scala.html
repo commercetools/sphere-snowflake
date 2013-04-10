@@ -1,0 +1,25 @@
+@(search: SearchResult[Product], category: Category)
+
+<input type="hidden" id="num-offset-product" name="offsetProducts" value="@search.getOffset" />
+<input type="hidden" id="num-current-product" name="countProducts" value="@search.getCount" />
+<input type="hidden" id="num-total-product" name="totalProducts" value="@search.getTotal" />
+
+<input type="hidden" id="num-current-page" name="currentPage" value="@search.getCurrentPage" />
+<input type="hidden" id="num-total-page" name="totalPages" value="@search.getTotalPages" />
+
+
+<div id="product-list">
+@for((product, i) <- search.getResults.zipWithIndex) {
+    @if(i % 11 == 2){
+    <div class="product-item featured">
+        @helper.productThumbnail(product, product.getMasterVariant, category, ImageSize.MEDIUM)
+    </div>
+    } else {
+    <div class="product-item">
+        @helper.productThumbnail(product, product.getMasterVariant, category, ImageSize.SMALL)
+    </div>
+    }
+}
+</div>
+
+

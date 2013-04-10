@@ -1,0 +1,27 @@
+@(currentCategoryId: String = "")
+
+<div class="main-navigation navbar">
+    <div class="container">
+        <ul class="nav" role="navigation">
+            @for(category <- getRootCategories) {
+            <li id="header-menu-@category.getSlug" class="menu-list dropdown">
+                <a href="@getCategoryUrl(category)">@category.getName</a>
+
+                @if(!category.getChildren.isEmpty) {
+                <ul class="dropdown-menu mainBox menu-list-b">
+                    @for(subcategory <- category.getChildren) {
+                    <li id="header-submenu-@subcategory.getSlug" class="menu-list-sub @getActiveClass(subcategory, currentCategoryId)">
+                        <a href="@getCategoryUrl(subcategory)">
+                            <small>@subcategory.getName</small>
+                        </a>
+                    </li>
+                    }
+                </ul>
+                }
+
+            </li>
+            <li class="divider">.</li>
+            }
+        </ul>
+    </div>
+</div>

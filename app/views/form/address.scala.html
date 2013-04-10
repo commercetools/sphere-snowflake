@@ -1,0 +1,103 @@
+@(addressForm: Form[AddAddress])
+
+@if(flash.containsKey("address-error")) {
+<div class="alert alert-error">
+    @flash.get("address-error")
+</div>
+}
+@if(flash.containsKey("address-success")) {
+<div class="alert alert-success">
+    @flash.get("address-success")
+</div>
+}
+@if(flash.containsKey("address-info")) {
+<div class="alert alert-info">
+    @flash.get("address-info")
+</div>
+}
+
+<h5>Address information</h5>
+
+@defining(addressForm.field("company").value) { company =>
+<div class="control-group">
+    @form.error("shipping-address-company")
+    <div class="controls">
+        <input type="text" name="company" id="shipping-address-company" value="@company" placeholder="Company (optional)" class="span4" />
+    </div>
+</div>
+}
+@defining(addressForm.field("firstName").value, addressForm.field("lastName").value) { case(firstName, lastName) =>
+<div class="control-group">
+    @form.error("shipping-address-firstName")
+    @form.error("shipping-address-lastName")
+    <div class="controls controls-row">
+        <input type="text" name="firstName" id="shipping-address-firstName" value="@firstName" placeholder="First Name" required="true" class="span2"/>
+        <input type="text" name="lastName" id="shipping-address-lastName" value="@lastName" placeholder="Last Name" required="true" class="span2"/>
+    </div>
+</div>
+}
+@defining(addressForm.field("phone").value) { mobile =>
+<div class="control-group">
+    @form.error("shipping-address-phone")
+    <div class="controls">
+        <input type="tel" name="mobile" id="shipping-address-phone" value="@mobile" placeholder="Phone" required="true" class="span4"/>
+    </div>
+</div>
+}
+@defining(addressForm.field("street").value) { street =>
+<div class="control-group">
+    @form.error("shipping-address-street")
+    <div class="controls">
+        <input type="text" name="street" id="shipping-address-street" value="@street" placeholder="Street Address" required="true" class="span4"/>
+    </div>
+</div>
+}
+@defining(addressForm.field("street2").value) { street2 =>
+<div class="control-group">
+    @form.error("shipping-address-street2")
+    <div class="controls">
+        <input type="text" name="street2" id="shipping-address-street2" value="@street2" placeholder="Street Address (optional)" class="span4"/>
+    </div>
+</div>
+}
+@defining(addressForm.field("postalCode").value, addressForm.field("city").value) { case(postalCode, city) =>
+<div class="control-group">
+    @form.error("shipping-address-postalCode")
+    @form.error("shipping-address-city")
+    <div class="controls controls-row">
+        <input type="text" name="postalCode" id="shipping-address-postalCode" value="@postalCode" placeholder="Postal Code" required="true" class="span2"/>
+        <input type="text" name="city" id="shipping-address-city" value="@city" placeholder="City" required="true" class="span2"/>
+    </div>
+</div>
+}
+@defining(addressForm.field("country").value) { country =>
+<div class="control-group">
+    @form.error("shipping-address-country")
+    <div class="controls">
+        <select name="country" id="shipping-address-country" required="true">
+            @for(countryCode <- AddAddress.getCountryCodes) {
+            <option value="@countryCode.getAlpha2" @if(countryCode.getAlpha2 == country){selected=selected}>@countryCode.getName</option>
+            }
+        </select>
+    </div>
+</div>
+}
+
+<h5>Additional contact information</h5>
+
+@defining(addressForm.field("email").value) { email =>
+<div class="control-group">
+    @form.error("shipping-address-email")
+    <div class="controls">
+        <input type="email" name="email" id="shipping-address-email" value="@email" placeholder="Email Address (optional)"/>
+    </div>
+</div>
+}
+@defining(addressForm.field("mobile").value) { mobile =>
+<div class="control-group">
+    @form.error("shipping-address-mobile")
+    <div class="controls">
+        <input type="tel" name="mobile" id="shipping-address-mobile" value="@mobile" placeholder="Mobile Phone (optional)"/>
+    </div>
+</div>
+}
