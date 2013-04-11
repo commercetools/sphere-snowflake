@@ -68,15 +68,6 @@ public class Payment {
                         getListXmlFooter());
     }
 
-    public static Document requestCharge(Cart cart, String referredId) {
-        return request(NATIVE_URL, cart.getId(),
-                getChargeXmlHeader() +
-                        getOriginXml(cart) +
-                        getReferredIdXml(referredId) +
-                        getAccountXml() +
-                        getListXmlFooter());
-    }
-
     public static String getRedirectUrl(Document response) {
         return XPath.selectText("//results/result/redirect[1]/url", response);
     }
@@ -245,16 +236,6 @@ public class Payment {
         }
         productsXml += "</products>\n";
         return productsXml;
-    }
-
-    private static String getAccountXml() {
-        return "<account>\n" +
-                    "\t<holderName>James Bond</holderName>\n" +
-                    "\t<number>4111111111111111</number>\n" +
-                    "\t<expiryMonth>12</expiryMonth>\n" +
-                    "\t<expiryYear>2012</expiryYear>\n" +
-                    "\t<verificationCode>123</verificationCode>\n" +
-                "</account>\n";
     }
 
     private static String getStyleXml() {
