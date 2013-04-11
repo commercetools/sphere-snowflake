@@ -31,8 +31,8 @@
     @form.error("shipping-address-firstName")
     @form.error("shipping-address-lastName")
     <div class="controls controls-row">
-        <input type="text" name="firstName" id="shipping-address-firstName" value="@firstName" placeholder="First Name" required="true" class="span2"/>
-        <input type="text" name="lastName" id="shipping-address-lastName" value="@lastName" placeholder="Last Name" required="true" class="span2"/>
+        <input type="text" name="firstName" id="shipping-address-firstName" value="@firstName" placeholder="First Name" required class="span2"/>
+        <input type="text" name="lastName" id="shipping-address-lastName" value="@lastName" placeholder="Last Name" required class="span2"/>
     </div>
 </div>
 }
@@ -40,7 +40,7 @@
 <div class="control-group">
     @form.error("shipping-address-phone")
     <div class="controls">
-        <input type="tel" name="phone" id="shipping-address-phone" value="@phone" placeholder="Phone" required="true" class="span4"/>
+        <input type="tel" name="phone" id="shipping-address-phone" value="@phone" placeholder="Phone" required class="span4"/>
     </div>
 </div>
 }
@@ -48,7 +48,7 @@
 <div class="control-group">
     @form.error("shipping-address-street")
     <div class="controls">
-        <input type="text" name="street" id="shipping-address-street" value="@street" placeholder="Street Address" required="true" class="span4"/>
+        <input type="text" name="street" id="shipping-address-street" value="@street" placeholder="Street Address" required class="span4"/>
     </div>
 </div>
 }
@@ -65,8 +65,8 @@
     @form.error("shipping-address-postalCode")
     @form.error("shipping-address-city")
     <div class="controls controls-row">
-        <input type="text" name="postalCode" id="shipping-address-postalCode" value="@postalCode" placeholder="Postal Code" required="true" class="span2"/>
-        <input type="text" name="city" id="shipping-address-city" value="@city" placeholder="City" required="true" class="span2"/>
+        <input type="text" name="postalCode" id="shipping-address-postalCode" value="@postalCode" placeholder="Postal Code" required class="span2"/>
+        <input type="text" name="city" id="shipping-address-city" value="@city" placeholder="City" required class="span2"/>
     </div>
 </div>
 }
@@ -74,7 +74,7 @@
 <div class="control-group">
     @form.error("shipping-address-country")
     <div class="controls">
-        <select name="country" id="shipping-address-country" required="true">
+        <select name="country" id="shipping-address-country" required>
             @for(countryCode <- AddAddress.getCountryCodes) {
             <option value="@countryCode.getAlpha2" @if(countryCode.getAlpha2 == country){selected=selected}>@countryCode.getName</option>
             }

@@ -8,7 +8,7 @@ $ ->
     validateForm = (form, allRequired) ->
         all = form.find(':input')
         required = all.not(':disabled')
-        required = required.filter('[required=true]') if not allRequired
+        required = required.filter('[required]') if not allRequired
 
         # Start with all fields marked as valid
         all.attr("aria-invalid", "false")
