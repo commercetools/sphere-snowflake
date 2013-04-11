@@ -43,17 +43,14 @@ public class Checkouts extends ShopController {
             return badRequest();
         }
         Checkout checkout = form.get();
-        Cart cart = sphere().currentCart().fetch();
-        Document response = Payment.requestHostedList(cart, checkout.checkoutId, checkout.paymentMethod);
-        String url = Payment.getRedirectUrl(response);
-        // TODO Do not jump over payment platform
-        notification(checkout.checkoutId);
-        return success();
-        //return redirect(url);
+        if (sphere().currentCart().isSafeToCreateOrder(checkout.checkoutId)) {
+            sphere().currentCart().createOrder(checkout.checkoutId, PaymentState.Pending);
+            return success();
+        }
+        return failure();
     }
 
     public static Result notification(String checkoutId) {
-        // TODO Check it's really coming from the payment system
         Form<PaymentNotification> form = form(PaymentNotification.class).bindFromRequest();
         if (form.hasErrors()) {
             return badRequest();

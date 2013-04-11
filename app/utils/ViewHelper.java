@@ -120,7 +120,7 @@ public class ViewHelper {
     }
 
     public static Money getShippingCost() {
-        // TODO Get correct currency
+        // TODO Implement correct shipping cost
         return new Money(BigDecimal.valueOf(10), "EUR");
     }
 

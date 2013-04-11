@@ -21,12 +21,10 @@ import java.util.List;
 
 public class Categories extends ShopController {
 
-    // TODO SDK: Control errors
     public static int PAGE_SIZE = 40;
 
     @With(SaveContext.class)
     public static Result home(int page) {
-        // TODO Order by something
         SearchRequest<Product> searchRequest = sphere().products.all();
         searchRequest = filterBy(searchRequest);
         searchRequest = sortBy(searchRequest);
@@ -43,9 +41,8 @@ public class Categories extends ShopController {
         if (category == null) {
             return notFound("Category not found: " + categorySlug);
         }
-        // TODO SDK: CategoriesOrSubcategories asks for Category object, Categories for Category Id
         FilterExpression categoryFilter = new FilterExpressions.CategoriesOrSubcategories(category);
-        SearchRequest<Product> searchRequest = sphere().products.filter(categoryFilter);
+        SearchRequest <Product> searchRequest = sphere().products.filter(categoryFilter);
         searchRequest = filterBy(searchRequest);
         searchRequest = sortBy(searchRequest);
         searchRequest = paging(searchRequest, page);
@@ -66,7 +63,6 @@ public class Categories extends ShopController {
             if (category == null) {
                 return notFound("Category not found: " + categorySlug);
             }
-            // TODO SDK: CategoriesOrSubcategories asks for Category object, Categories for Category Id
             FilterExpression categoryFilter = new FilterExpressions.CategoriesOrSubcategories(category);
             searchRequest = sphere().products.filter(categoryFilter);
         }
