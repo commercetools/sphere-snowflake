@@ -50,11 +50,11 @@ public class PaymentNetwork {
     public String getFormHtml() {
         try {
             Document doc = Jsoup.connect(localizedFormUrl).get();
-            // Convert all popups into common links
+            // Convert all popups into regular links
             Elements onclickLinks = doc.select("a[onclick]");
             if (!onclickLinks.isEmpty()) {
                 Elements scripts = doc.select("script");
-                String urlVar = "var url = \"(.+?)\"";
+                String urlVar = "var url\\s*=\\s*\"(.+?)\"";
                 String funcName;
                 Pattern p;
                 Matcher m;

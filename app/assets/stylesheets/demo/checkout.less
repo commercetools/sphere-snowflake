@@ -65,17 +65,44 @@
             margin-top: 10px;
             margin-left: -50px;
         }
+
+        .form-summary {
+            span.company:not(:empty), span.city:not(:empty) {
+                &:before {
+                    content: "(";
+                }
+                &:after {
+                    content: ")";
+                }
+            }
+        }
     }
 }
 
-#payment-networks {
-    .payment-network-form {
-        .row {
-            margin-left: 20px;
+#checkout-billing {
+    .step-body {
+        margin-left: 50px;
+    }
+
+    #payment-networks {
+        .payment-network {
+            .network-img {
+                opacity: 0.5;
+            }
+
+            &.active .network-img {
+                opacity: 1;
+            }
         }
 
-        input[name=network] {
-            display: none;
+        .payment-network-form {
+            .row {
+                margin-left: 20px;
+            }
+
+            input[name=network] {
+                display: none;
+            }
         }
     }
 }
@@ -95,6 +122,11 @@
 
 #checkout {
     .step {
+        .form-summary {
+            font-size: 12px;
+            .unstyled;
+        }
+
         .hide {
             display: none;
         }

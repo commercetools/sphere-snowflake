@@ -36,11 +36,11 @@
     </div>
 </div>
 }
-@defining(addressForm.field("phone").value) { mobile =>
+@defining(addressForm.field("phone").value) { phone =>
 <div class="control-group">
     @form.error("shipping-address-phone")
     <div class="controls">
-        <input type="tel" name="mobile" id="shipping-address-phone" value="@mobile" placeholder="Phone" required="true" class="span4"/>
+        <input type="tel" name="phone" id="shipping-address-phone" value="@phone" placeholder="Phone" required="true" class="span4"/>
     </div>
 </div>
 }

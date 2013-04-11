@@ -10,7 +10,7 @@
 
             <div class="step-header">
                 <span class="step-number">1</span>
-                <h3>Shipping method</h3>
+                <h3>Cart summary</h3>
                 <button type="button" class="btn btn-edit hide">
                     Change <i class="icon-edit"></i>
                 </button>
@@ -67,7 +67,7 @@
         <div id="checkout-shipping" class="step disabled clearfix">
             <div class="step-header">
                 <span class="step-number">2</span>
-                <h3>Shipping address</h3>
+                <h3>Shipping</h3>
                 <button type="button" class="btn btn-edit hide">
                     Change <i class="icon-edit"></i>
                 </button>
@@ -79,21 +79,54 @@
                 </div>
 
                 <div class="address hide">
-                    <ul>
+                    <ul id="shipping-address-summary" class="form-summary">
                         <li>
-                            <span class="first-name">@addressForm.field("firstName").value</span>
-                            <span class="last-name">@addressForm.field("LastName").value</span>
+                            <span data-form="firstName" class="first-name">
+                                @addressForm.field("firstName").value
+                            </span>
+                            <span data-form="lastName" class="last-name">
+                                @addressForm.field("lastName").value
+                            </span>
+                            <span data-form="company" class="company">
+                                @addressForm.field("company").value
+                            </span>
                         </li>
-                        <li><span class="street">@addressForm.field("street").value</span></li>
-                        <li><span class="street">@addressForm.field("street2").value</span></li>
                         <li>
-                            <span class="postal-code">@addressForm.field("postalCode").value</span>
-                            <span class="city">@addressForm.field("city").value</span>
+                            <span data-form="street" class="street">
+                                @addressForm.field("street").value
+                            </span>
                         </li>
-                        <li><span class="country">@getCountryName(addressForm.field("country").value)</span></li>
-                        <li><span class="phone">@addressForm.field("phone").value</span></li>
-                        <li><span class="mobile">@addressForm.field("mobile").value</span></li>
-                        <li><span class="email">@addressForm.field("email").value</span></li>
+                        <li>
+                            <span data-form="street2" class="street">
+                                @addressForm.field("street2").value
+                            </span>
+                        </li>
+                        <li>
+                            <span data-form="postalCode" class="postal-code">
+                                @addressForm.field("postalCode").value
+                            </span>
+                            <span data-form="city" class="city">
+                                @addressForm.field("city").value
+                            </span>
+                            <span data-form="country" class="country">
+                                @addressForm.field("country").value
+                            </span>
+                        </li>
+                        <li>
+                            <span data-form="phone" class="phone">
+                                @addressForm.field("phone").value
+                            </span>
+                        </li>
+                        <li>
+                            <span data-form="mobile" class="mobile">
+                                @addressForm.field("mobile").value
+                            </span>
+                        </li>
+                        <li>
+                            <span data-form="email" class="email">
+                                @addressForm.field("email").value
+                            </span>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -104,10 +137,9 @@
                 </button>
             </div>
         </div>
-
+        <input type="hidden" name="checkoutId" value="@checkoutId" />
         @* Sending last step of the form to payment platform *@
-        <form id="form-billing-method" method="post" action="@submitUrl" autocomplete="off">
-            <input type="hidden" name="checkoutId" value="@checkoutId" />
+        <form method="post" action="@submitUrl" autocomplete="off">
 
             <div id="checkout-billing" class="step disabled clearfix">
                 <div class="step-header">
@@ -119,8 +151,16 @@
                 </div>
 
                 <div class="step-body">
-                    <div id="payment-networks">
-                        @* Loading asynchronously *@
+                    <div id="payment-networks" class="show">
+                        @* Loading asynchronously after last step submit *@
+                    </div>
+                    <div class="hide">
+                        <ul id="billing-method-summary" class="form-summary">
+                            <li>
+                                <span data-form="network" class="network">
+                                </span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 

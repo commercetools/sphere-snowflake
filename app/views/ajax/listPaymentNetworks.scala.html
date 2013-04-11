@@ -8,18 +8,13 @@
         @for(network <- networks) {
     <li class="payment-network">
         <a href="#network-@network.networkCode" data-toggle="tab">
-            @defining(network.logoUrl, network.logoUrl.replaceAll("/logo.gif", "/logo_inactive.gif")) { case(logoActive, logoInactive) =>
-            <img src="@if(selected == network.networkCode){@logoActive} else{@logoInactive}" class="network-img"
-                 alt="@network.description"
-                 data-active="@logoActive"
-                 data-inactive="@logoInactive"/>
-            }
+            <img src="@network.logoUrl" class="network-img" alt="@network.description"/>
         </a>
     </li>
         }
     }
     </ul>
-    <div class="tab-content">
+    <div id="form-billing-method" class="tab-content">
     @for((group, networks) <- groupPaymentNetworks(paymentNetworks)) {
         @for(network <- networks) {
         <div class="payment-network-form tab-pane" id="network-@network.networkCode">

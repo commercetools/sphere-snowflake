@@ -5,16 +5,39 @@ $ ->
     checkoutBilling = $('#checkout-billing.step')
 
     # Validate form and mark incorrect fields as invalid
-    validateForm = (form) ->
+    validateForm = (form, allRequired) ->
+        all = form.find(':input')
+        required = all.not(':disabled')
+        required = required.filter('[required=true]') if not allRequired
+
         # Start with all fields marked as valid
-        required = form.find('[required=true]').filter(':visible')
-        required.attr("aria-invalid", "false")
+        all.attr("aria-invalid", "false")
 
         # Mark incorrect fields as invalid
         invalid = required.filter -> return not $(this).val()
         return true unless invalid.length > 0
         invalid.attr("aria-invalid", "true")
         return false
+
+    # Get form data
+    getFormData = (form) ->
+        data = {}
+        form.find(':input').not(':disabled').each ->
+            data[$(this).attr("name")] = $(this).val()
+        return data
+
+    # Fill form summary with form data
+    fillSummary = (form, summaryList) ->
+        form.find(':input').not(':disabled').each ->
+            value = if $(this).is('select') then $(this).find(':selected').text() else $(this).val()
+            place = summaryList.find('[data-form=' + $(this).attr("name") + ']')
+
+            if place.length > 0
+                # If there is a list element for this value, set here the data
+                place.text(value)
+            else
+                # Otherwise append a new list element
+                summaryList.append("<li>" + value + "</li>")
 
     # Jump to the next section form
     nextStep = (focused) ->
@@ -42,18 +65,11 @@ $ ->
 
             # Add events on change selected payment method
             listElement.find('.payment-network').has('a[data-toggle=tab]').click( ->
-                deselected = $(this).siblings()
                 active = listElement.find($(this).find('a[data-toggle=tab]').attr("href"))
                 inactive = active.siblings()
 
-                # Display inactive all deselected logos
-                deselected.find('img.network-img').attr("src", -> $(this).data("inactive"))
-
                 # Disable form elements of inactive networks
                 inactive.find(':input').attr('disabled', 'disabled')
-
-                # Highlight images of the selected group
-                $(this).find('img.network-img').attr("src", -> $(this).data("active"))
 
                 # Enable form elements of selected network
                 active.find(':input').removeAttr('disabled')
@@ -78,48 +94,45 @@ $ ->
         $('html, body').animate scrollTop: selected.offset().top - marginTop, 'slow'
     )
 
-    # Bind cart 'next step' button click event to 'next step' functionality
+    # Bind cart 'next step' click event to 'next step' functionality
     checkoutCart.find('.btn-next').click( ->
         nextStep(checkoutCart)
     )
 
-    # Bind shipping 'next step' button click event to 'submit form' and 'next step' functionality
+    # Bind shipping 'next step' click event to 'submit form' and 'next step' functionality
     checkoutShipping.find('.btn-next').click( ->
+        form = $('#form-shipping-address')
+
         # Validate form client side
-        return unless validateForm(checkoutShipping.find('#form-shipping-address'))
+        return unless validateForm(form, false)
 
         # Send address to server
         url = "/checkout/submit/shipping"
         $.ajax url,
             type: 'POST'
-            data: {
-                company: $('#shipping-address-company').val(),
-                firstName: $('#shipping-address-firstName').val(),
-                lastName: $('#shipping-address-lastName').val(),
-                email: $('#shipping-address-email').val(),
-                phone: $('#shipping-address-phone').val(),
-                mobile: $('#shipping-address-mobile').val(),
-                street: $('#shipping-address-street').val(),
-                street2: $('#shipping-address-street2').val(),
-                postalCode: $('#shipping-address-postalCode').val(),
-                city: $('#shipping-address-city').val(),
-                country: $('#shipping-address-country').val()
-            }
+            data: getFormData(form)
             dataType: 'html'
         .done( ->
             # Load payment networks once we have shipping information
             loadPaymentNetworks($('#payment-networks'))
+
+            # Fill form summary data
+            fillSummary(form, $('#shipping-address-summary'))
 
             # Go to next section
             nextStep(checkoutShipping)
         )
     )
 
+    # Bind billing 'next step' click event to 'validate form' and 'next step' functionality
     checkoutBilling.find('.btn-next').click( ->
         form = $('#form-billing-method')
 
         # Validate form client side
-        return unless validateForm(form)
+        return unless validateForm(form, true)
+
+        # Fill form summary data
+        fillSummary(form, $('#billing-method-summary'))
 
         # Go to next section
         nextStep(checkoutBilling)
