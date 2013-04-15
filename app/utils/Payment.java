@@ -6,7 +6,7 @@ import io.sphere.client.shop.model.Attribute;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.LineItem;
 import forms.PaymentNetwork;
-import org.specs2.internal.scalaz.std.string;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -152,7 +152,6 @@ public class Payment {
     protected static String transformXml(Document doc) throws Exception {
         StringWriter writer = new StringWriter();
         TransformerFactory.newInstance().newTransformer().transform(new DOMSource(doc), new StreamResult(writer));
-        System.out.println(writer.getBuffer().toString());
         return writer.getBuffer().toString();
     }
 
