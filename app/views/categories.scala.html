@@ -7,19 +7,6 @@
     </div>
     @helper.breadcrumb(category)
 }{
-    <div>
-        <fieldset>
-            <legend>@category.getName</legend>
-            <ul id="filter-category" class="nav nav-pills nav-stacked">
-                @for(subcategory <- category.getChildren) {
-                <li id="filter-category-@subcategory.getSlug" class="getActiveClass(category, subcategory)">
-                    <a href="@getCategoryUrl(subcategory)">@subcategory.getName</a>
-                </li>
-                }
-            </ul>
-        </fieldset>
-    </div>
-
     <div id="category-product-list" class="clearfix">
         @ajax.listProducts(search, category)
     </div>
