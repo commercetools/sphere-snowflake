@@ -73,14 +73,14 @@ public class ViewHelper {
 	 * Compares the categories and returns the 'active' class if are the same.
 	 * 
 	 * @param category
-     * @param currentCategoryId
+     * @param currentCategory
 	 * @return 'active' if categories are the same, otherwise an empty string.
 	 */
-	public static String getActiveClass(Category category, String currentCategoryId) {
-		String active = "";
-		if (category != null && category.getId().equals(currentCategoryId)) {
-			active = "active";
-		}
+	public static String getActiveClass(Category category, Category currentCategory) {
+        String active = "";
+        if (currentCategory != null && currentCategory.getPathInTree().contains(category)) {
+            active = "active";
+        }
 		return active;
 	}
 

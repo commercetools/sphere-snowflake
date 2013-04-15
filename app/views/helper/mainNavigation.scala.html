@@ -1,10 +1,10 @@
-@(currentCategoryId: String = "")
+@(currentCategory: Category = null)
 
 <div class="main-navigation navbar">
     <div class="container">
         <ul class="nav" role="navigation">
             @for(category <- getRootCategories) {
-            <li id="header-menu-@category.getSlug" class="dropdown">
+            <li id="header-menu-@category.getSlug" class="dropdown @getActiveClass(category, currentCategory)">
                 <a href="@getCategoryUrl(category)" id="@category.getSlug" class="dropdown-toggle">
                     @category.getName
                 </a>
@@ -12,7 +12,7 @@
                 @if(!category.getChildren.isEmpty) {
                 <ul class="dropdown-menu" role="menu" aria-labelledBy="@category.getSlug">
                     @for(subcategory <- category.getChildren) {
-                    <li id="header-submenu-@subcategory.getSlug" class="@getActiveClass(subcategory, currentCategoryId)">
+                    <li id="header-submenu-@subcategory.getSlug" class="@getActiveClass(subcategory, currentCategory)">
                         <a href="@getCategoryUrl(subcategory)">
                             <small>@subcategory.getName</small>
                         </a>
