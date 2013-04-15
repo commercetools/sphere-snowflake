@@ -5,9 +5,10 @@ import controllers.routes;
 import io.sphere.client.shop.model.Attribute;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.LineItem;
-import io.sphere.client.shop.model.PaymentState;
 import forms.PaymentNetwork;
+import org.specs2.internal.scalaz.std.string;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -18,67 +19,106 @@ import play.libs.XPath;
 import play.mvc.Http;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Payment {
 
-    public static String AUTH_TOKEN = Play.application().configuration().getString("optile.token");
-    public static String AUTH_USERNAME = Play.application().configuration().getString("optile.username");
-    public static String AUTH_PASSWORD = Play.application().configuration().getString("optile.password");
+    private static String AUTH_TOKEN = Play.application().configuration().getString("optile.token");
+    private static String AUTH_USERNAME = Play.application().configuration().getString("optile.username");
+    private static String AUTH_PASSWORD = Play.application().configuration().getString("optile.password");
 
     public static String HOSTED_URL = Play.application().configuration().getString("optile.hostedUrl");
     public static String NATIVE_URL = Play.application().configuration().getString("optile.nativeUrl");
 
-    public static Document requestHostedList(Cart cart, String checkoutId) {
-        return request(HOSTED_URL, cart.getId(),
-                getListXmlHeader() +
-                        getOriginXml(cart) +
-                        getCustomerXml(cart) +
-                        getCallbackXml(checkoutId) +
-                        getPaymentXml(cart) +
-                        getProductsXml(cart) +
-                        getStyleXml() +
-                        getListXmlFooter());
+    private Document req;
+    private Document res;
+
+    public Cart cart;
+    public String checkoutId;
+    public String networkGroup;
+
+    public enum Operation {
+        LIST, CHARGE
     }
 
-    public static Document requestHostedList(Cart cart, String checkoutId, String networkGroup) {
-        return request(HOSTED_URL, cart.getId(),
-                getListXmlHeader() +
-                        getOriginXml(cart) +
-                        getCustomerXml(cart) +
-                        getCallbackXml(checkoutId) +
-                        getPaymentXml(cart) +
-                        getPreselectionXml(networkGroup) +
-                        getProductsXml(cart) +
-                        getStyleXml() +
-                        getListXmlFooter());
+    public Payment(Cart cart, String checkoutId) {
+        this.cart = cart;
+        this.checkoutId = checkoutId;
+        try {
+            req = createXml();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static Document requestNativeList(Cart cart, String checkoutId) {
-        return request(NATIVE_URL, cart.getId(),
-                getListXmlHeader() +
-                        getOriginXml(cart) +
-                        getCustomerXml(cart) +
-                        getCallbackXml(checkoutId) +
-                        getPaymentXml(cart) +
-                        getProductsXml(cart) +
-                        getStyleXml() +
-                        getListXmlFooter());
+    public void setPreselectedNetwork(String networkGroup) {
+        this.networkGroup = networkGroup;
     }
 
-    public static String getRedirectUrl(Document response) {
-        return XPath.selectText("//results/result/redirect[1]/url", response);
+    public String doRequest(String url, Operation operation) {
+        String transactionId = cart.getId();
+        try {
+            // Build request
+            Element root = req.createElementNS("http://dev.btelligent.net/optile/xsd/paymentTransaction/v1.120", "pt:Request");
+            req.appendChild(root);
+
+            Element authentication = req.createElement("authentication");
+            authentication.appendChild(createNode("token", AUTH_TOKEN));
+            root.appendChild(authentication);
+
+            Element transactions = req.createElement("transactions");
+            Transaction transaction = new Transaction(operation, transactionId);
+            transactions.appendChild(transaction.get());
+            transaction.addOrigin()
+                    .addCustomer()
+                    .addCallback()
+                    .addPayment()
+                    .addProducts()
+                    .addPreselection()
+                    .addStyle();
+            root.appendChild(transactions);
+            // Send request
+
+            F.Promise<WS.Response> promise = WS.url(url)
+                    .setHeader("Content-Type", "application/x-www-form-urlencoded")
+                    .setAuth(AUTH_USERNAME, AUTH_PASSWORD, Realm.AuthScheme.BASIC)
+                    .post("command=" + transformXml(req));
+            // Read request
+            res = parseXml(promise.get().getBody());
+            printMessages(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return transactionId;
     }
 
-    public static String getReferredId(Document response) {
-        return XPath.selectText("//results/result/identification/longId", response);
+    public boolean isValidResponse(String transactionId) {
+        if (res == null) return false;
+        if (!getTransactionId().equals(transactionId)) return false;
+        return true;
     }
 
-    public static List<PaymentNetwork> getApplicableNetworks(Document response) {
+    public String getRedirectUrl() {
+        return XPath.selectText("//results/result[1]/redirect[1]/url", res);
+    }
+
+    public String getReferredId() {
+        return XPath.selectText("//results/result[1]/identification/longId", res);
+    }
+
+    public String getTransactionId() {
+        return XPath.selectText("//results/result[1]/identification/transactionId", res);
+    }
+
+    public List<PaymentNetwork> getApplicableNetworks() {
         List<PaymentNetwork> paymentNetworkList = new ArrayList<PaymentNetwork>();
-        NodeList nodes = XPath.selectNodes("//results/result[1]/networks/applicableNetworks/applicableNetwork", response);
+        NodeList nodes = XPath.selectNodes("//results/result[1]/networks/applicableNetworks/applicableNetwork", res);
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             paymentNetworkList.add(new PaymentNetwork(
@@ -99,154 +139,24 @@ public class Payment {
         return paymentNetworkList;
     }
 
-    public static PaymentState getPaymentState(String entity, String statusCode, String reasonCode) {
-        // TODO Complete it
-        if (statusCode.equals("charged")) return PaymentState.Paid;
-        if (statusCode.equals("paid_out")) return PaymentState.Paid;
-        if (statusCode.equals("pending")) return PaymentState.Pending;
-        if (statusCode.equals("failed")) return PaymentState.Failed;
-        return PaymentState.Failed;
+    protected Node createNode(String name, String value) {
+        Element element =  req.createElement(name);
+        element.appendChild(req.createTextNode(value));
+        return element;
     }
 
-    private static Document request(String url, String transactionId, String requestXml) {
-        F.Promise<WS.Response> promise = WS.url(url)
-                .setHeader("Content-Type","application/x-www-form-urlencoded")
-                .setAuth(AUTH_USERNAME, AUTH_PASSWORD, Realm.AuthScheme.BASIC)
-                .post("command=" + requestXml);
-        Document response = null;
-        try {
-            response = parseXml(promise.get().getBody());
-            if (!XPath.selectText("//results/result[1]/identification/transactionId", response).equals(transactionId)) {
-                return null;
-            }
-            printMessages(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return response;
+    protected static Document createXml() throws Exception{
+        return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
     }
 
-    private static String getListXmlHeader() {
-        return  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<pt:Request xmlns:pt=\"http://dev.btelligent.net/optile/xsd/paymentTransaction/v1.120\">\n" +
-                    "\t<authentication>\n" +
-                        "\t\t<token>"+ AUTH_TOKEN +"</token>\n" +
-                    "\t</authentication>\n" +
-                    "\t<transactions>\n" +
-                        "\t\t<transaction>\n" +
-                            "\t\t\t<operation>LIST</operation>\n";
+    protected static String transformXml(Document doc) throws Exception {
+        StringWriter writer = new StringWriter();
+        TransformerFactory.newInstance().newTransformer().transform(new DOMSource(doc), new StreamResult(writer));
+        System.out.println(writer.getBuffer().toString());
+        return writer.getBuffer().toString();
     }
 
-    private static String getChargeXmlHeader() {
-        return  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<pt:Request xmlns:pt=\"http://dev.btelligent.net/optile/xsd/paymentTransaction/v1.120\">\n" +
-                    "\t<authentication>\n" +
-                        "\t\t<token>"+ AUTH_TOKEN +"</token>\n" +
-                    "\t</authentication>\n" +
-                    "\t<transactions>\n" +
-                        "\t\t<transaction>\n" +
-                            "\t\t\t<operation>CHARGE</operation>\n";
-    }
-
-    private static String getListXmlFooter() {
-        return          "\t\t</transaction>\n" +
-                    "\t</transactions>\n" +
-                "</pt:Request>";
-    }
-
-    private static String getOriginXml(Cart cart) {
-        return  "<origin>\n" +
-                    "\t<merchant>COMMERCETOOLS</merchant>\n" +
-                    "\t<transactionId>"+ cart.getId() +"</transactionId>\n" +
-                    "\t<channel>WEB_ORDER</channel>\n" +
-                    "\t<country>DE</country>\n" +
-                "</origin>\n";
-    }
-
-    private static String getReferredIdXml(String referredId) {
-        return "<referredId>"+ referredId +"</referredId>\n";
-    }
-
-    private static String getCustomerXml(Cart cart) {
-        if (cart.getCustomerId() == null) return "";
-        return  "<customer>\n" +
-                    "\t<number>"+ cart.getCustomerId() +"</number>\n" +
-                "</customer>\n";
-    }
-
-    private static String getCallbackXml(String checkoutId) {
-        return  "<callback>\n" +
-                    "\t<cancelUrl>"+ routes.Checkouts.failure().absoluteURL(Http.Context.current().request()) +"</cancelUrl>\n" +
-                    "\t<returnUrl>"+ routes.Checkouts.success().absoluteURL(Http.Context.current().request()) +"</returnUrl>\n" +
-                    "\t<notificationUrl>"+ routes.Checkouts.notification(checkoutId).absoluteURL(Http.Context.current().request()) +"</notificationUrl>\n" +
-                "</callback>\n";
-    }
-
-    private static String getSessionIdXml() {
-        return  "<sessionId>...</sessionId>";
-    }
-
-    private static String getCustomerRegistrationXml() {
-        return  "<customerRegistrationId>customerRegistrationId</customerRegistrationId>\n" +
-                "<customerRegistrationPassword>...</customerRegistrationPassword>\n";
-    }
-
-    private static String getPaymentXml(Cart cart) {
-        return  "<payment>\n" +
-                    "\t<currency>"+ cart.getTotalPrice().getCurrencyCode() +"</currency>\n" +
-                    "\t<maskedAmount>\n" +
-                        "\t\t<amount>"+ cart.getTotalPrice().getAmount().setScale(2) +"</amount>\n" +
-                        "\t\t<mask>##########0.00</mask>\n" +
-                    "\t</maskedAmount>\n" +
-                    "\t<shortReference>Sphere</shortReference>\n" +
-                    "\t<longReference>\n" +
-                        "\t\t<essential>Sphere.io by commercetools.de</essential>\n" +
-                    "\t</longReference>\n" +
-                "</payment>\n";
-    }
-
-    private static String getPreselectionXml(String networkGroup) {
-        return  "<preselection>\n" +
-                    "\t<method>"+ networkGroup +"</method>\n" +
-                "</preselection>\n";
-    }
-
-    private static String getProductsXml(Cart cart) {
-        if (cart.getLineItems().size() < 1) return "";
-        String productsXml = "<products>\n";
-        for (LineItem item : cart.getLineItems()) {
-            productsXml += "<product>\n" +
-                            "\t<code>"+ item.getVariant().getSKU() +"</code>\n" +
-                            "\t<name>"+ item.getProductName() +"</name>\n" +
-                            "\t<quantity>"+ item.getQuantity() +"</quantity>\n" +
-                            "\t<unit>item</unit>\n" +
-                            "\t<totalAmount>"+ item.getTotalPrice().getAmount().setScale(2) +"</totalAmount>\n" +
-                            "\t<currency>"+ item.getTotalPrice().getCurrencyCode() +"</currency>\n" +
-                            "\t<attributes>\n";
-            for (Attribute attr : item.getVariant().getAttributes()) {
-                productsXml +=  "\t\t<attribute>\n" +
-                                    "\t\t\t<name>"+ attr.getName() +"</name>\n" +
-                                    "\t\t\t<value>"+ attr.getValue().toString() +"</value>\n" +
-                                    "\t\t\t<type>string</type>\n" +
-                                    "\t\t\t<pattern>*</pattern>\n" +
-                                "\t\t</attribute>\n";
-            }
-            productsXml +=      "\t</attributes>\n" +
-                            "</product>\n";
-        }
-        productsXml += "</products>\n";
-        return productsXml;
-    }
-
-    private static String getStyleXml() {
-        return  "<style>\n" +
-                    "\t<language>en_US</language >\n" +
-                    "\t<theme>light</theme>\n" +
-                    "\t<cssOverride>https://sandbox.oscato.com/shop/css/override.css</cssOverride>\n" +
-                "</style>\n";
-    }
-
-    private static Document parseXml(String xml) throws Exception {
+    protected static Document parseXml(String xml) throws Exception {
         return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
     }
 
@@ -258,5 +168,156 @@ public class Payment {
             String text = XPath.selectNode("text", message).getTextContent();
             System.err.println(level + ": " + text);
         }
+    }
+
+
+    public class Transaction {
+
+        public String id;
+        public Node transaction;
+
+        public Transaction(Operation operation, String id) {
+            this.id = id;
+            this.transaction = req.createElement("transaction");
+            this.transaction.appendChild(createNode("operation", operation.name()));
+        }
+
+        public Node get() {
+            return transaction;
+        }
+
+        public Transaction addOrigin() {
+            Node merchant       = createNode("merchant", "COMMERCETOOLS");
+            Node transactionId  = createNode("transactionId", id);
+            Node channel        = createNode("channel", "WEB_ORDER");
+            Node country        = createNode("country", (cart.getCountry() != null)? cart.getCountry().getAlpha2() : "DE");
+
+            Element element = req.createElement("origin");
+            element.appendChild(merchant);
+            element.appendChild(transactionId);
+            element.appendChild(channel);
+            element.appendChild(country);
+            transaction.appendChild(element);
+            return this;
+        }
+
+        public Transaction addCustomer() {
+            String number = cart.getCustomerId();
+            if (number != null) {
+                Node customer = createNode("number", number);
+
+                Element element = req.createElement("customer");
+                element.appendChild(customer);
+                transaction.appendChild(element);
+            }
+            return this;
+        }
+
+        public Transaction addCallback() {
+            Node cancelUrl          = createNode("cancelUrl",
+                    routes.Checkouts.failure().absoluteURL(Http.Context.current().request()));
+            Node returnUrl          = createNode("returnUrl",
+                    routes.Checkouts.success().absoluteURL(Http.Context.current().request()));
+            Node notificationUrl    = createNode("notificationUrl",
+                    routes.Checkouts.notification(checkoutId).absoluteURL(Http.Context.current().request()));
+
+            Element element = req.createElement("callback");
+            element.appendChild(cancelUrl);
+            element.appendChild(returnUrl);
+            element.appendChild(notificationUrl);
+            transaction.appendChild(element);
+            return this;
+        }
+
+        public Transaction addPayment() {
+            Node currency       = createNode("currency", cart.getCurrency().getCurrencyCode());
+            Node amount         = createNode("amount", cart.getTotalPrice().getAmount().setScale(2).toString());
+            Node mask           = createNode("mask", "##########0.00");
+            Node shortReference = createNode("shortReference", "Sphere");
+            Node essential      = createNode("essential", "Sphere.io by commercetools.de");
+
+            Element element = req.createElement("payment");
+            element.appendChild(currency);
+
+            Element maskedAmount = req.createElement("maskedAmount");
+            maskedAmount.appendChild(amount);
+            maskedAmount.appendChild(mask);
+            element.appendChild(maskedAmount);
+
+            element.appendChild(shortReference);
+
+            Element longReference = req.createElement("longReference");
+            longReference.appendChild(essential);
+            element.appendChild(longReference);
+
+            transaction.appendChild(element);
+            return this;
+        }
+
+        public Transaction addPreselection() {
+            if (networkGroup != null) {
+                Element element = req.createElement("preselection");
+                element.appendChild(createNode("method", networkGroup));
+                transaction.appendChild(element);
+            }
+            return this;
+        }
+
+        public Transaction addProducts() {
+            if (cart.getLineItems().size() > 0) {
+                Element products = req.createElement("products");
+                for (LineItem item : cart.getLineItems()) {
+                    Node code       = createNode("code", item.getVariant().getSKU());
+                    Node name       = createNode("name", item.getProductName());
+                    Node quantity   = createNode("quantity", String.valueOf(item.getQuantity()));
+                    Node unit       = createNode("unit", "item");
+                    Node amount     = createNode("totalAmount", item.getTotalPrice().getAmount().setScale(2).toString());
+                    Node currency   = createNode("currency", item.getTotalPrice().getCurrencyCode());
+
+                    Element product = req.createElement("product");
+                    product.appendChild(code);
+                    product.appendChild(name);
+                    product.appendChild(quantity);
+                    product.appendChild(unit);
+                    product.appendChild(amount);
+                    product.appendChild(currency);
+
+                    if (item.getVariant().getAttributes().size() > 0) {
+                        Element attributes = req.createElement("attributes");
+                        for (Attribute attr : item.getVariant().getAttributes()) {
+                            Node attrName       = createNode("name", attr.getName());
+                            Node attrValue      = createNode("value", attr.getString());
+                            Node attrType       = createNode("type", "string");
+                            Node attrPattern    = createNode("pattern", "*");
+
+                            Element attribute = req.createElement("attribute");
+                            attribute.appendChild(attrName);
+                            attribute.appendChild(attrValue);
+                            attribute.appendChild(attrType);
+                            attribute.appendChild(attrPattern);
+                            attributes.appendChild(attribute);
+                        }
+                        product.appendChild(attributes);
+                    }
+                    products.appendChild(product);
+                }
+                transaction.appendChild(products);
+            }
+            return this;
+        }
+
+        public Transaction addStyle() {
+            Node language   = createNode("language", "en_US");
+            Node theme      = createNode("theme", "light");
+            Node css        = createNode("cssOverride", "https://sandbox.oscato.com/shop/css/override.css");
+
+            Element element = req.createElement("style");
+            element.appendChild(language);
+            element.appendChild(theme);
+            element.appendChild(css);
+            transaction.appendChild(element);
+            return this;
+        }
+
     }
 }

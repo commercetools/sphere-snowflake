@@ -55,8 +55,8 @@ public class Checkouts extends ShopController {
         if (form.hasErrors()) {
             return badRequest();
         }
-        PaymentNotification payment = form.get();
-        PaymentState state = Payment.getPaymentState(payment.entity, payment.statusCode, payment.reasonCode);
+        PaymentNotification paymentNotification = form.get();
+        PaymentState state = paymentNotification.getPaymentState();
         sphere().currentCart().createOrder(checkoutId, state);
         return ok();
     }
@@ -81,12 +81,13 @@ public class Checkouts extends ShopController {
             return noContent();
         }
         String checkoutId = sphere().currentCart().createCheckoutSummaryId();
-        Document response = Payment.requestNativeList(cart, checkoutId);
-        if (response == null) {
+        Payment payment = new Payment(cart, checkoutId);
+        String transactionId = payment.doRequest(Payment.NATIVE_URL, Payment.Operation.LIST);
+        if (!payment.isValidResponse(transactionId)) {
             return noContent();
         }
-        List<PaymentNetwork> paymentNetworks = Payment.getApplicableNetworks(response);
-        String referredId = Payment.getReferredId(response);
+        List<PaymentNetwork> paymentNetworks = payment.getApplicableNetworks();
+        String referredId = payment.getReferredId();
         return ok(views.html.ajax.listPaymentNetworks.render(paymentNetworks, referredId, selected));
     }
 

@@ -1,5 +1,6 @@
 package forms;
 
+import io.sphere.client.shop.model.PaymentState;
 import play.data.validation.Constraints;
 
 public class PaymentNotification {
@@ -71,5 +72,14 @@ public class PaymentNotification {
         this.interactionCode = interactionCode;
         this.interactionReason = interactionReason;
         this.retryAfter = retryAfter;
+    }
+
+    public PaymentState getPaymentState() {
+        // TODO Complete it
+        if (statusCode.equals("charged")) return PaymentState.Paid;
+        if (statusCode.equals("paid_out")) return PaymentState.Paid;
+        if (statusCode.equals("pending")) return PaymentState.Pending;
+        if (statusCode.equals("failed")) return PaymentState.Failed;
+        return PaymentState.Failed;
     }
 }
