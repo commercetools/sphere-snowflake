@@ -60,6 +60,14 @@
         .clearfix;
         padding: 5px 100px;
 
+        ul.nav li.dropdown:hover > ul.dropdown-menu{
+            display: block;
+        }
+
+        .dropdown-menu {
+            margin: 0;
+        }
+
         li {
             color: @gray-text;
             font-weight: bold;
@@ -78,6 +86,10 @@
 .breadcrumb {
     background-color: transparent;
     padding: 5px 115px;
+
+    .active {
+        font-size: 20px;
+    }
 }
 
 #sub-menu {

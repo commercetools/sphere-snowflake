@@ -4,13 +4,15 @@
     <div class="container">
         <ul class="nav" role="navigation">
             @for(category <- getRootCategories) {
-            <li id="header-menu-@category.getSlug" class="menu-list dropdown">
-                <a href="@getCategoryUrl(category)">@category.getName</a>
+            <li id="header-menu-@category.getSlug" class="dropdown">
+                <a href="@getCategoryUrl(category)" id="@category.getSlug" class="dropdown-toggle">
+                    @category.getName
+                </a>
 
                 @if(!category.getChildren.isEmpty) {
-                <ul class="dropdown-menu mainBox menu-list-b">
+                <ul class="dropdown-menu" role="menu" aria-labelledBy="@category.getSlug">
                     @for(subcategory <- category.getChildren) {
-                    <li id="header-submenu-@subcategory.getSlug" class="menu-list-sub @getActiveClass(subcategory, currentCategoryId)">
+                    <li id="header-submenu-@subcategory.getSlug" class="@getActiveClass(subcategory, currentCategoryId)">
                         <a href="@getCategoryUrl(subcategory)">
                             <small>@subcategory.getName</small>
                         </a>
