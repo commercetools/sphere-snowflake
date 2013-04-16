@@ -1,28 +1,27 @@
 @(currentCategory: Category = null)
 
-<div class="main-navigation navbar">
-    <div class="container">
-        <ul class="nav" role="navigation">
+<div id="main-navigation" class="navbar">
+    <div class="container parent-menu">
+        <ul class="nav nav-pills" role="navigation">
             @for(category <- getRootCategories) {
-            <li id="header-menu-@category.getSlug" class="dropdown @getActiveClass(category, currentCategory)">
+            <li id="header-menu-@category.getSlug" class="@getActiveClass(category, currentCategory)">
                 <a href="@getCategoryUrl(category)" id="@category.getSlug" class="dropdown-toggle">
                     @category.getName
                 </a>
-
                 @if(!category.getChildren.isEmpty) {
-                <ul class="dropdown-menu" role="menu" aria-labelledBy="@category.getSlug">
-                    @for(subcategory <- category.getChildren) {
-                    <li id="header-submenu-@subcategory.getSlug" class="@getActiveClass(subcategory, currentCategory)">
-                        <a href="@getCategoryUrl(subcategory)">
-                            <small>@subcategory.getName</small>
-                        </a>
-                    </li>
-                    }
-                </ul>
+                <div class="child-menu @getActiveClass(category, currentCategory)">
+                    <ul class="nav nav-pills dropdown-list" role="menu" aria-labelledBy="@category.getSlug">
+                        @for(subcategory <- category.getChildren) {
+                        <li id="header-submenu-@subcategory.getSlug" class="@getActiveClass(subcategory, currentCategory)">
+                            <a href="@getCategoryUrl(subcategory)">
+                                <small>@subcategory.getName</small>
+                            </a>
+                        </li>
+                        }
+                    </ul>
+                </div>
                 }
-
             </li>
-            <li class="divider">.</li>
             }
         </ul>
     </div>
