@@ -74,6 +74,15 @@ $ ->
                 # Enable form elements of selected network
                 active.find(':input').removeAttr('disabled')
             )
+
+            # Show tooltip on hovering input with hint
+            listElement.find('.hint-message').hover( ->
+                id = $(this).parent().attr("for") + "-hint"
+                $('#' + id + '.hint').show()
+            , ->
+                id = $(this).parent().attr("for") + "-hint"
+                $('#' + id + '.hint').hide()
+            )
         )
 
     # Bind 'change' button click event to allow editing a section form

@@ -106,6 +106,22 @@
             input[name=network] {
                 display: none;
             }
+
+            .hint-message {
+                padding: 0 10px 0;
+            }
+
+            .hint {
+                display: none;
+                position: absolute;
+                background-color: @foreground;
+                border: 1px solid @light-gray;
+                border-radius: 10px;
+                -webkit-box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.1);
+                -moz-box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.1);
+                box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.1);
+                padding: 10px;
+            }
         }
     }
 }

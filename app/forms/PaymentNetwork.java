@@ -70,6 +70,17 @@ public class PaymentNetwork {
                     link.attr("target", "_blank");
                 }
             }
+            // Append some text inside label element where a hint message is found
+            Elements hints = doc.select(".hint");
+            if (!hints.isEmpty()) {
+                String id;
+                for (Element hint : hints) {
+                    id = hint.attr("id").replaceAll("-hint$", "");
+                    doc.select("label[for=" + id + "]")
+                            .append("<span class=\"hint-message\"><i class=\"icon-question-sign\"></span>");
+                }
+            }
+
             // Clean up code to avoid XSS
             Whitelist whitelist = Whitelist.relaxed()
                 .addAttributes(":all", "class")
