@@ -40,10 +40,9 @@ public class Checkouts extends ShopController {
     public static Result notification(String checkoutId) {
         Form<PaymentNotification> form = form(PaymentNotification.class).bindFromRequest();
         if (form.hasErrors()) {
-            System.err.println("KO...");
             return badRequest();
         }
-        System.err.println("OK!");
+        System.err.println("OK from " + request().remoteAddress());
         PaymentNotification paymentNotification = form.get();
         System.err.println("Notification " + paymentNotification.transactionId);
         System.err.println(paymentNotification.entity + " - " + paymentNotification.statusCode + " - " + paymentNotification.reasonCode);
