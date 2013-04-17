@@ -51,11 +51,16 @@ public class Checkouts extends ShopController {
     }
 
     public static Result notification(String checkoutId) {
+        System.err.println("Notification");
         Form<PaymentNotification> form = form(PaymentNotification.class).bindFromRequest();
         if (form.hasErrors()) {
+            System.err.println("KO...");
             return badRequest();
         }
+        System.err.println("OK!");
         PaymentNotification paymentNotification = form.get();
+        System.err.println(paymentNotification.entity + " - " + paymentNotification.statusCode + " - " + paymentNotification.reasonCode);
+        System.err.println(paymentNotification.resultCode + ": " + paymentNotification.resultInfo);
         PaymentState state = paymentNotification.getPaymentState();
         sphere().currentCart().createOrder(checkoutId, state);
         return ok();
