@@ -39,7 +39,7 @@ public class Carts extends ShopController {
             VariantList variants = product.getVariants();
             // Filter them by selected color, if any
             if (variant.hasAttribute("color")) {
-                variants.byAttributes(variant.getAttribute("color"));
+                variants = variants.byAttributes(variant.getAttribute("color"));
             }
             // Filter them by selected size
             Attribute size = new Attribute("size", addToCart.size);
