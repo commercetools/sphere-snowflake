@@ -1,4 +1,4 @@
-@(cart: Cart, checkoutId: String, submitUrl: String, addressForm: Form[AddAddress])
+@(cart: Cart, checkoutId: String, submitUrl: String, addressForm: Form[SetAddress])
 
 @main("Checkout", "checkout"){
     <div class="navigation">
@@ -75,7 +75,7 @@
 
             <div class="step-body">
                 <div id="form-shipping-address" class="show">
-                    @form.address(addressForm)
+                    @form.setAddress(addressForm)
                 </div>
 
                 <div class="address hide">

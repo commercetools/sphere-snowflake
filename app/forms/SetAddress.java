@@ -8,7 +8,7 @@ import play.data.validation.Constraints;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddAddress {
+public class SetAddress {
 
     public String company;
 
@@ -41,11 +41,11 @@ public class AddAddress {
     @Constraints.Pattern(value = "DE|AT", message = "Invalid value for country")
     public String country;
 
-    public AddAddress() {
+    public SetAddress() {
 
     }
 
-    public AddAddress(Address address) {
+    public SetAddress(io.sphere.client.shop.model.Address address) {
         if (address != null) {
             this.company = address.getCompany();
             this.firstName = address.getFirstName();
@@ -61,12 +61,12 @@ public class AddAddress {
         }
     }
 
-    public AddAddress(Customer customer) {
+    public SetAddress(Customer customer) {
         this(null, customer.getFirstName(), customer.getLastName(), customer.getEmail(), null,
                 null, null, null, null, null, null);
     }
 
-    public AddAddress(String company, String firstName, String lastName, String email, String phone,
+    public SetAddress(String company, String firstName, String lastName, String email, String phone,
                       String mobile, String street, String street2,
                       String postalCode, String city, String country) {
         this.company = company;
@@ -95,6 +95,10 @@ public class AddAddress {
         address.setPostalCode(postalCode);
         address.setCity(city);
         return address;
+    }
+
+    public CountryCode getCountry() {
+        return CountryCode.getByCode(this.country);
     }
 
     public static List<CountryCode> getCountryCodes() {
