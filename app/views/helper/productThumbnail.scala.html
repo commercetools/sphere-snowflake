@@ -35,8 +35,24 @@
         @variant.getPrice.getValue
     </div>
     <div class="product-info-buy">
-        <button type="button" name="addToCart-product" data-product="@product.getId" data-variant="@variant.getId" class="btn btn-link btn-mini">
+        <button type="button" name="addToCart-product" class="btn btn-link btn-mini"
+                data-product="@product.getId"
+                data-variant="@variant.getId">
             <i class="icon-shopping-cart"></i>
         </button>
+        @if(hasMoreSizes(product)) {
+        <ul class="product-info-variants-size">
+            @for(size <- getPossibleSizes(product, variant)) {
+            <li>
+                <button type="button" name="addToCart-product" class="btn btn-link btn-mini"
+                        data-product="@product.getId"
+                        data-variant="@variant.getId"
+                        data-size="@size">
+                    @size
+                </button>
+            </li>
+            }
+        </ul>
+        }
     </div>
 </div>

@@ -42,14 +42,15 @@ $ ->
     )
 
     # Add selected product and quantity to cart
-    addToCart = (productId, variantId, quantity) ->
+    addToCart = (productId, variantId, quantity, size) ->
         url = "/cart/add"
         $.ajax url,
             type: 'POST'
             data: {
                 productId: productId,
                 variantId: variantId,
-                quantity: quantity
+                quantity: quantity,
+                size: size
             }
             dataType: 'html'
             success: (data, textStatus, jqXHR) ->
@@ -113,7 +114,8 @@ $ ->
         productId = $(this).data("product")
         variantId = $(this).data("variant")
         quantity = 1
-        addToCart productId, variantId, quantity
+        size = $(this).data("size")
+        addToCart productId, variantId, quantity, size
     )
 
     # Bind 'add to cart' button in product detail with 'add to cart' functionality

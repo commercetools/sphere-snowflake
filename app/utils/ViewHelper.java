@@ -153,6 +153,15 @@ public class ViewHelper {
         return routes.Products.select(product.getSlug(), String.valueOf(variant.getId()));
     }
 
+    public static List<String> getPossibleSizes(Product product, Variant variant) {
+        List<Variant> variants = getPossibleVariants(product, variant, "size");
+        List<String> sizes = new ArrayList<String>();
+        for (Variant matchedVariant : variants) {
+            sizes.add(matchedVariant.getString("size"));
+        }
+        return sizes;
+    }
+
     public static List<Variant> getPossibleVariants(Product product, Variant variant, String selectedAttribute) {
         List<Variant> matchingVariantList = new ArrayList<Variant>();
         List<Attribute> desiredAttributes = new ArrayList<Attribute>();

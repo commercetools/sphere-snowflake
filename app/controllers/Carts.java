@@ -1,6 +1,6 @@
 package controllers;
 
-import io.sphere.client.shop.model.Cart;
+import io.sphere.client.shop.model.*;
 import forms.AddToCart;
 import forms.RemoveFromCart;
 import forms.UpdateCart;
@@ -23,7 +23,29 @@ public class Carts extends ShopController {
             return badRequest();
         }
         AddToCart addToCart = form.get();
-        Cart cart = sphere().currentCart().addLineItem(addToCart.productId, addToCart.variantId, addToCart.quantity);
+        String variantId = addToCart.variantId;
+        // If size is selected we have to find the correct variant
+        if (addToCart.size != null) {
+            // Fetch selected product variant
+            Product product = sphere().products.byId(addToCart.productId).fetch().orNull();
+            if (product == null) {
+                return badRequest();
+            }
+            Variant variant = product.getVariants().byId(addToCart.variantId).orNull();
+            if (variant == null) {
+                return badRequest();
+            }
+            // Fetch all variants
+            VariantList variants = product.getVariants();
+            // Filter them by selected color, if any
+            if (variant.hasAttribute("color")) {
+                variants.byAttributes(variant.getAttribute("color"));
+            }
+            // Filter them by selected size
+            Attribute size = new Attribute("size", addToCart.size);
+            variantId = variants.byAttributes(size).first().or(variant).getId();
+        }
+        Cart cart = sphere().currentCart().addLineItem(addToCart.productId, variantId, addToCart.quantity);
         return ok(views.html.ajax.updateCart.render(cart));
     }
 
