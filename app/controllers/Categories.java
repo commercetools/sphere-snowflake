@@ -21,7 +21,7 @@ import java.util.List;
 
 public class Categories extends ShopController {
 
-    public static int PAGE_SIZE = 40;
+    public static int PAGE_SIZE = 50;
 
     @With(SaveContext.class)
     public static Result home(int page) {

@@ -28,7 +28,6 @@ $ ->
                 products.imagesLoaded( ->
                     $('#product-list').append(products).masonry('appended', products)
                 )
-
             complete: ->
                 calling = false;
 
@@ -52,8 +51,8 @@ $ ->
         $('#jump-to-top').fadeIn() if not isNearTop and $('#jump-to-top:hidden')
 
         # Load more products if it is near the page bottom
-        distance = 2000
+        distance = 1000
         limit = $(document).height() - $(window).height() - distance
         isNearBottom = $(window).scrollTop() >= limit
         loadMore() if isNearBottom
-    ), 200
+    ), 300
