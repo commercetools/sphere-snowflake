@@ -75,7 +75,7 @@
     @form.error("shipping-address-country")
     <div class="controls">
         <select name="country" id="shipping-address-country" required>
-            @for(countryCode <- AddAddress.getCountryCodes) {
+            @for(countryCode <- SetAddress.getCountryCodes) {
             <option value="@countryCode.getAlpha2" @if(countryCode.getAlpha2 == country){selected=selected}>@countryCode.getName</option>
             }
         </select>

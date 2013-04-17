@@ -83,7 +83,7 @@ public class SetAddress {
     }
 
     public Address getAddress() {
-        Address address = new Address(CountryCode.getByCode(this.country));
+        Address address = new Address(getCountryCode());
         address.setCompany(company);
         address.setFirstName(firstName);
         address.setLastName(lastName);
@@ -97,7 +97,7 @@ public class SetAddress {
         return address;
     }
 
-    public CountryCode getCountry() {
+    public CountryCode getCountryCode() {
         return CountryCode.getByCode(this.country);
     }
 

@@ -33,7 +33,7 @@ public class Checkouts extends ShopController {
         }
         SetAddress setAddress = form.get();
         sphere().currentCart().setShippingAddress(setAddress.getAddress());
-        sphere().currentCart().setCountry(setAddress.getCountry());
+        sphere().currentCart().setCountry(setAddress.getCountryCode());
         return ok();
     }
 
