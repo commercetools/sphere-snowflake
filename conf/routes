@@ -16,7 +16,6 @@ POST    /cart/remove                                        controllers.Carts.re
 
 # Checkout
 GET     /checkout                                           controllers.Checkouts.show()
-POST    /checkout                                           controllers.Checkouts.submit()
 
 GET     /checkout/payment                                   controllers.Checkouts.notification(id: String)
 GET     /checkout/success                                   controllers.Checkouts.success()

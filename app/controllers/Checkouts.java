@@ -4,7 +4,6 @@ import controllers.actions.Authorization;
 import forms.*;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.PaymentState;
-import org.w3c.dom.Document;
 import play.Play;
 import play.data.Form;
 import play.mvc.Result;
@@ -21,37 +20,24 @@ public class Checkouts extends ShopController {
     public static Result show() {
         Cart cart = sphere().currentCart().fetch();
         String checkoutId = sphere().currentCart().createCheckoutSummaryId();
-        AddAddress draftAddress = new AddAddress(cart.getShippingAddress());
-        Form<AddAddress> addressForm = form(AddAddress.class).fill(draftAddress);
+        SetAddress draftAddress = new SetAddress(cart.getShippingAddress());
+        Form<SetAddress> addressForm = form(SetAddress.class).fill(draftAddress);
         String submitUrl = Play.application().configuration().getString("optile.chargeUrl");
         return ok(views.html.checkouts.render(cart, checkoutId, submitUrl, addressForm));
     }
 
     public static Result submitShippingAddress() {
-        Form<AddAddress> form = form(AddAddress.class).bindFromRequest();
+        Form<SetAddress> form = form(SetAddress.class).bindFromRequest();
         if (form.hasErrors()) {
             return badRequest();
         }
-        AddAddress addAddress = form.get();
-        sphere().currentCart().setShippingAddress(addAddress.getAddress());
+        SetAddress setAddress = form.get();
+        sphere().currentCart().setShippingAddress(setAddress.getAddress());
+        sphere().currentCart().setCountry(setAddress.getCountry());
         return ok();
     }
 
-    public static Result submit() {
-        Form<Checkout> form = form(Checkout.class).bindFromRequest();
-        if (form.hasErrors()) {
-            return badRequest();
-        }
-        Checkout checkout = form.get();
-        if (sphere().currentCart().isSafeToCreateOrder(checkout.checkoutId)) {
-            sphere().currentCart().createOrder(checkout.checkoutId, PaymentState.Pending);
-            return success();
-        }
-        return failure();
-    }
-
     public static Result notification(String checkoutId) {
-        System.err.println("Notification");
         Form<PaymentNotification> form = form(PaymentNotification.class).bindFromRequest();
         if (form.hasErrors()) {
             System.err.println("KO...");
@@ -59,10 +45,13 @@ public class Checkouts extends ShopController {
         }
         System.err.println("OK!");
         PaymentNotification paymentNotification = form.get();
+        System.err.println("Notification " + paymentNotification.transactionId);
         System.err.println(paymentNotification.entity + " - " + paymentNotification.statusCode + " - " + paymentNotification.reasonCode);
         System.err.println(paymentNotification.resultCode + ": " + paymentNotification.resultInfo);
         PaymentState state = paymentNotification.getPaymentState();
-        sphere().currentCart().createOrder(checkoutId, state);
+        if (state.equals(PaymentState.Paid)) {
+            sphere().currentCart().createOrder(checkoutId, state);
+        }
         return ok();
     }
 
