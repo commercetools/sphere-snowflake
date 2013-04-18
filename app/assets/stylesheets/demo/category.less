@@ -1,5 +1,102 @@
-body {
-    &.category {
+#product-list {
+    margin: 10px 5px 10px 50px;
+    position: relative;
 
+
+    .product-item {
+        margin: 10px;
+        float: left;
+        text-align: center;
+        padding: 1px 0;
+        border-radius: 3px;
+        border: 1px solid #d8d8d8;
+        background-color: @foreground;
+        width: 200px;
+
+        &:hover {
+            z-index: 2;
+        }
+
+        .product-image {
+            padding: 10px;
+        }
+
+        .product-info {
+            border-top: 1px solid #d8d8d8;
+            background-color: #fff;
+            font-size: 12px;
+            padding-bottom: 10px;
+
+            .product-info-variants-color {
+                .product-info-variants-style;
+                min-height: 30px;
+                padding: 10px;
+
+                img {
+                    width: 25px;
+                    height: 25px;
+                }
+            }
+
+            .product-info-name {
+                padding-top: 10px;
+
+                a {
+                    color: @black-text;
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .product-footer {
+            border-top: 1px dashed @light-gray;
+            background-color: @foreground;
+            padding: 5px 15px;
+            font-size: 12px;
+
+            .product-info-buy {
+                float: right;
+                position: relative;
+                opacity: 0.3;
+
+                .product-info-variants-size {
+                    .unstyled;
+                    position: absolute;
+                    bottom: 0;
+                    margin-bottom: -5px;
+                    background-color: @foreground;
+                    border: 1px solid @light-gray;
+                    border-radius: 3px;
+                    display: none;
+
+                    button {
+                        font-weight: bold;
+                    }
+                }
+
+                &:hover {
+                    opacity: 0.7;
+                }
+
+                &:hover .product-info-variants-size {
+                    .popover;
+                    display: block;
+                    opacity: 1.5;
+                }
+            }
+
+            .product-info-price {
+                float: left;
+                line-height: 23px;
+                font-weight: bold;
+                color: @gray-text;
+            }
+        }
+
+
+        &.featured {
+            width: 422px;
+        }
     }
 }
