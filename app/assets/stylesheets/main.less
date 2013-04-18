@@ -1,19 +1,20 @@
-@import "demo/mixins";
-@import "demo/cart";
-@import "demo/category";
 @import "demo/colors";
+@import "demo/mixins";
 @import "demo/header";
+@import "demo/category";
 @import "demo/product";
+@import "demo/cart";
 @import "demo/checkout";
+@import "demo/login";
 
-body{
+body {
     font-family: 'Lucida Grande', sans-serif;
     font-weight: 400;
     background: @background;
     color: @gray-text;
     padding-top: 180px;
 
-    &.cart, &.checkout {
+    &.cart, &.checkout, &.login {
         padding-top: 80px;
     }
 }

@@ -1,0 +1,35 @@
+@(logInForm: Form[LogIn], signUpForm: Form[SignUp])
+
+@main("Log in", "login"){
+<div class="navigation">
+    @helper.topNavigation()
+</div>
+}{
+<div id="login">
+
+    <div id="login-log-in" class="clearfix">
+        <h4>Log In</h4>
+        <form action="@routes.Login.logIn" method="post">
+            @form.logIn(logInForm)
+            <button type="submit" class="btn btn-primary">
+                Log in!
+            </button>
+        </form>
+    </div>
+
+    <div id="login-sign-up" class="clearfix">
+        <h4>Sign Up</h4>
+        <p>Not a member yet?</p>
+        <form action="@routes.Login.signUp" method="post">
+            @form.signUp(signUpForm)
+            <button type="submit" class="btn btn-success">
+                Sign up!
+            </button>
+        </form>
+    </div>
+
+</div>
+}{
+
+
+}
