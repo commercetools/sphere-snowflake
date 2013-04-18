@@ -11,6 +11,7 @@ import io.sphere.client.model.SearchResult;
 import forms.PaymentNetwork;
 import org.apache.commons.lang3.text.WordUtils;
 import play.mvc.Call;
+import play.mvc.Http;
 import sphere.Sphere;
 
 import io.sphere.client.shop.model.Attribute;
@@ -51,6 +52,10 @@ public class ViewHelper {
         // Add current category
         path += category.getPathInTree().get(level - 1).getSlug();
         return path;
+    }
+
+    public static String getReturnUrl() {
+        return Http.Context.current().session().get("returnUrl");
     }
 
     public static String capitalizeInitials(String text) {

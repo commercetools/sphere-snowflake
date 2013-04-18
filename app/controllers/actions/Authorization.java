@@ -2,7 +2,6 @@ package controllers.actions;
 
 import forms.LogIn;
 import forms.SignUp;
-import play.data.Form;
 import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;

@@ -60,8 +60,13 @@
             </div>
         </div>
 
-        <div id="cart-footer" class="clearfix">
-            <div class="summary">
+        <div id="cart-footer" class="footer">
+            <div class="left">
+                <a href="@getReturnUrl" class="btn">
+                    <i class="icon-chevron-left"></i> Continue shopping
+                </a>
+            </div>
+            <div class="right">
                 @helper.orderSummary(cart)
                 <a href="@routes.Checkouts.show" class="btn btn-success">
                     Proceed to checkout <i class="icon-chevron-right icon-white"></i>
