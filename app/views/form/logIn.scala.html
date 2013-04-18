@@ -1,0 +1,36 @@
+@(logInForm: Form[LogIn])
+
+@if(flash.containsKey("log-in-error")) {
+<div class="alert alert-error">
+    @flash.get("log-in-error")
+</div>
+}
+@if(flash.containsKey("log-in-success")) {
+<div class="alert alert-success">
+    @flash.get("log-in-success")
+</div>
+}
+@if(flash.containsKey("log-in-info")) {
+<div class="alert alert-info">
+    @flash.get("log-in-info")
+</div>
+}
+
+<div class="form">
+    @defining(logInForm.field("email").value) { email =>
+    <div class="control-group">
+        @form.error("log-in-email")
+        <div class="controls">
+            <input type="email" name="email" id="log-in-email" value="@email" placeholder="Email" required />
+        </div>
+    </div>
+    }
+    @defining(logInForm.field("password").value) { password =>
+    <div class="control-group">
+        @form.error("log-in-password")
+        <div class="controls">
+            <input type="password" name="password" id="log-in-password" value="@password" placeholder="Password" required />
+        </div>
+    </div>
+    }
+</div>

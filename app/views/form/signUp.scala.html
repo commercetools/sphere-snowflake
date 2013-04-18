@@ -1,0 +1,46 @@
+@(signUpForm: Form[SignUp])
+
+@if(flash.containsKey("sign-up-error")) {
+<div class="alert alert-error">
+    @flash.get("sign-up-error")
+</div>
+}
+@if(flash.containsKey("sign-up-success")) {
+<div class="alert alert-success">
+    @flash.get("sign-up-success")
+</div>
+}
+@if(flash.containsKey("sign-up-info")) {
+<div class="alert alert-info">
+    @flash.get("sign-up-info")
+</div>
+}
+
+<div class="form">
+    @defining(signUpForm.field("firstName").value, signUpForm.field("lastName").value) { case(firstName, lastName) =>
+    <div class="control-group">
+        @form.error("sign-up-firstName")
+        @form.error("sign-up-lastName")
+        <div class="controls controls-row">
+            <input type="text" name="firstName" id="sign-up-firstName" value="@firstName" placeholder="First Name" required class="span2"/>
+            <input type="text" name="lastName" id="sign-up-lastName" value="@lastName" placeholder="Last Name" required class="span2"/>
+        </div>
+    </div>
+    }
+    @defining(signUpForm.field("email").value) { email =>
+    <div class="control-group">
+        @form.error("sign-up-email")
+        <div class="controls">
+            <input type="email" name="email" id="sign-up-email" value="@email" placeholder="Email" required class="span4"/>
+        </div>
+    </div>
+    }
+    @defining(signUpForm.field("password").value) { password =>
+    <div class="control-group">
+        @form.error("sign-up-password")
+        <div class="controls">
+            <input type="password" name="password" id="sign-up-password" value="@password" placeholder="Password" required class="span4"/>
+        </div>
+    </div>
+    }
+</div>
