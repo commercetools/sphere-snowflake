@@ -9,14 +9,19 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import play.mvc.Result;
 import sphere.Sphere;
 import utils.MockHelper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Sphere.class)
+@PowerMockIgnore("javax.crypto.*")
 public class CategoriesTest {
 
     private static int NUM_PRODUCT = 4;
@@ -87,100 +92,140 @@ public class CategoriesTest {
     @Ignore
     @Test
     public void showHome() {
-        Result result = callAction(routes.ref.Categories.home(1));
-        assertOK(result);
-        Document body = contentAsDocument(result);
-        assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
+        running(fakeApplication(), new Runnable() {
+            public void run() {
+                Result result = callAction(routes.ref.Categories.home(1));
+                assertOK(result);
+                Document body = contentAsDocument(result);
+                assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
+            }
+        });
     }
 
 	@Test
 	public void selectCategory() {
-        Result result = callAction(routes.ref.Categories.select("cat1", 1));
-        assertOK(result);
-        Document body = contentAsDocument(result);
-        assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
+        running(fakeApplication(), new Runnable() {
+            public void run() {
+                Result result = callAction(routes.ref.Categories.select("cat1", 1));
+                assertOK(result);
+                Document body = contentAsDocument(result);
+                assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
+            }
+        });
 	}
 
 	@Test
 	public void showSubcategory() {
-        Result result = callAction(routes.ref.Categories.select("cat1-cat2/cat3", 1));
-        assertOK(result);
-        Document body = contentAsDocument(result);
-        assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
+        running(fakeApplication(), new Runnable() {
+            public void run() {
+                Result result = callAction(routes.ref.Categories.select("cat1-cat2/cat3", 1));
+                assertOK(result);
+                Document body = contentAsDocument(result);
+                assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
+            }
+        });
 	}
 
 	@Test
 	public void showInvalidCategory() {
-        Result result = callAction(routes.ref.Categories.select("non-existing-category", 1));
-        assertNotFound(result);
+        running(fakeApplication(), new Runnable() {
+            public void run() {
+                Result result = callAction(routes.ref.Categories.select("non-existing-category", 1));
+                assertNotFound(result);
+            }
+        });
 	}
 
 	@Test
 	public void showCategoryWithInvalidParent() {
-        Result result = callAction(routes.ref.Categories.select("non-existing-category/cat3", 1));
-        assertOK(result);
-        Document body = contentAsDocument(result);
-        assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
+        running(fakeApplication(), new Runnable() {
+            public void run() {
+                Result result = callAction(routes.ref.Categories.select("non-existing-category/cat3", 1));
+                assertOK(result);
+                Document body = contentAsDocument(result);
+                assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
+            }
+        });
 	}
 
 	@Ignore
 	@Test
 	public void pagingProducts() {
-        // TODO Impossible to specify page now with current mocking
-        Result result = callAction(routes.ref.Categories.select("cat1-cat2/cat3", 2));
-        assertOK(result);
-        Document body = contentAsDocument(result);
-        assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
+        running(fakeApplication(), new Runnable() {
+            public void run() {
+                // TODO Impossible to specify page now with current mocking
+                Result result = callAction(routes.ref.Categories.select("cat1-cat2/cat3", 2));
+                assertOK(result);
+                Document body = contentAsDocument(result);
+                assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
+            }
+        });
 	}
 
 	@Ignore
 	@Test
 	public void pagingProductsAboveRange() {
-        // TODO Impossible to specify page now with current mocking
-        Result result = callAction(routes.ref.Categories.select("cat1/cat", 100));
-        assertOK(result);
-        Document body = contentAsDocument(result);
-        assertThat(body.select("#product-list .product-item").size()).isEqualTo(0);
-        assertThat(body.select("#messages .alert-info").hasText()).isTrue();
+        running(fakeApplication(), new Runnable() {
+            public void run() {
+                // TODO Impossible to specify page now with current mocking
+                Result result = callAction(routes.ref.Categories.select("cat1/cat", 100));
+                assertOK(result);
+                Document body = contentAsDocument(result);
+                assertThat(body.select("#product-list .product-item").size()).isEqualTo(0);
+                assertThat(body.select("#messages .alert-info").hasText()).isTrue();
+            }
+        });
 	}
 
 	@Ignore
 	@Test
 	public void pagingProductsInvalid() {
-        // TODO Impossible to specify page now with current mocking
-        Result result = callAction(routes.ref.Categories.select("cat1/cat", -2));
-        assertOK(result);
-        Document body = contentAsDocument(result);
-        assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
-        assertThat(body.select("#num-offset-product").val()).isEqualTo("0");
-        assertThat(body.select("#num-current-product").val()).isEqualTo("15");
-        assertThat(body.select("#num-total-product").val()).isEqualTo("107");
-        assertThat(body.select("#num-current-page").val()).isEqualTo("0");
-        assertThat(body.select("#num-total-page").val()).isEqualTo("8");
+        running(fakeApplication(), new Runnable() {
+            public void run() {
+                // TODO Impossible to specify page now with current mocking
+                Result result = callAction(routes.ref.Categories.select("cat1/cat", -2));
+                assertOK(result);
+                Document body = contentAsDocument(result);
+                assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
+                assertThat(body.select("#num-offset-product").val()).isEqualTo("0");
+                assertThat(body.select("#num-current-product").val()).isEqualTo("15");
+                assertThat(body.select("#num-total-product").val()).isEqualTo("107");
+                assertThat(body.select("#num-current-page").val()).isEqualTo("0");
+                assertThat(body.select("#num-total-page").val()).isEqualTo("8");
+            }
+        });
 	}
 
 	@Ignore
 	@Test
 	public void filterProductsByPrice() {
-        // TODO Impossible to specify price now with current mocking
-        Result result = callAction(routes.ref.Categories.select("cat1/cat", 1), fakeRequest("GET", "?price=10_20"));
-        assertOK(result);
-        Document body = contentAsDocument(result);
-        assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
-        assertThat(body.select("#num-total-product").val()).isEqualTo("26");
+        running(fakeApplication(), new Runnable() {
+            public void run() {
+                // TODO Impossible to specify price now with current mocking
+                Result result = callAction(routes.ref.Categories.select("cat1/cat", 1), fakeRequest("GET", "?price=10_20"));
+                assertOK(result);
+                Document body = contentAsDocument(result);
+                assertThat(body.select("#product-list .product-item").size()).isEqualTo(NUM_PRODUCT);
+                assertThat(body.select("#num-total-product").val()).isEqualTo("26");
+            }
+        });
 	}
 
 	@Ignore
 	@Test
 	public void filterProductsByColor() {
-        // TODO Impossible to specify color now with current mocking
-        Result result = callAction(routes.ref.Categories.select("cat1/cat", 1), fakeRequest("GET", "?color=schwarz"));
-        assertOK(result);
-        Document body = contentAsDocument(result);
-        assertThat(body.select("#product-list .product-item").size()).isEqualTo(12);
-        assertThat(body.select("#num-total-product").val()).isEqualTo("12");
-        // TODO SDK: Use title or id instead of text
-        // assertThat(body.select("#filter-color > ul > li > a.selected").text()).isEqualTo("schwarz");
+        running(fakeApplication(), new Runnable() {
+            public void run() {
+                // TODO Impossible to specify color now with current mocking
+                Result result = callAction(routes.ref.Categories.select("cat1/cat", 1), fakeRequest("GET", "?color=schwarz"));
+                assertOK(result);
+                Document body = contentAsDocument(result);
+                assertThat(body.select("#product-list .product-item").size()).isEqualTo(12);
+                assertThat(body.select("#num-total-product").val()).isEqualTo("12");
+                // TODO SDK: Use title or id instead of text
+                // assertThat(body.select("#filter-color > ul > li > a.selected").text()).isEqualTo("schwarz");
+            }
+        });
 	}
 
 }

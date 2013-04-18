@@ -1,8 +1,14 @@
 package controllers.actions;
 
+import forms.LogIn;
+import forms.SignUp;
+import play.data.Form;
 import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;
+import sphere.Sphere;
+
+import static play.data.Form.form;
 
 public class Authorization extends Action.Simple {
 
@@ -13,13 +19,10 @@ public class Authorization extends Action.Simple {
         // Before
         Http.Context.current.set(ctx);
         // TODO Customer account not implemented yet
-        /*
+
         if (Sphere.getClient().currentCustomer() == null) {
-            Form<LoginForm> loginForm = form(LoginForm.class);
-            Form<SignUpForm> signUpForm = form(SignUpForm.class);
-            return unauthorized(login.render(loginForm, signUpForm, ctx.session().get("returnUrl"), true));
+            return unauthorized(views.html.login.render(form(LogIn.class), form(SignUp.class)));
         }
-        */
         Result result = delegate.call(ctx);
         // After
         return result;

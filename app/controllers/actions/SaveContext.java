@@ -11,8 +11,7 @@ public class SaveContext extends Action.Simple {
     * */
     public Result call(Http.Context ctx) throws Throwable {
         // Before
-        // TODO For some reason it is breaking the tests with mocking
-        //ctx.session().put("returnUrl", ctx.request().uri());
+        ctx.session().put("returnUrl", ctx.request().uri());
         Result result = delegate.call(ctx);
         // After
         return result;
