@@ -6,13 +6,23 @@
             </li>
         </ul>
         <ul class="nav pull-right">
+        @if(isLoggedIn) {
             <li class="nav-link">
-                <a href="#">Register</a>
+                <a href="@routes.Customers.show">Hi @getCurrentCustomer.getFirstName</a>
             </li>
             <li class="nav-link">|</li>
             <li class="nav-link">
-                <a href="#">Login</a>
+                <a href="@routes.Login.logOut">Sign out</a>
             </li>
+        } else {
+            <li class="nav-link">
+                <a href="@routes.Login.show">Register</a>
+            </li>
+            <li class="nav-link">|</li>
+            <li class="nav-link">
+                <a href="@routes.Login.show">Login</a>
+            </li>
+        }
             <li id="mini-cart">
                 @helper.miniCart(getCurrentCart)
             </li>

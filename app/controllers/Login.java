@@ -2,6 +2,7 @@ package controllers;
 
 import forms.LogIn;
 import forms.SignUp;
+import io.sphere.client.shop.model.Customer;
 import play.data.Form;
 import play.mvc.Result;
 import sphere.ShopController;
@@ -23,7 +24,7 @@ public class Login extends ShopController {
         }
         SignUp signUp = form.get();
         sphere().signup(signUp.email, signUp.password, signUp.getCustomerName());
-        return ok();
+        return redirect(routes.Customers.show());
     }
 
     public static Result logIn() {
@@ -37,7 +38,12 @@ public class Login extends ShopController {
             flash("log-in-error", "Invalid credentials");
             return badRequest(views.html.login.render(form, form(SignUp.class)));
         }
-        return ok();
+        return redirect(routes.Customers.show());
+    }
+
+    public static Result logOut() {
+        sphere().logout();
+        return redirect(session("returnUrl"));
     }
 
 }

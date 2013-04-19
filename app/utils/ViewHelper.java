@@ -9,17 +9,11 @@ import io.sphere.client.SphereClientConfig;
 import io.sphere.client.model.Money;
 import io.sphere.client.model.SearchResult;
 import forms.PaymentNetwork;
+import io.sphere.client.shop.model.*;
 import org.apache.commons.lang3.text.WordUtils;
 import play.mvc.Call;
 import play.mvc.Http;
 import sphere.Sphere;
-
-import io.sphere.client.shop.model.Attribute;
-import io.sphere.client.shop.model.Cart;
-import io.sphere.client.shop.model.Category;
-import io.sphere.client.shop.model.Product;
-import io.sphere.client.shop.model.Variant;
-import io.sphere.client.shop.model.VariantList;
 
 public class ViewHelper {
 
@@ -29,6 +23,18 @@ public class ViewHelper {
 	public static Cart getCurrentCart() {
 		return Sphere.getClient().currentCart().fetch();
 	}
+
+    public static Customer getCurrentCustomer() {
+        Customer customer = null;
+        if (Sphere.getClient().isLoggedIn()) {
+            customer = Sphere.getClient().currentCustomer().fetch();
+        }
+        return customer;
+    }
+
+    public static boolean isLoggedIn() {
+        return Sphere.getClient().isLoggedIn();
+    }
 
 	/**
 	 * Returns the list of root categories
