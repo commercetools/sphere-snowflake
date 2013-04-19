@@ -26,10 +26,13 @@ POST    /checkout/submit/shipping                           controllers.Checkout
 
 # Login
 GET     /user/login                                         controllers.Login.show()
-GET     /user/register                                      controllers.Login.show()
+GET     /user/logout                                        controllers.Login.logOut()
 
 POST    /user/login                                         controllers.Login.logIn()
 POST    /user/register                                      controllers.Login.signUp()
+
+# Customer
+GET     /user                                               controllers.Customers.show()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                                       controllers.Assets.at(path="/public", file)

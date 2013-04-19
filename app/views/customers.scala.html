@@ -1,0 +1,29 @@
+@(customer: Customer)
+
+@main("Customer", "customer"){
+<div class="navigation">
+    @helper.topNavigation()
+</div>
+}{
+<div id="login">
+
+    <div class="tabbable tabs-left">
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a href="#tab-main" data-toggle="tab">
+                    Welcome tab
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab-main">
+                <p>Welcome @customer.getFirstName!</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+}{
+
+
+}
