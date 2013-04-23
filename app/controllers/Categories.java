@@ -1,7 +1,6 @@
 package controllers;
 
 import controllers.actions.SaveContext;
-import io.sphere.client.SearchRequest;
 import io.sphere.client.facets.Facet;
 import io.sphere.client.facets.Facets;
 import io.sphere.client.facets.expressions.FacetExpression;
@@ -15,6 +14,7 @@ import io.sphere.client.shop.model.Product;
 import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
+import sphere.SearchRequest;
 
 import java.util.ArrayList;
 import java.util.List;
