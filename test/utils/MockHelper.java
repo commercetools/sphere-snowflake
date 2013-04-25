@@ -1,14 +1,14 @@
 package utils;
 
 import io.sphere.client.ProductSort;
-import io.sphere.client.SearchRequest;
+import sphere.SearchRequest;
 import io.sphere.client.facets.expressions.FacetExpression;
 import io.sphere.client.filters.expressions.FilterExpression;
 import io.sphere.client.model.Money;
 import io.sphere.client.model.SearchResult;
 import io.sphere.client.model.facets.FacetResult;
 import io.sphere.client.shop.CategoryTree;
-import io.sphere.client.shop.ProductService;
+import sphere.ProductService;
 import io.sphere.client.shop.model.*;
 import org.mockito.Mockito;
 import sphere.CurrentCart;
