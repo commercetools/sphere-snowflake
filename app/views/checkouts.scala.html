@@ -1,6 +1,8 @@
 @(cart: Cart, checkoutId: String, submitUrl: String, addressForm: Form[SetAddress])
 
-@main("Checkout", "checkout"){
+@scripts = {<script src="@routes.Assets.at("javascripts/checkout.js")"></script>}
+
+@main("Checkout", "checkout", scripts){
     <div class="navigation">
         @helper.topNavigation()
     </div>

@@ -1,6 +1,8 @@
 @(cart: Cart)
 
-@main("Cart", "cart"){
+@scripts = {<script src="@routes.Assets.at("javascripts/cart.js")"></script>}
+
+@main("Cart", "cart", scripts){
     <div class="navigation">
         @helper.topNavigation()
     </div>

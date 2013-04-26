@@ -1,6 +1,8 @@
 @(product: Product, variant: Variant, category: Category)
 
-@main(product.getName, "product"){
+@scripts = {<script src="@routes.Assets.at("javascripts/product.js")"></script>}
+
+@main(product.getName, "product", scripts){
     <div class="navigation">
         @helper.topNavigation()
         @helper.mainNavigation(category)

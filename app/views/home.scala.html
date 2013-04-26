@@ -1,6 +1,13 @@
 @(search: SearchResult[Product])
 
-@main("Home", "home"){
+@scripts = {
+    <script src="//cdnjs.cloudflare.com/ajax/libs/masonry/2.1.07/jquery.masonry.min.js"></script>
+    <script src="@routes.Assets.at("javascripts/product-list.js")"></script>
+    <script src="@routes.Assets.at("javascripts/product-thumbnail.js")"></script>
+    <script src="@routes.Assets.at("javascripts/cart.js")"></script>
+}
+
+@main("Home", "home", scripts){
     <div class="navigation">
         @helper.topNavigation()
         @helper.mainNavigation()
