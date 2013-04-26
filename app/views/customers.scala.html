@@ -1,4 +1,4 @@
-@(customer: Customer)
+@(customer: Customer, updateCustomerForm: Form[UpdateCustomer], updatePasswordForm: Form[UpdatePassword])
 
 @main("Customer", "customer"){
 <div class="navigation">
@@ -10,14 +10,32 @@
     <div class="tabbable tabs-left">
         <ul class="nav nav-tabs">
             <li class="active">
-                <a href="#tab-main" data-toggle="tab">
-                    Welcome tab
+                <a href="#tab-profile" data-toggle="tab">
+                    User profile
+                </a>
+            </li>
+            <li>
+                <a href="#tab-update-data" data-toggle="tab">
+                    Change data
+                </a>
+            </li>
+            <li>
+                <a href="#tab-update-password" data-toggle="tab">
+                    Change password
                 </a>
             </li>
         </ul>
         <div class="tab-content">
-            <div class="tab-pane active" id="tab-main">
+            <div class="tab-pane active" id="tab-profile">
                 <p>Welcome @customer.getFirstName!</p>
+            </div>
+
+            <div class="tab-pane" id="tab-update-data">
+                @form.updateCustomer(updateCustomerForm)
+            </div>
+
+            <div class="tab-pane" id="tab-update-password">
+                @form.updatePassword(updatePasswordForm)
             </div>
         </div>
     </div>

@@ -2,7 +2,6 @@ package controllers;
 
 import forms.LogIn;
 import forms.SignUp;
-import io.sphere.client.shop.model.Customer;
 import play.data.Form;
 import play.mvc.Result;
 import sphere.ShopController;
