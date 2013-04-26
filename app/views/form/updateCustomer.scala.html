@@ -1,0 +1,38 @@
+@(updateCustomerForm: Form[UpdateCustomer])
+
+@if(flash.containsKey("update-customer-error")) {
+<div class="alert alert-error">
+    @flash.get("update-customer-error")
+</div>
+}
+@if(flash.containsKey("update-customer-success")) {
+<div class="alert alert-success">
+    @flash.get("update-customer-success")
+</div>
+}
+@if(flash.containsKey("update-customer-info")) {
+<div class="alert alert-info">
+    @flash.get("update-customer-info")
+</div>
+}
+
+<div class="form">
+    @defining(updateCustomerForm.field("firstName").value, updateCustomerForm.field("lastName").value) { case(firstName, lastName) =>
+    <div class="control-group">
+        @form.error("update-customer-firstName")
+        @form.error("update-customer-lastName")
+        <div class="controls controls-row">
+            <input type="text" name="firstName" id="update-customer-firstName" value="@firstName" placeholder="First Name" required class="span2"/>
+            <input type="text" name="lastName" id="update-customer-lastName" value="@lastName" placeholder="Last Name" required class="span2"/>
+        </div>
+    </div>
+    }
+    @defining(updateCustomerForm.field("email").value) { email =>
+    <div class="control-group">
+        @form.error("update-customer-email")
+        <div class="controls">
+            <input type="email" name="email" id="update-customer-email" value="@email" placeholder="Email" required class="span4"/>
+        </div>
+    </div>
+    }
+</div>
