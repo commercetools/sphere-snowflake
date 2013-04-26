@@ -4,14 +4,14 @@ import play.data.validation.Constraints;
 
 public class UpdatePassword {
 
-    @Constraints.Required(message = "Password required")
-    public String passwordOld;
+    @Constraints.Required(message = "Old password required")
+    public String oldPassword;
 
-    @Constraints.Required(message = "Password required")
-    public String passwordNew;
+    @Constraints.Required(message = "New password required")
+    public String newPassword;
 
-    @Constraints.Required(message = "Password required")
-    public String passwordRepeat;
+    @Constraints.Required(message = "Repeat password required")
+    public String repeatPassword;
 
 
     public UpdatePassword() {
@@ -19,7 +19,7 @@ public class UpdatePassword {
     }
 
     public String validate() {
-        if (!passwordNew.equals(passwordRepeat)) {
+        if (!newPassword.equals(repeatPassword)) {
             return "New passwords do not match";
         }
         return null;

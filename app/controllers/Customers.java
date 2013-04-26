@@ -44,7 +44,9 @@ public class Customers extends ShopController {
             return badRequest();
         }
         UpdatePassword updatePassword = form.get();
-        sphere().currentCustomer().changePassword(updatePassword.passwordOld, updatePassword.passwordNew);
+        if (!sphere().currentCustomer().changePassword(updatePassword.oldPassword, updatePassword.newPassword)) {
+            return badRequest();
+        }
         return ok();
     }
 
