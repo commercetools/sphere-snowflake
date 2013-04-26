@@ -12,7 +12,4 @@ public class RemoveFromCart {
 
     }
 
-    public RemoveFromCart(String lineItemId) {
-        this.lineItemId = lineItemId;
-    }
 }

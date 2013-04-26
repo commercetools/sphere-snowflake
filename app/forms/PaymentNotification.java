@@ -48,32 +48,6 @@ public class PaymentNotification {
     public PaymentNotification() {
     }
 
-    public PaymentNotification(String transactionId, String resultCode, String resultInfo, String entity,
-                               String statusCode, String reasonCode, String longId, String shortId, String timestamp,
-                               String network, String referredTransactionPassword, String customerRegistrationId,
-                               String customerRegistrationPassword, String amount, String currency, String reference,
-                               String interactionCode, String interactionReason, String retryAfter) {
-        this.transactionId = transactionId;
-        this.resultCode = resultCode;
-        this.resultInfo = resultInfo;
-        this.entity = entity;
-        this.statusCode = statusCode;
-        this.reasonCode = reasonCode;
-        this.longId = longId;
-        this.shortId = shortId;
-        this.timestamp = timestamp;
-        this.network = network;
-        this.referredTransactionPassword = referredTransactionPassword;
-        this.customerRegistrationId = customerRegistrationId;
-        this.customerRegistrationPassword = customerRegistrationPassword;
-        this.amount = amount;
-        this.currency = currency;
-        this.reference = reference;
-        this.interactionCode = interactionCode;
-        this.interactionReason = interactionReason;
-        this.retryAfter = retryAfter;
-    }
-
     public PaymentState getPaymentState() {
         // TODO Complete it
         if (statusCode.equals("charged")) return PaymentState.Paid;

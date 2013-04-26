@@ -45,7 +45,7 @@ public class SetAddress {
 
     }
 
-    public SetAddress(io.sphere.client.shop.model.Address address) {
+    public SetAddress(Address address) {
         if (address != null) {
             this.company = address.getCompany();
             this.firstName = address.getFirstName();
@@ -62,24 +62,11 @@ public class SetAddress {
     }
 
     public SetAddress(Customer customer) {
-        this(null, customer.getFirstName(), customer.getLastName(), customer.getEmail(), null,
-                null, null, null, null, null, null);
-    }
-
-    public SetAddress(String company, String firstName, String lastName, String email, String phone,
-                      String mobile, String street, String street2,
-                      String postalCode, String city, String country) {
-        this.company = company;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phone = phone;
-        this.mobile = mobile;
-        this.street = street;
-        this.street2 = street2;
-        this.postalCode = postalCode;
-        this.city = city;
-        this.country = country;
+        if (customer != null) {
+            this.firstName = customer.getFirstName();
+            this.lastName = customer.getLastName();
+            this.email = customer.getEmail();
+        }
     }
 
     public Address getAddress() {

@@ -17,8 +17,4 @@ public class UpdateCart {
 
     }
 
-    public UpdateCart(String lineItemId, int quantity) {
-        this.lineItemId = lineItemId;
-        this.quantity = quantity;
-    }
 }
