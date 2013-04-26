@@ -1,6 +1,8 @@
 @(customer: Customer, updateCustomerForm: Form[UpdateCustomer], updatePasswordForm: Form[UpdatePassword])
 
-@main("Customer", "customer"){
+@scripts = {<script src="@routes.Assets.at("javascripts/customer.js")"></script>}
+
+@main("Customer", "customer", scripts){
 <div class="navigation">
     @helper.topNavigation()
 </div>
@@ -31,11 +33,17 @@
             </div>
 
             <div class="tab-pane" id="tab-update-data">
-                @form.updateCustomer(updateCustomerForm)
+                <form id="form-update-customer" action="@routes.Customers.update" method="post">
+                    @form.updateCustomer(updateCustomerForm)
+                    <button type="submit" class="btn btn-success">Save</button>
+                </form>
             </div>
 
             <div class="tab-pane" id="tab-update-password">
-                @form.updatePassword(updatePasswordForm)
+                <form id="form-update-password" action="@routes.Customers.updatePassword" method="post">
+                    @form.updatePassword(updatePasswordForm)
+                    <button type="submit" class="btn btn-success">Save</button>
+                </form>
             </div>
         </div>
     </div>
