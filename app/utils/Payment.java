@@ -83,12 +83,13 @@ public class Payment {
                     .addPreselection()
                     .addStyle();
             root.appendChild(transactions);
-            // Send request
 
+            // Send request
             F.Promise<WS.Response> promise = WS.url(url)
                     .setHeader("Content-Type", "application/x-www-form-urlencoded")
                     .setAuth(AUTH_USERNAME, AUTH_PASSWORD, Realm.AuthScheme.BASIC)
                     .post("command=" + transformXml(req));
+
             // Read request
             res = parseXml(promise.get().getBody());
             printMessages(res);
