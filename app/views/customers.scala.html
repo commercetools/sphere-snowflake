@@ -35,14 +35,20 @@
             <div class="tab-pane" id="tab-update-data">
                 <form id="form-update-customer" action="@routes.Customers.update" method="post">
                     @form.updateCustomer(updateCustomerForm)
-                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="submit" class="btn btn-success"
+                            data-loading-text="Saving..."
+                            data-default-text="Save"
+                            data-failed-text="Try again">Save</button>
                 </form>
             </div>
 
             <div class="tab-pane" id="tab-update-password">
                 <form id="form-update-password" action="@routes.Customers.updatePassword" method="post">
                     @form.updatePassword(updatePasswordForm)
-                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="submit" class="btn btn-success"
+                            data-loading-text="Saving..."
+                            data-default-text="Save"
+                            data-failed-text="Try again">Save</button>
                 </form>
             </div>
         </div>

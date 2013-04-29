@@ -19,6 +19,7 @@
 <div class="form">
     @defining(updateCustomerForm.field("firstName").value, updateCustomerForm.field("lastName").value) { case(firstName, lastName) =>
     <div class="control-group">
+        <label for="update-customer-firstName">Name</label>
         @form.error("update-customer-firstName")
         @form.error("update-customer-lastName")
         <div class="controls controls-row">
@@ -29,9 +30,10 @@
     }
     @defining(updateCustomerForm.field("email").value) { email =>
     <div class="control-group">
+        <label for="update-customer-email">Email</label>
         @form.error("update-customer-email")
         <div class="controls">
-            <input type="email" name="email" id="update-customer-email" value="@email" placeholder="Email" required class="span4"/>
+            <input type="email" name="email" id="update-customer-email" value="@email" placeholder="username@@example.com" required class="span4"/>
         </div>
     </div>
     }
