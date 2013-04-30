@@ -2,6 +2,10 @@ $ ->
     updateCustomerForm = $('#form-update-customer')
     updatePasswordForm = $('#form-update-password')
 
+    saveMsg = "Saved!"
+    failMsg = "Something went wrong..."
+    infoMsg = "You have unsaved changes"
+
     # Validate form and mark incorrect fields as invalid
     validateForm = (form, allRequired) ->
         all = form.find(':input')
@@ -34,9 +38,8 @@ $ ->
 
     # Create alert message
     displayMessage = (place, level, message) ->
-        icon = ''
+        icon = '<i class="icon-exclamation-sign"></i>'
         if level is "info" then icon = '<i class="icon-pencil"></i>'
-        if level is "error" then icon = '<i class="icon-exclamation-sign"></i>'
         if level is "success" then icon = '<i class="icon-ok"></i>'
         place.append('<div class="alert alert-' + level + '">' + icon + ' ' + message + '</div>')
 
@@ -56,9 +59,9 @@ $ ->
         .always ->
             btn.button('reset')
         .done ->
-            displayMessage btn.parent(), "success", "Saved!"
+            displayMessage btn.parent(), "success", saveMsg
         .fail ->
-            displayMessage btn.parent(), "error", "Something went wrong..."
+            displayMessage btn.parent(), "error", failMsg
             btn.text(btn.data("failed-text"))
 
     # Update password data
@@ -71,9 +74,9 @@ $ ->
         .always ->
             btn.button('reset')
         .done ->
-            displayMessage btn.parent(), "success", "Saved!"
+            displayMessage btn.parent(), "success", saveMsg
         .fail ->
-            displayMessage btn.parent(), "error", "Something went wrong..."
+            displayMessage btn.parent(), "error", failMsg
             btn.text(btn.data("failed-text"))
 
     # Bind customer update 'save' submit event to 'update customer' functionality
@@ -127,11 +130,11 @@ $ ->
     # Bind change input value with remove messages functionality
     updateCustomerForm.find(':input').change( ->
         removeMessages updateCustomerForm, 0, true
-        displayMessage updateCustomerForm, "info", "You have unsaved changes"
+        displayMessage updateCustomerForm, "info", infoMsg
     )
 
     # Bind change input value with remove messages functionality
     updatePasswordForm.find(':input').change( ->
         removeMessages updatePasswordForm, 0, true
-        displayMessage updateCustomerForm, "info", "You have unsaved changes"
+        displayMessage updateCustomerForm, "info", infoMsg
     )
