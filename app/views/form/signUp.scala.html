@@ -19,27 +19,34 @@
 <div class="form">
     @defining(signUpForm.field("firstName").value, signUpForm.field("lastName").value) { case(firstName, lastName) =>
     <div class="control-group">
+        <label for="sign-up-firstName" class="control-label">Name</label>
         @form.error("sign-up-firstName")
         @form.error("sign-up-lastName")
         <div class="controls controls-row">
-            <input type="text" name="firstName" id="sign-up-firstName" value="@firstName" placeholder="First Name" required class="span2"/>
-            <input type="text" name="lastName" id="sign-up-lastName" value="@lastName" placeholder="Last Name" required class="span2"/>
+            <input type="text" name="firstName" id="sign-up-firstName" value="@firstName"
+                   placeholder="First name" aria-label="First name" required class="span2"/>
+            <input type="text" name="lastName" id="sign-up-lastName" value="@lastName"
+                   placeholder="Last name" aria-label="Last name" required class="span2"/>
         </div>
     </div>
     }
     @defining(signUpForm.field("email").value) { email =>
     <div class="control-group">
+        <label for="sign-up-email" class="control-label">Email</label>
         @form.error("sign-up-email")
         <div class="controls">
-            <input type="email" name="email" id="sign-up-email" value="@email" placeholder="Email" required class="span4"/>
+            <input type="email" name="email" id="sign-up-email" value="@email"
+                   placeholder="username@@example.com" aria-label="Email" required class="span4"/>
         </div>
     </div>
     }
     @defining(signUpForm.field("password").value) { password =>
     <div class="control-group">
+        <label for="sign-up-password" class="control-label">Password</label>
         @form.error("sign-up-password")
         <div class="controls">
-            <input type="password" name="password" id="sign-up-password" value="@password" placeholder="Password" required class="span4"/>
+            <input type="password" name="password" id="sign-up-password" value="@password"
+                   placeholder="Password" aria-label="Password" required class="span4"/>
         </div>
     </div>
     }

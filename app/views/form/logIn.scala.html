@@ -19,17 +19,21 @@
 <div class="form">
     @defining(logInForm.field("email").value) { email =>
     <div class="control-group">
+        <label for="log-in-email" class="control-label">Email</label>
         @form.error("log-in-email")
         <div class="controls">
-            <input type="email" name="email" id="log-in-email" value="@email" placeholder="Email" required />
+            <input type="email" name="email" id="log-in-email" value="@email"
+                   placeholder="username@@example.com" aria-label="Email" required />
         </div>
     </div>
     }
     @defining(logInForm.field("password").value) { password =>
     <div class="control-group">
+        <label for="log-in-password" class="control-label">Password</label>
         @form.error("log-in-password")
         <div class="controls">
-            <input type="password" name="password" id="log-in-password" value="@password" placeholder="Password" required />
+            <input type="password" name="password" id="log-in-password" value="@password"
+                   placeholder="Your password" aria-label="Password" required />
         </div>
     </div>
     }
