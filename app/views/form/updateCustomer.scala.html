@@ -20,11 +20,14 @@
     @defining(updateCustomerForm.field("firstName").value, updateCustomerForm.field("lastName").value) { case(firstName, lastName) =>
     <div class="control-group">
         <label for="update-customer-firstName">Name</label>
+        <label for="update-customer-lastName"></label>
         @form.error("update-customer-firstName")
         @form.error("update-customer-lastName")
         <div class="controls controls-row">
-            <input type="text" name="firstName" id="update-customer-firstName" value="@firstName" placeholder="First Name" required class="span2"/>
-            <input type="text" name="lastName" id="update-customer-lastName" value="@lastName" placeholder="Last Name" required class="span2"/>
+            <input type="text" name="firstName" id="update-customer-firstName" value="@firstName"
+                   placeholder="First Name" aria-label="First name"  class="span2"/>
+            <input type="text" name="lastName" id="update-customer-lastName" value="@lastName"
+                   placeholder="Last Name" aria-label="Last name"  class="span2"/>
         </div>
     </div>
     }
@@ -33,7 +36,8 @@
         <label for="update-customer-email">Email</label>
         @form.error("update-customer-email")
         <div class="controls">
-            <input type="email" name="email" id="update-customer-email" value="@email" placeholder="username@@example.com" required class="span4"/>
+            <input type="email" name="email" id="update-customer-email" value="@email"
+                   placeholder="username@@example.com" aria-label="Email" required class="span4"/>
         </div>
     </div>
     }

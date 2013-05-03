@@ -2,7 +2,10 @@ package forms;
 
 import io.sphere.client.shop.model.Customer;
 import io.sphere.client.shop.model.CustomerName;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
+import play.libs.Json;
 
 public class UpdateCustomer {
 
@@ -29,5 +32,13 @@ public class UpdateCustomer {
 
     public CustomerName getCustomerName() {
         return new CustomerName(this.firstName, this.lastName);
+    }
+
+    public JsonNode getJson(Customer customer) {
+        ObjectNode json = Json.newObject();
+        json.put("firstName", customer.getFirstName());
+        json.put("lastName", customer.getLastName());
+        json.put("email", customer.getEmail());
+        return json;
     }
 }

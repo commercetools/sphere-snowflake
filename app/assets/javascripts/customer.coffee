@@ -1,140 +1,65 @@
 $ ->
-    updateCustomerForm = $('#form-update-customer')
-    updatePasswordForm = $('#form-update-password')
-
-    saveMsg = "Saved!"
-    failMsg = "Something went wrong..."
-    infoMsg = "You have unsaved changes"
-
-    # Validate form and mark incorrect fields as invalid
-    validateForm = (form, allRequired) ->
-        all = form.find(':input')
-        required = all.not(':disabled')
-        required = required.filter('[required]') if not allRequired
-
-        # Start with all fields marked as valid
-        all.attr("aria-invalid", "false")
-
-        # Mark incorrect fields as invalid
-        invalid = required.filter -> return not $(this).val()
-        return true unless invalid.length > 0
-        invalid.attr("aria-invalid", "true")
-        displayMessage form, "error", "Highlighted fields are required"
-        return false
-
-    # Validate field values are equal
-    validateEqualFields = (form, fields) ->
-        # Start with all fields marked as valid
-        fields.attr("aria-invalid", "false")
-        value = fields.first().val()
-        console.debug value
-
-        # Mark incorrect fields as invalid
-        invalid = fields.filter -> return $(this).val() isnt value
-        return true unless invalid.length > 0
-        fields.attr("aria-invalid", "true")
-        displayMessage form, "error", "Highlighted fields must be equal"
-        return false
-
-    # Create alert message
-    displayMessage = (place, level, message) ->
-        icon = '<i class="icon-exclamation-sign"></i>'
-        if level is "info" then icon = '<i class="icon-pencil"></i>'
-        if level is "success" then icon = '<i class="icon-ok"></i>'
-        place.append('<div class="alert alert-' + level + '">' + icon + ' ' + message + '</div>')
-
-    # Remove all alert messages
-    removeMessages = (place, speed, removeAll) ->
-        alerts = if removeAll then place.find('.alert') else place.find('.alert.alert-success')
-        alerts.stop true, true
-        alerts.fadeOut(speed, -> $(this).remove())
-
-    # Update customer data
-    updateCustomer = (btn, url, method, data) ->
-        btn.button('loading')
-        $.ajax url,
-            type: method
-            data: data
-            dataType: 'html'
-        .always ->
-            btn.button('reset')
-        .done ->
-            displayMessage btn.parent(), "success", saveMsg
-        .fail ->
-            displayMessage btn.parent(), "error", failMsg
-            btn.text(btn.data("failed-text"))
-
-    # Update password data
-    updatePassword = (btn, url, method, data) ->
-        btn.button('loading')
-        $.ajax url,
-            type: method
-            data: data
-            dataType: 'html'
-        .always ->
-            btn.button('reset')
-        .done ->
-            displayMessage btn.parent(), "success", saveMsg
-        .fail ->
-            displayMessage btn.parent(), "error", failMsg
-            btn.text(btn.data("failed-text"))
+    updateCustomer = new @Form $('#form-update-customer')
+    updatePassword = new @Form $('#form-update-password')
 
     # Bind customer update 'save' submit event to 'update customer' functionality
-    updateCustomerForm.find('[type=submit]').click( ->
+    updateCustomer.form.submit( ->
         # Remove alert messages
-        removeMessages updateCustomerForm, 0, true
-        $(this).text $(this).data("default-text")
+        updateCustomer.removeAllMessages()
 
         # Validate form client side
-        return false unless validateForm updateCustomerForm, false
+        #return false unless updateCustomer.validateRequired()
 
         # Send new data to server
-        url = updateCustomerForm.attr("action")
-        method = updateCustomerForm.attr("method")
-        data = updateCustomerForm.serialize()
-        updateCustomer $(this), url, method, data
+        url = updateCustomer.form.attr("action")
+        method = updateCustomer.form.attr("method")
+        data = updateCustomer.form.serialize()
+        updateCustomer.submit(url, method, data)
 
         # Disable form submit
         return false
     )
 
     # Bind password update 'save' submit event to 'update password' functionality
-    updatePasswordForm.find('[type=submit]').click( ->
+    updatePassword.form.submit( ->
         # Remove alert messages
-        removeMessages updatePasswordForm, 0, true
-        $(this).text $(this).data("default-text")
+        updatePassword.removeAllMessages()
 
         # Validate form client side
-        return false unless validateForm updatePasswordForm, false
+        #return false unless updatePassword.validateRequired()
 
         # Validate repeat password match
-        repeatPasswords = updatePasswordForm.find('[name=newPassword], [name=repeatPassword]')
-        return false unless validateEqualFields updatePasswordForm, repeatPasswords
+        repeatPasswords = updatePassword.inputs.filter('[name=newPassword], [name=repeatPassword]')
+        #return false unless updatePassword.validateEqualFields(repeatPasswords)
 
         # Send new data to server
-        url = updatePasswordForm.attr("action")
-        method = updatePasswordForm.attr("method")
-        data = updatePasswordForm.serialize()
-        updatePassword $(this), url, method, data
+        url = updatePassword.form.attr("action")
+        method = updatePassword.form.attr("method")
+        data = updatePassword.form.serialize()
+        updatePassword.submit(url, method, data)
 
         # Disable form submit
         return false
     )
 
-    # Bind change tab with remove messages functionality
+    # Bind change tab with remove success messages functionality
     $('.tabbable .nav [data-toggle=tab]').click( ->
-        removeMessages updateCustomerForm, 0, false
-        removeMessages updatePasswordForm, 0, false
+        updateCustomer.removeSuccessMessages()
+        updatePassword.removeSuccessMessages()
     )
 
-    # Bind change input value with remove messages functionality
-    updateCustomerForm.find(':input').change( ->
-        removeMessages updateCustomerForm, 0, true
-        displayMessage updateCustomerForm, "info", infoMsg
+    # Bind change input value with remove all messages functionality
+    updateCustomer.inputs.change( ->
+        if updateCustomer.saved is true
+            updateCustomer.removeAllMessages()
+            updateCustomer.displayInfoMessage("You have unsaved changes", 700)
+            updateCustomer.saved = false
     )
 
-    # Bind change input value with remove messages functionality
-    updatePasswordForm.find(':input').change( ->
-        removeMessages updatePasswordForm, 0, true
-        displayMessage updateCustomerForm, "info", infoMsg
+    # Bind change input value with remove all messages functionality
+    updatePassword.inputs.change( ->
+        if updatePassword.saved is true
+            updatePassword.removeAllMessages()
+            updatePassword.displayInfoMessage("You have unsaved changes", 700)
+            updatePassword.saved = false
     )
