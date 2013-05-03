@@ -8,10 +8,12 @@ $ ->
         # Mark fields as valid
         markValid: (fields) ->
             fields.attr("aria-invalid", "false")
+            fields.parentsUntil('.control-group').parent().removeClass("error")
 
         # Mark fields as invalid
         markInvalid: (fields) ->
             fields.attr("aria-invalid", "true")
+            fields.parentsUntil('.control-group').parent().addClass("error")
 
         # Validate form and mark incorrect fields as invalid
         validateRequired: ->
@@ -31,10 +33,8 @@ $ ->
             # Mark incorrect fields as invalid
             @markInvalid invalid
 
-            # Display error message in each label
-            for field in invalid
-                place = @labels.filter('[for=' + $(field).attr("id") + ']')
-                @displayErrorMessage("Highlighted fields are required", place)
+            # Display error message
+            @displayErrorMessage("Highlighted fields are required")
             return false
 
         # Validate field values are equal
@@ -51,8 +51,8 @@ $ ->
             @markInvalid fields
 
             # Display error message in its label container
-            place =  @labels.has($(fields))
-            @displayErrorMessage("Highlighted fields must be equal", place)
+            place = fields.first()
+            @displayErrorMessage("These fields must contain the same value", place)
             return false
 
         # Create success message
@@ -72,12 +72,16 @@ $ ->
 
         # Create alert message
         displayMessage: (level, text, place, speed) ->
-            # Select form element if no element is specified
-            place = @form if not place or place.length < 1
+            # Choose inline help or form alert
+            if not place or place.length < 1
+                alert = $('<div class="alert alert-' + level + '">' + text + '</div>')
+                place = @buttons
+            else
+                alert = $('<span class="help-inline span">' + text + '</span>')
 
             # Display alert
-            alert = $('<div class="alert alert-' + level + '">' + text + '</div>').hide()
-            place.append(alert)
+            alert.hide()
+            place.after(alert)
             alert.fadeIn(speed)
 
         # Remove success alert messages
@@ -90,11 +94,22 @@ $ ->
 
         # Remove alert messages
         removeMessages: (removeSuccessOnly, speed) ->
-            # Remove alert messages
-            alerts = if removeSuccessOnly then @form.find('.alert.alert-success') else @form.find('.alert')
+            # Select alert and inline help messages
+            alerts = if removeSuccessOnly then @form.find('.alert.alert-success, .control-group.success .help-inline')
+            else @form.find('.alert, .help-inline')
+
+            # Remove alert and inline help messages
             if alerts.length > 0
                 alerts.stop true, true
                 alerts.fadeOut(speed, -> $(this).remove())
+
+            # Remove inline help notation
+            helps = @form.find('.control-group')
+            helps.removeClass("success")
+            helps.removeClass("error", "info") if not removeSuccessOnly
+
+            # Remove mark from invalid fields
+            @markValid @inputs if not removeSuccessOnly
 
         # Submit form data
         submit: (url, method, data) ->
@@ -113,12 +128,9 @@ $ ->
                 @displaySuccessMessage("Saved!")
 
                 # Update page data
-                $.each data, (key, msg) =>
-                    $('[data-form-update=' + key + ']')
-
-                    # Display error message in each label
-                    place = @labels.filter('[for=' + field.attr("id") + ']')
-                    @displayErrorMessage(msg, place)
+                $.each data, (key, value) ->
+                    elem = $('span[data-form-update=' + key + ']')
+                    elem.text(value)
 
             .fail (xhr) =>
                 # When dealing with any other error display default message
@@ -135,7 +147,6 @@ $ ->
                             @markInvalid field
 
                             # Display error message in each label
-                            place = @labels.filter('[for=' + field.attr("id") + ']')
-                            @displayErrorMessage(msg, place)
+                            @displayErrorMessage(msg, field)
                     catch error
                         @displayErrorMessage("Something went wrong...")

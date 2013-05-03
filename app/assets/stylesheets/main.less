@@ -64,6 +64,34 @@ body {
     font-weight: bold;
 }
 
-input[aria-invalid=true], textarea[aria-invalid=true], select[aria-invalid=true] {
-    background-color: @light-yellow;
+form {
+    input[aria-invalid=true], textarea[aria-invalid=true], select[aria-invalid=true] {
+        background-color: @light-red;
+    }
+
+    .alert {
+        display: inline-block;
+        margin: 0 30px 0;
+        padding: 0;
+        border-radius: 0;
+        border-width: 0;
+        border-bottom-width: 3px;
+        background: transparent;
+        color: @gray-text;
+    }
+
+    .control-group {
+        .help-inline {
+            float: right;
+            border-style: solid;
+            border-width: 0;
+            color: @gray-text !important;
+        }
+
+        &.error .help-inline {
+            border-color: rgb(238, 211, 215);
+            border-bottom-width: 3px;
+        }
+    }
 }
+

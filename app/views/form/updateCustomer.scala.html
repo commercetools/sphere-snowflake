@@ -19,21 +19,20 @@
 <div class="form">
     @defining(updateCustomerForm.field("firstName").value, updateCustomerForm.field("lastName").value) { case(firstName, lastName) =>
     <div class="control-group">
-        <label for="update-customer-firstName">Name</label>
-        <label for="update-customer-lastName"></label>
+        <label for="update-customer-firstName" class="control-label">Name</label>
         @form.error("update-customer-firstName")
         @form.error("update-customer-lastName")
         <div class="controls controls-row">
             <input type="text" name="firstName" id="update-customer-firstName" value="@firstName"
-                   placeholder="First Name" aria-label="First name"  class="span2"/>
+                   placeholder="First Name" aria-label="First name" required class="span2"/>
             <input type="text" name="lastName" id="update-customer-lastName" value="@lastName"
-                   placeholder="Last Name" aria-label="Last name"  class="span2"/>
+                   placeholder="Last Name" aria-label="Last name" required class="span2"/>
         </div>
     </div>
     }
     @defining(updateCustomerForm.field("email").value) { email =>
     <div class="control-group">
-        <label for="update-customer-email">Email</label>
+        <label for="update-customer-email" class="control-label">Email</label>
         @form.error("update-customer-email")
         <div class="controls">
             <input type="email" name="email" id="update-customer-email" value="@email"

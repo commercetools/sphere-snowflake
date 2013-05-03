@@ -8,7 +8,7 @@ $ ->
         updateCustomer.removeAllMessages()
 
         # Validate form client side
-        #return false unless updateCustomer.validateRequired()
+        return false unless updateCustomer.validateRequired()
 
         # Send new data to server
         url = updateCustomer.form.attr("action")
@@ -26,11 +26,11 @@ $ ->
         updatePassword.removeAllMessages()
 
         # Validate form client side
-        #return false unless updatePassword.validateRequired()
+        return false unless updatePassword.validateRequired()
 
         # Validate repeat password match
         repeatPasswords = updatePassword.inputs.filter('[name=newPassword], [name=repeatPassword]')
-        #return false unless updatePassword.validateEqualFields(repeatPasswords)
+        return false unless updatePassword.validateEqualFields(repeatPasswords)
 
         # Send new data to server
         url = updatePassword.form.attr("action")
