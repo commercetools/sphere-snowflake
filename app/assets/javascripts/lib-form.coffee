@@ -128,6 +128,7 @@ $ ->
             .done (data) =>
                 if data.redirectUrl?
                     window.location.replace(data.redirectUrl)
+                    return
                 else
                     # Display success message
                     @saved = true
