@@ -57,16 +57,19 @@ $ ->
 
         # Create success message
         displaySuccessMessage: (message, speed = 0) ->
+            return if not message
             text = '<i class="icon-ok"></i> ' + message
             @displayMessage("success", text, false, speed)
 
         # Create error message
         displayErrorMessage: (message, place = false, speed = 0) ->
+            return if not message
             text = '<i class="icon-exclamation-sign"></i> ' + message
             @displayMessage("error", text, place, speed)
 
         # Create info message
         displayInfoMessage: (message, speed = 0) ->
+            return if not message
             text = '<i class="icon-pencil"></i> ' + message
             @displayMessage("info", text, false, speed)
 
@@ -123,14 +126,17 @@ $ ->
                 @buttons.button('reset')
 
             .done (data) =>
-                # Display success message
-                @saved = true
-                @displaySuccessMessage("Saved!")
+                if data.redirectUrl?
+                    window.location.replace(data.redirectUrl)
+                else
+                    # Display success message
+                    @saved = true
+                    @displaySuccessMessage("Saved!")
 
-                # Update page data
-                $.each data, (key, value) ->
-                    elem = $('span[data-form-update=' + key + ']')
-                    elem.text(value)
+                    # Update page data
+                    $.each data, (key, value) ->
+                        elem = $('span[data-form-update=' + key + ']')
+                        elem.text(value)
 
             .fail (xhr) =>
                 # When dealing with any other error display default message

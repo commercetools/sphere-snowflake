@@ -2,7 +2,10 @@ package controllers;
 
 import forms.LogIn;
 import forms.SignUp;
+import org.codehaus.jackson.node.ObjectNode;
 import play.data.Form;
+import play.libs.Json;
+import play.mvc.Http;
 import play.mvc.Result;
 import sphere.ShopController;
 
@@ -18,26 +21,23 @@ public class Login extends ShopController {
     public static Result signUp() {
         Form<SignUp> form = form(SignUp.class).bindFromRequest();
         if (form.hasErrors()) {
-            generateErrorMessages(form, "sign-up");
-            return badRequest(views.html.login.render(form(LogIn.class), form));
+            return badRequest(form.errorsAsJson());
         }
         SignUp signUp = form.get();
         sphere().signup(signUp.email, signUp.password, signUp.getCustomerName());
-        return redirect(routes.Customers.show());
+        return ok(signUp.getJson(routes.Customers.show()));
     }
 
     public static Result logIn() {
         Form<LogIn> form = form(LogIn.class).bindFromRequest();
         if (form.hasErrors()) {
-            generateErrorMessages(form, "log-in");
-            return badRequest(views.html.login.render(form, form(SignUp.class)));
+            return badRequest(form.errorsAsJson());
         }
         LogIn logIn = form.get();
         if (!sphere().login(logIn.email, logIn.password)) {
-            flash("log-in-error", "Invalid credentials");
-            return badRequest(views.html.login.render(form, form(SignUp.class)));
+            return badRequest(logIn.getJsonCredentialsMatchError());
         }
-        return redirect(routes.Customers.show());
+        return ok(logIn.getJson(routes.Customers.show()));
     }
 
     public static Result logOut() {
