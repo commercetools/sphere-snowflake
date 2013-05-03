@@ -1,6 +1,10 @@
 package forms;
 
+import io.sphere.client.shop.model.Customer;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
+import play.libs.Json;
 
 public class UpdatePassword {
 
@@ -25,4 +29,14 @@ public class UpdatePassword {
         return null;
     }
 
+    public JsonNode getJson() {
+        ObjectNode json = Json.newObject();
+        return json;
+    }
+
+    public JsonNode getJsonPasswordMatchError() {
+        ObjectNode json = Json.newObject();
+        json.put("oldPassword", "Current password does not match our records");
+        return json;
+    }
 }

@@ -44,11 +44,9 @@ public class Customers extends ShopController {
         }
         UpdatePassword updatePassword = form.get();
         if (!sphere().currentCustomer().changePassword(updatePassword.oldPassword, updatePassword.newPassword)) {
-            ObjectNode result = Json.newObject();
-            result.put("oldPassword", "Current password does not match our records");
-            return badRequest(result);
+            return badRequest(updatePassword.getJsonPasswordMatchError());
         }
-        return ok(Json.newObject());
+        return ok(updatePassword.getJson());
     }
 
 }
