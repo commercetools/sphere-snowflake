@@ -1,6 +1,8 @@
 @(cart: Cart)
 
-@scripts = {<script src="@routes.Assets.at("javascripts/cart.js")"></script>}
+@scripts = {
+    <script src="@routes.Assets.at("javascripts/cart.js")"></script>
+}
 
 @main("Cart", "cart", scripts){
     <div class="navigation">
@@ -31,7 +33,10 @@
                                         </li>
                                         <li class="item-quantity">
                                             <fieldset>
-                                                <input type="number" name="quantity" min="1" max="10" value="@item.getQuantity" data-item="@item.getId" class="input-mini" />
+                                                <form class="form-update-cart" action="@routes.Carts.update" method="post">
+                                                    <input type="hidden" name="lineItemId" value="@item.getId"/>
+                                                    <input type="number" name="quantity" min="1" max="10" value="@item.getQuantity" class="input-mini" />
+                                                </form>
                                             </fieldset>
                                         </li>
                                         <li class="item-total-price">
@@ -44,9 +49,12 @@
                                 </div>
                                 <div class="item-detail">
                                     <div class="item-remove">
-                                        <button type="button" name="remove" data-item="@item.getId" class="btn btn-link">
-                                            Remove
-                                        </button>
+                                        <form class="form-remove-from-cart" action="@routes.Carts.remove" method="post">
+                                            <input type="hidden" name="lineItemId" value="@item.getId"/>
+                                            <button type="submit" name="remove" data-loading-text="Removing..." class="btn btn-link">
+                                                Remove
+                                            </button>
+                                        </form>
                                     </div>
                                     <ul class="unstyled">
                                     @for(attribute <- item.getVariant.getAttributes) {

@@ -1,6 +1,6 @@
 $ ->
     class @Form
-        constructor: (@form, @async = true, @saved = true) ->
+        constructor: (@form, @async = true, @dataType = 'json', @saved = true) ->
             @labels = @form.find('label, fieldset')
             @inputs = @form.find(':input')
             @buttons = @inputs.filter('[type=submit]')
@@ -129,24 +129,26 @@ $ ->
                 type: method
                 async: @async
                 data: data
-                dataType: 'json'
+                dataType: @dataType
 
             .done (data) =>
-                if data.redirectUrl?
-                    window.location.replace(data.redirectUrl)
-                    return
-                else
-                    @buttons.button('reset')
+                if @dataType is 'json'
+                    if data.redirectUrl?
+                        window.location.replace(data.redirectUrl)
+                        return
+                    else
+                        # Update page data
+                        $.each data, (key, value) ->
+                            elem = $('span[data-form-update=' + key + ']')
+                            elem.text(value)
 
-                    # Display success message
-                    @saved = true
-                    @displaySuccessMessage("Saved!")
+                # Display success message
+                @saved = true
+                @displaySuccessMessage("Saved!")
+                @buttons.button('reset')
 
-                    # Update page data
-                    $.each data, (key, value) ->
-                        elem = $('span[data-form-update=' + key + ']')
-                        elem.text(value)
-                if doSuccess? then doSuccess()
+                # Execute after success call
+                if doSuccess? then doSuccess(data)
 
             .fail (xhr) =>
                 @buttons.button('reset')

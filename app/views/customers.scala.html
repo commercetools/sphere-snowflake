@@ -1,7 +1,6 @@
 @(customer: Customer, updateCustomerForm: Form[UpdateCustomer], updatePasswordForm: Form[UpdatePassword])
 
 @scripts = {
-    <script src="@routes.Assets.at("javascripts/lib-form.js")"></script>
     <script src="@routes.Assets.at("javascripts/customer.js")"></script>
 }
 
@@ -41,7 +40,7 @@
                     <button type="submit" class="btn btn-success" data-loading-text="Saving...">
                         Save
                     </button>
-                    <div class="messages"></div>
+
                 </form>
             </div>
 

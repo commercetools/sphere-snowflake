@@ -28,7 +28,7 @@ $ ->
 
         # Update all add to cart links
         variantId = $(this).data('variant')
-        productItem.find("button[name=addToCart-product]").data('variant', variantId)
+        productItem.find("form.form-add-to-cart [name=variantId]").val(variantId)
 
         # Update active variant
         $(this).parentsUntil('ul').parent().find('.active').removeClass("active")

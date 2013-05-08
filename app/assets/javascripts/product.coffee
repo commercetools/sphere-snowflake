@@ -4,7 +4,7 @@ $ ->
 
         # Update 'add to cart' button with new variant
         variantId = $(this).data("variant")
-        $('button[name=addToCart-product]').data("variant", variantId)
+        $('#form-add-to-cart [name=variantId]').val(variantId)
 
         # Disable 'active' on previously selected size
         $('.product-info-variant-size li.active').removeClass("active")

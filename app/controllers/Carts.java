@@ -4,7 +4,10 @@ import io.sphere.client.shop.model.*;
 import forms.AddToCart;
 import forms.RemoveFromCart;
 import forms.UpdateCart;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 import play.data.Form;
+import play.libs.Json;
 import play.mvc.Result;
 import sphere.ShopController;
 
@@ -18,6 +21,7 @@ public class Carts extends ShopController {
     }
 
     public static Result add() {
+        System.out.print("C");
         Form<AddToCart> form = form(AddToCart.class).bindFromRequest();
         if (form.hasErrors()) {
             return badRequest();
@@ -50,17 +54,20 @@ public class Carts extends ShopController {
     }
 
     public static Result update() {
+        System.out.print("A");
         Form<UpdateCart> form = form(UpdateCart.class).bindFromRequest();
         if (form.hasErrors()) {
             return badRequest();
         }
         UpdateCart updateCart = form.get();
-        //Cart cart = sphere().currentCart().updateLineItemQuantity(updateCart.lineItemId, updateCart.quantity);
-        //return ok(views.html.ajax.updateCart.render(cart));
-        return ok();
+        CartUpdate cartUpdate = new CartUpdate();
+        cartUpdate.setLineItemQuantity(updateCart.lineItemId, updateCart.quantity);
+        Cart cart = sphere().currentCart().update(cartUpdate);
+        return ok(views.html.ajax.updateCart.render(cart));
     }
 
     public static Result remove() {
+        System.out.print("B");
         Form<RemoveFromCart> form = form(RemoveFromCart.class).bindFromRequest();
         if (form.hasErrors()) {
             return badRequest();
@@ -69,4 +76,5 @@ public class Carts extends ShopController {
         Cart cart = sphere().currentCart().removeLineItem(updateCart.lineItemId);
         return ok(views.html.ajax.updateCart.render(cart));
     }
+
 }

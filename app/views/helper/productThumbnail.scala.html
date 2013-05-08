@@ -35,21 +35,27 @@
         @variant.getPrice.getValue
     </div>
     <div class="product-info-buy">
-        <button type="button" name="addToCart-product" class="btn btn-link btn-mini"
-                data-product="@product.getId"
-                data-variant="@variant.getId">
-            <i class="icon-shopping-cart"></i>
-        </button>
+        <form class="form-add-to-cart" action="@routes.Carts.add" method="post">
+            <input type="hidden" name="productId" value="@product.getId" />
+            <input type="hidden" name="variantId" value="@variant.getId" />
+            <input type="hidden" name="quantity" value="1" />
+            <button type="submit" name="addToCart-product" data-loading-text="" class="btn btn-link btn-mini">
+                <i class="icon-shopping-cart"></i>
+            </button>
+        </form>
         @if(hasMoreSizes(product)) {
         <ul class="product-info-variants-size">
             @for(size <- getPossibleSizes(product, variant)) {
             <li>
-                <button type="button" name="addToCart-product" class="btn btn-link btn-mini"
-                        data-product="@product.getId"
-                        data-variant="@variant.getId"
-                        data-size="@size">
-                    @size
-                </button>
+                <form class="form-add-to-cart" action="@routes.Carts.add" method="post">
+                    <input type="hidden" name="productId" value="@product.getId" />
+                    <input type="hidden" name="variantId" value="@variant.getId" />
+                    <input type="hidden" name="size" value="@size" />
+                    <input type="hidden" name="quantity" value="1" />
+                    <button type="submit" name="addToCart-product" data-loading-text="@size" class="btn btn-link btn-mini">
+                        @size
+                    </button>
+                </form>
             </li>
             }
         </ul>
