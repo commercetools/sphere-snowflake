@@ -1,9 +1,16 @@
 $ ->
     class @Form
-        constructor: (@form, @saved = true) ->
+        constructor: (@form, @async = true, @saved = true) ->
             @labels = @form.find('label, fieldset')
             @inputs = @form.find(':input')
             @buttons = @inputs.filter('[type=submit]')
+            @messages = @form.find('.messages')
+
+        reload: ->
+            @labels = @form.find('label, fieldset')
+            @inputs = @form.find(':input')
+            @buttons = @inputs.filter('[type=submit]')
+            @messages = @form.find('.messages')
 
         # Mark fields as valid
         markValid: (fields) ->
@@ -20,7 +27,7 @@ $ ->
             @validateRequired(false)
 
         validateRequired: (allRequired) ->
-            required = @inputs.not(':disabled')
+            required = @inputs.not(':disabled').not('button')
             required = required.filter('[required]') if not allRequired
 
             # Start with all fields marked as valid
@@ -31,6 +38,7 @@ $ ->
             return true unless invalid.length > 0
 
             # Mark incorrect fields as invalid
+            console.debug invalid
             @markInvalid invalid
 
             # Display error message
@@ -78,13 +86,13 @@ $ ->
             # Choose inline help or form alert
             if not place or place.length < 1
                 alert = $('<div class="alert alert-' + level + '">' + text + '</div>')
-                place = @buttons
+                place = @messages
             else
                 alert = $('<span class="help-inline span">' + text + '</span>')
 
             # Display alert
             alert.hide()
-            place.after(alert)
+            place.append(alert)
             alert.fadeIn(speed)
 
         # Remove success alert messages
@@ -115,21 +123,21 @@ $ ->
             @markValid @inputs if not removeSuccessOnly
 
         # Submit form data
-        submit: (url, method, data) ->
+        submit: (url, method, data, doSuccess) ->
             @buttons.button('loading')
             $.ajax url,
                 type: method
+                async: @async
                 data: data
                 dataType: 'json'
-
-            .always =>
-                @buttons.button('reset')
 
             .done (data) =>
                 if data.redirectUrl?
                     window.location.replace(data.redirectUrl)
                     return
                 else
+                    @buttons.button('reset')
+
                     # Display success message
                     @saved = true
                     @displaySuccessMessage("Saved!")
@@ -138,8 +146,11 @@ $ ->
                     $.each data, (key, value) ->
                         elem = $('span[data-form-update=' + key + ']')
                         elem.text(value)
+                if doSuccess? then doSuccess()
 
             .fail (xhr) =>
+                @buttons.button('reset')
+
                 # When dealing with any other error display default message
                 if xhr.status isnt 400
                     @displayErrorMessage("Something went wrong...")
@@ -154,6 +165,10 @@ $ ->
                             @markInvalid field
 
                             # Display error message in each label
-                            @displayErrorMessage(msg, field)
+                            label = @labels.filter('[for=' + field.attr("id") + ']')
+                            @displayErrorMessage(msg, label)
                     catch error
                         @displayErrorMessage("Something went wrong...")
+
+    $('.loading-ajax').ajaxStart -> $(this).show()
+    $('.loading-ajax').ajaxStop -> $(this).hide()

@@ -3,7 +3,10 @@ package forms;
 import com.neovisionaries.i18n.CountryCode;
 import io.sphere.client.shop.model.Address;
 import io.sphere.client.shop.model.Customer;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
+import play.libs.Json;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +70,22 @@ public class SetAddress {
             this.lastName = customer.getLastName();
             this.email = customer.getEmail();
         }
+    }
+
+    public JsonNode getJson(Address address) {
+        ObjectNode json = Json.newObject();
+        json.put("company", address.getCompany());
+        json.put("firstName", address.getFirstName());
+        json.put("lastName", address.getLastName());
+        json.put("email", address.getEmail());
+        json.put("phone", address.getPhone());
+        json.put("mobile", address.getMobile());
+        json.put("street", address.getStreetName());
+        json.put("street2", address.getStreetNumber());
+        json.put("postalCode", address.getPostalCode());
+        json.put("city", address.getCity());
+        json.put("country", address.getCountry().getAlpha2());
+        return json;
     }
 
     public Address getAddress() {

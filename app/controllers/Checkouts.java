@@ -29,12 +29,12 @@ public class Checkouts extends ShopController {
     public static Result submitShippingAddress() {
         Form<SetAddress> form = form(SetAddress.class).bindFromRequest();
         if (form.hasErrors()) {
-            return badRequest();
+            return badRequest(form.errorsAsJson());
         }
         SetAddress setAddress = form.get();
         sphere().currentCart().setShippingAddress(setAddress.getAddress());
         sphere().currentCart().setCountry(setAddress.getCountryCode());
-        return ok();
+        return ok(setAddress.getJson(setAddress.getAddress()));
     }
 
     public static Result notification(String checkoutId) {

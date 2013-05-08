@@ -1,6 +1,7 @@
 @(cart: Cart, checkoutId: String, submitUrl: String, addressForm: Form[SetAddress])
 
 @scripts = {
+    <script src="@routes.Assets.at("javascripts/lib-form.js")"></script>
     <script src="@routes.Assets.at("javascripts/checkout.js")"></script>
 }
 
@@ -68,84 +69,86 @@
             </div>
         </div>
 
-        <div id="checkout-shipping" class="step disabled clearfix">
-            <div class="step-header">
-                <span class="step-number">2</span>
-                <h3>Shipping</h3>
-                <button type="button" class="btn btn-edit hide">
-                    Change <i class="icon-edit"></i>
-                </button>
-            </div>
-
-            <div class="step-body">
-                <div id="form-shipping-address" class="show">
-                    @form.setAddress(addressForm)
+        <form id="form-shipping-address" action="@routes.Checkouts.submitShippingAddress" method="post">
+            <div id="checkout-shipping" class="step disabled clearfix">
+                <div class="step-header">
+                    <span class="step-number">2</span>
+                    <h3>Shipping</h3>
+                    <button type="button" class="btn btn-edit hide">
+                        Change <i class="icon-edit"></i>
+                    </button>
                 </div>
 
-                <div class="address hide">
-                    <ul id="shipping-address-summary" class="form-summary">
-                        <li>
-                            <span data-form="firstName" class="first-name">
-                                @addressForm.field("firstName").value
-                            </span>
-                            <span data-form="lastName" class="last-name">
-                                @addressForm.field("lastName").value
-                            </span>
-                            <span data-form="company" class="company">
-                                @addressForm.field("company").value
-                            </span>
-                        </li>
-                        <li>
-                            <span data-form="street" class="street">
-                                @addressForm.field("street").value
-                            </span>
-                        </li>
-                        <li>
-                            <span data-form="street2" class="street">
-                                @addressForm.field("street2").value
-                            </span>
-                        </li>
-                        <li>
-                            <span data-form="postalCode" class="postal-code">
-                                @addressForm.field("postalCode").value
-                            </span>
-                            <span data-form="city" class="city">
-                                @addressForm.field("city").value
-                            </span>
-                            <span data-form="country" class="country">
-                                @addressForm.field("country").value
-                            </span>
-                        </li>
-                        <li>
-                            <span data-form="phone" class="phone">
-                                @addressForm.field("phone").value
-                            </span>
-                        </li>
-                        <li>
-                            <span data-form="mobile" class="mobile">
-                                @addressForm.field("mobile").value
-                            </span>
-                        </li>
-                        <li>
-                            <span data-form="email" class="email">
-                                @addressForm.field("email").value
-                            </span>
-                        </li>
-                    </ul>
+                <div class="step-body">
+                    <div id="shipping-address-form" class="show">
+                        @form.setAddress(addressForm)
+                    </div>
+
+                    <div class="address hide">
+                        <ul id="shipping-address-summary" class="form-summary">
+                            <li>
+                                <span data-form="firstName" class="first-name">
+                                    @addressForm.field("firstName").value
+                                </span>
+                                <span data-form="lastName" class="last-name">
+                                    @addressForm.field("lastName").value
+                                </span>
+                                <span data-form="company" class="company">
+                                    @addressForm.field("company").value
+                                </span>
+                            </li>
+                            <li>
+                                <span data-form="street" class="street">
+                                    @addressForm.field("street").value
+                                </span>
+                            </li>
+                            <li>
+                                <span data-form="street2" class="street">
+                                    @addressForm.field("street2").value
+                                </span>
+                            </li>
+                            <li>
+                                <span data-form="postalCode" class="postal-code">
+                                    @addressForm.field("postalCode").value
+                                </span>
+                                <span data-form="city" class="city">
+                                    @addressForm.field("city").value
+                                </span>
+                                <span data-form="country" class="country">
+                                    @addressForm.field("country").value
+                                </span>
+                            </li>
+                            <li>
+                                <span data-form="phone" class="phone">
+                                    @addressForm.field("phone").value
+                                </span>
+                            </li>
+                            <li>
+                                <span data-form="mobile" class="mobile">
+                                    @addressForm.field("mobile").value
+                                </span>
+                            </li>
+                            <li>
+                                <span data-form="email" class="email">
+                                    @addressForm.field("email").value
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-footer">
+                    <div class="messages"></div>
+                    <button type="submit" class="btn btn-success btn-next" data-loading-text="Saving...">
+                         Next <i class="icon-chevron-right icon-white"></i>
+                    </button>
                 </div>
             </div>
-
-            <div class="step-footer">
-                <button type="button" class="btn btn-success btn-next">
-                    Next <i class="icon-chevron-right icon-white"></i>
-                </button>
-            </div>
-        </div>
+        </form>
 
         <input type="hidden" name="checkoutId" value="@checkoutId" />
-        @* Sending last step of the form to payment platform *@
-        <form method="post" action="@submitUrl" autocomplete="off">
 
+        <form id="form-billing-method" action="@submitUrl" method="post" autocomplete="off">
             <div id="checkout-billing" class="step disabled clearfix">
                 <div class="step-header">
                     <span class="step-number">3</span>
@@ -157,7 +160,7 @@
 
                 <div class="step-body">
                     <div id="payment-networks" class="show">
-                        @* Loading asynchronously after last step submit *@
+                        <div class="loading-ajax">Loading...</div>
                     </div>
                     <div class="hide">
                         <ul id="billing-method-summary" class="form-summary">
@@ -170,6 +173,7 @@
                 </div>
 
                 <div class="step-footer">
+                    <div class="messages"></div>
                     <button type="button" class="btn btn-success btn-next">
                         Next <i class="icon-chevron-right icon-white"></i>
                     </button>

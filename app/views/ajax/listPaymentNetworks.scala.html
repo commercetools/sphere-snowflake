@@ -14,7 +14,7 @@
         }
     }
     </ul>
-    <div id="form-billing-method" class="tab-content">
+    <div id="billing-method-form" class="tab-content">
     @for((group, networks) <- groupPaymentNetworks(paymentNetworks)) {
         @for(network <- networks) {
         <div class="payment-network-form tab-pane" id="network-@network.networkCode">
