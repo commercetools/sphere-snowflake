@@ -5,9 +5,7 @@ import forms.UpdateCustomer;
 import forms.UpdatePassword;
 import io.sphere.client.shop.model.Customer;
 import io.sphere.client.shop.model.CustomerUpdate;
-import org.codehaus.jackson.node.ObjectNode;
 import play.data.Form;
-import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
@@ -48,5 +46,4 @@ public class Customers extends ShopController {
         }
         return ok(updatePassword.getJson());
     }
-
 }

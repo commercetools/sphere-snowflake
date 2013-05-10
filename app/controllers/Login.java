@@ -1,21 +1,21 @@
 package controllers;
 
 import forms.LogIn;
+import forms.ResetPassword;
 import forms.SignUp;
-import org.codehaus.jackson.node.ObjectNode;
+import io.sphere.client.shop.model.Customer;
+import io.sphere.client.shop.model.CustomerToken;
 import play.data.Form;
-import play.libs.Json;
-import play.mvc.Http;
 import play.mvc.Result;
 import sphere.ShopController;
 
 import static play.data.Form.form;
-import static utils.ControllerHelper.generateErrorMessages;
 
 public class Login extends ShopController {
 
     public static Result show() {
-        return ok(views.html.login.render(form(LogIn.class), form(SignUp.class)));
+        CustomerToken tokenResetPassword = sphere().currentCustomer().createEmailVerificationToken(60*24);
+        return ok(views.html.login.render(tokenResetPassword, form(LogIn.class), form(SignUp.class)));
     }
 
     public static Result signUp() {
@@ -45,4 +45,17 @@ public class Login extends ShopController {
         return redirect(session("returnUrl"));
     }
 
+    public static Result showResetPassword(String token) {
+        return ok();
+    }
+
+    public static Result resetPassword(String token) {
+        Form<ResetPassword> form = form(ResetPassword.class).bindFromRequest();
+        if (form.hasErrors()) {
+            return badRequest(form.errorsAsJson());
+        }
+        ResetPassword resetPassword = form.get();
+        Customer customer = sphere().currentCustomer().resetPassword(token, resetPassword.newPassword);
+        return ok();
+    }
 }

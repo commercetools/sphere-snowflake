@@ -17,12 +17,8 @@ object ApplicationBuild extends Build {
         Seq(
             resolvers += "sphere" at "http://public-repo.ci.cloud.commercetools.de/content/repositories/releases",
             lessEntryPoints <<= baseDirectory(customLessEntryPoints),
-            libraryDependencies ++= Seq(
-                Libs.sphereSDK,
-                Libs.jSoup,
-                Libs.pMock,
-                Libs.pMockAPI
-            ),
+            libraryDependencies ++= Libs.appDependencies,
+            libraryDependencies ++= Libs.testDependencies,
             templatesImport ++= Seq(
                 "utils.ViewHelper._",
                 "forms._",
@@ -33,9 +29,14 @@ object ApplicationBuild extends Build {
     )
 
     object Libs {
-        lazy val sphereSDK  = "io.sphere" %% "sphere-play-sdk" % "0.31.1" withSources()
-        lazy val jSoup      = "org.jsoup" % "jsoup" % "1.7.1"
-        lazy val pMock      = "org.powermock" % "powermock-module-junit4" % "1.5" % "test"
-        lazy val pMockAPI   = "org.powermock" % "powermock-api-mockito" % "1.5" % "test"
+        val appDependencies = Seq(
+            "io.sphere"     %%  "sphere-play-sdk"   %   "0.31.1",
+            "javax.mail"    %   "mail"              %   "1.4.7",
+            "org.jsoup"     %   "jsoup"             %   "1.7.1"
+        )
+        val testDependencies = Seq(
+            "org.powermock" %   "powermock-module-junit4"   %   "1.5"   %   "test",
+            "org.powermock" %   "powermock-api-mockito"     %   "1.5"   %   "test"
+        )
     }
 }
