@@ -21,7 +21,6 @@ public class Carts extends ShopController {
     }
 
     public static Result add() {
-        System.out.print("C");
         Form<AddToCart> form = form(AddToCart.class).bindFromRequest();
         if (form.hasErrors()) {
             return badRequest();
@@ -54,7 +53,6 @@ public class Carts extends ShopController {
     }
 
     public static Result update() {
-        System.out.print("A");
         Form<UpdateCart> form = form(UpdateCart.class).bindFromRequest();
         if (form.hasErrors()) {
             return badRequest();
@@ -67,7 +65,6 @@ public class Carts extends ShopController {
     }
 
     public static Result remove() {
-        System.out.print("B");
         Form<RemoveFromCart> form = form(RemoveFromCart.class).bindFromRequest();
         if (form.hasErrors()) {
             return badRequest();

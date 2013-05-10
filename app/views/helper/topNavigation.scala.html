@@ -9,7 +9,7 @@
         @if(isLoggedIn) {
             <li class="nav-link">
                 <a href="@routes.Customers.show">
-                    Hi <span data-form-update="firstName">@getCurrentCustomer.getFirstName</span>
+                    Hi <span data-form-update="customer-firstName">@getCurrentCustomer.getFirstName</span>
                 </a>
             </li>
             <li class="nav-link">|</li>

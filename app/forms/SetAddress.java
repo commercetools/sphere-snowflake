@@ -74,17 +74,17 @@ public class SetAddress {
 
     public JsonNode getJson(Address address) {
         ObjectNode json = Json.newObject();
-        json.put("company", address.getCompany());
-        json.put("firstName", address.getFirstName());
-        json.put("lastName", address.getLastName());
-        json.put("email", address.getEmail());
-        json.put("phone", address.getPhone());
-        json.put("mobile", address.getMobile());
-        json.put("street", address.getStreetName());
-        json.put("street2", address.getStreetNumber());
-        json.put("postalCode", address.getPostalCode());
-        json.put("city", address.getCity());
-        json.put("country", address.getCountry().getAlpha2());
+        json.put("address-company", address.getCompany());
+        json.put("address-firstName", address.getFirstName());
+        json.put("address-lastName", address.getLastName());
+        json.put("address-email", address.getEmail());
+        json.put("address-phone", address.getPhone());
+        json.put("address-mobile", address.getMobile());
+        json.put("address-street", address.getStreetName());
+        json.put("address-street2", address.getStreetNumber());
+        json.put("address-postalCode", address.getPostalCode());
+        json.put("address-city", address.getCity());
+        json.put("address-country", address.getCountry().getAlpha2());
         return json;
     }
 

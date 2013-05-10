@@ -36,9 +36,9 @@ public class UpdateCustomer {
 
     public JsonNode getJson(Customer customer) {
         ObjectNode json = Json.newObject();
-        json.put("firstName", customer.getFirstName());
-        json.put("lastName", customer.getLastName());
-        json.put("email", customer.getEmail());
+        json.put("customer-firstName", customer.getFirstName());
+        json.put("customer-lastName", customer.getLastName());
+        json.put("customer-email", customer.getEmail());
         return json;
     }
 }
