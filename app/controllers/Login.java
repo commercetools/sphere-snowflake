@@ -1,6 +1,7 @@
 package controllers;
 
 import forms.LogIn;
+import forms.RecoverPassword;
 import forms.ResetPassword;
 import forms.SignUp;
 import io.sphere.client.shop.model.Customer;
@@ -8,14 +9,14 @@ import io.sphere.client.shop.model.CustomerToken;
 import play.data.Form;
 import play.mvc.Result;
 import sphere.ShopController;
+import utils.Email;
 
 import static play.data.Form.form;
 
 public class Login extends ShopController {
 
     public static Result show() {
-        CustomerToken tokenResetPassword = sphere().currentCustomer().createEmailVerificationToken(60*24);
-        return ok(views.html.login.render(tokenResetPassword, form(LogIn.class), form(SignUp.class)));
+        return ok(views.html.login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
     }
 
     public static Result signUp() {
@@ -45,17 +46,41 @@ public class Login extends ShopController {
         return redirect(session("returnUrl"));
     }
 
-    public static Result showResetPassword(String token) {
-        return ok();
+    public static Result recoverPassword() {
+        Form<RecoverPassword> form = form(RecoverPassword.class).bindFromRequest();
+        if (form.hasErrors()) {
+            return badRequest(form.errorsAsJson());
+        }
+        RecoverPassword recoverPassword = form.get();
+        CustomerToken token = sphere().customers.createPasswordResetToken(recoverPassword.email).execute();
+        System.out.println(token.getCustomerId());
+        System.out.println(token.getValue());
+        String url = routes.Login.showResetPassword(token.getValue()).absoluteURL(request());
+        String body = views.html.mail.forgetPassword.render(url).body();
+        Email email = new Email(recoverPassword.email, "Password recovery", body);
+        //email.send();
+        return ok(recoverPassword.getJson(url));
     }
 
-    public static Result resetPassword(String token) {
+    public static Result showResetPassword(String token) {
+        Customer customer = sphere().customers.byToken(token).fetch().orNull();
+        if (customer == null) {
+            flash("error", "Either you followed an invalid link or your request expired");
+            badRequest(views.html.login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
+        }
+        ResetPassword resetPassword = new ResetPassword(token);
+        Form<ResetPassword> form = form(ResetPassword.class).fill(resetPassword);
+        String resetPasswordHtml = views.html.helper.resetPassword.render(form).body();
+        return ok(views.html.login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), resetPasswordHtml));
+    }
+
+    public static Result resetPassword() {
         Form<ResetPassword> form = form(ResetPassword.class).bindFromRequest();
         if (form.hasErrors()) {
             return badRequest(form.errorsAsJson());
         }
         ResetPassword resetPassword = form.get();
-        Customer customer = sphere().currentCustomer().resetPassword(token, resetPassword.newPassword);
-        return ok();
+        //sphere().currentCustomer().resetPassword(resetPassword.token, resetPassword.newPassword);
+        return ok(resetPassword.getJson());
     }
 }

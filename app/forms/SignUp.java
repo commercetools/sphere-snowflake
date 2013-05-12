@@ -18,7 +18,7 @@ public class SignUp {
     public String lastName;
 
     @Constraints.Required(message = "Email required")
-    @Constraints.Email(message = "Invalid value for email")
+    @Constraints.Email(message = "Invalid email address")
     public String email;
 
     @Constraints.Required(message = "Password required")

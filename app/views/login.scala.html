@@ -1,4 +1,4 @@
-@(tokenResetPassword: CustomerToken, logInForm: Form[LogIn], signUpForm: Form[SignUp])
+@(logInForm: Form[LogIn], signUpForm: Form[SignUp], recoverPasswordForm: Form[RecoverPassword], resetPasswordHtml: String = "")
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/login.js")"></script>
@@ -20,6 +20,9 @@
             </button>
             <div class="messages"></div>
         </form>
+        <div class="forgot-password">
+            <a href="#recover-password-modal" role="button" data-toggle="modal">Forgot password?</a>
+        </div>
     </div>
 
     <div id="login-sign-up" class="clearfix">
@@ -33,6 +36,28 @@
             <div class="messages"></div>
         </form>
     </div>
+
+    <div id="recover-password-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="recover-password-label" aria-hidden="true">
+        <form id="form-recover-password" action="@routes.Login.recoverPassword" method="post">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="recover-password-label">Recover password</h3>
+            </div>
+            <div class="modal-body">
+                <p>You will receive an email with the instructions to follow in order to recover your password.</p>
+                @form.recoverPassword(recoverPasswordForm)
+                <div class="messages"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button type="submit" class="btn btn-success" data-loading-text="Sending email...">
+                    Send
+                </button>
+            </div>
+        </form>
+    </div>
+
+    @Html(resetPasswordHtml)
 
 </div>
 }{

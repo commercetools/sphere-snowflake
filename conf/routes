@@ -31,6 +31,10 @@ GET     /user/logout                                        controllers.Login.lo
 POST    /user/login                                         controllers.Login.logIn()
 POST    /user/register                                      controllers.Login.signUp()
 
+POST    /user/password/recover                              controllers.Login.recoverPassword()
+GET     /user/password/reset/:token                         controllers.Login.showResetPassword(token: String)
+POST    /user/password/reset                                controllers.Login.resetPassword()
+
 # Customer
 GET     /user                                               controllers.Customers.show()
 
