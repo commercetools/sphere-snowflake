@@ -144,7 +144,7 @@ $ ->
 
                 # Display success message
                 @saved = true
-                @displaySuccessMessage("Saved!")
+                @displaySuccessMessage("Done!")
                 @buttons.button('reset')
 
                 # Execute after success call
