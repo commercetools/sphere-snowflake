@@ -37,8 +37,7 @@ $ ->
             invalid = required.filter -> return not $(this).val()
             return true unless invalid.length > 0
 
-            # Mark incorrect fields as invalid
-            console.debug invalid
+            # Mark incorrect fields as invalidx
             @markInvalid invalid
 
             # Display error message
@@ -59,7 +58,7 @@ $ ->
             @markInvalid fields
 
             # Display error message in its label container
-            place = fields.first()
+            place = @labels.filter('[for=' + fields.first().attr("id") + ']')
             @displayErrorMessage("These fields must contain the same value", place)
             return false
 
