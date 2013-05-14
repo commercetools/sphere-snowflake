@@ -29,12 +29,11 @@ $ ->
         removeCloseDelay: ->
             clearTimeout @closeDelay if @closeDelay?
 
-
-    @miniCart = new @MiniCart $('#mini-cart'), $('#mini-cart-popover')
+    window.miniCart = new @MiniCart $('#mini-cart'), $('#mini-cart-popover')
 
     # Bind 'mouse over mini cart' to 'open mini cart' functionality unless showing cart page
-    @miniCart.buttonCart.hover( =>
-        @miniCart.open 'fast' unless $('#cart').length > 0
-    , =>
-        @miniCart.addCloseDelay(500, '')
+    miniCart.buttonCart.hover( ->
+        miniCart.open 'fast' unless $('#cart').length > 0
+    , ->
+        miniCart.addCloseDelay(500, '')
     )
