@@ -1,8 +1,8 @@
 $ ->
-    logIn = new @Form $('#form-log-in')
-    signUp = new @Form $('#form-sign-up')
-    recoverPassword = new @Form $('#form-recover-password')
-    resetPassword = new @Form $('#form-reset-password')
+    logIn = new Form $('#form-log-in')
+    signUp = new Form $('#form-sign-up')
+    recoverPassword = new Form $('#form-recover-password')
+    resetPassword = new Form $('#form-reset-password')
 
     # Bind 'log in' submit event to 'log in' functionality
     logIn.form.submit( ->
@@ -13,13 +13,17 @@ $ ->
         return false unless logIn.validateRequired()
 
         # Send new data to server
+        logIn.startSubmit()
         url = logIn.form.attr("action")
         method = logIn.form.attr("method")
         data = logIn.form.serialize()
-        logIn.submit(url, method, data)
+        xhr = logIn.submit(url, method, data)
+        xhr.done (res) -> logIn.doneSubmit(res)
+        xhr.fail (res) ->
+            logIn.failSubmit(res)
+            logIn.stopSubmit()
 
-        # Disable form submit
-        return false
+        false
     )
 
     # Bind 'sign up' submit event to 'sign up' functionality
@@ -31,13 +35,16 @@ $ ->
         return false unless signUp.validateRequired()
 
         # Send new data to server
+        signUp.startSubmit()
         url = signUp.form.attr("action")
         method = signUp.form.attr("method")
         data = signUp.form.serialize()
-        signUp.submit(url, method, data)
+        xhr = signUp.submit(url, method, data)
+        xhr.done (res) -> signUp.doneSubmit(res)
+        xhr.fail (res) -> signUp.failSubmit(res)
+        xhr.always -> signUp.stopSubmit()
 
-        # Disable form submit
-        return false
+        false
     )
 
     # Bind 'recover password' submit event to 'recover password' functionality
@@ -49,15 +56,19 @@ $ ->
         return false unless recoverPassword.validateRequired()
 
         # Send new data to server
+        recoverPassword.startSubmit()
         url = recoverPassword.form.attr("action")
         method = recoverPassword.form.attr("method")
         data = recoverPassword.form.serialize()
-        recoverPassword.submit(url, method, data, ->
+        xhr = recoverPassword.submit(url, method, data)
+        xhr.done (res) ->
+            recoverPassword.doneSubmit(res)
+            # Close form
             $('#recover-password-modal').modal('hide')
-        )
+        xhr.fail (res) -> recoverPassword.failSubmit(res)
+        xhr.always -> recoverPassword.stopSubmit()
 
-        # Disable form submit
-        return false
+        false
     )
 
     # Bind 'recover password' submit event to 'recover password' functionality
@@ -69,15 +80,19 @@ $ ->
         return false unless resetPassword.validateRequired()
 
         # Send new data to server
+        resetPassword.startSubmit()
         url = resetPassword.form.attr("action")
         method = resetPassword.form.attr("method")
         data = resetPassword.form.serialize()
-        resetPassword.submit(url, method, data, ->
+        xhr = resetPassword.submit(url, method, data)
+        xhr.done (res) ->
+            resetPassword.doneSubmit(res)
+            # Close form
             setTimeout ( -> $('#reset-password-modal').modal('hide')), 3000
-        )
+        xhr.fail (res) -> resetPassword.failSubmit(res)
+        xhr.always -> resetPassword.stopSubmit()
 
-        # Disable form submit
-        return false
+        false
     )
 
     # Automatically open reset password modal when found

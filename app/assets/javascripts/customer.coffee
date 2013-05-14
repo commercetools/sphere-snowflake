@@ -1,6 +1,6 @@
 $ ->
-    updateCustomer = new @Form $('#form-update-customer')
-    updatePassword = new @Form $('#form-update-password')
+    updateCustomer = new Form $('#form-update-customer')
+    updatePassword = new Form $('#form-update-password')
 
     # Bind customer update 'save' submit event to 'update customer' functionality
     updateCustomer.form.submit( ->
@@ -11,13 +11,16 @@ $ ->
         return false unless updateCustomer.validateRequired()
 
         # Send new data to server
+        updateCustomer.startSubmit()
         url = updateCustomer.form.attr("action")
         method = updateCustomer.form.attr("method")
         data = updateCustomer.form.serialize()
-        updateCustomer.submit(url, method, data)
+        xhr = updateCustomer.submit(url, method, data)
+        xhr.done (res) -> updateCustomer.doneSubmit(res)
+        xhr.fail (res) -> updateCustomer.failSubmit(res)
+        xhr.always -> updateCustomer.stopSubmit()
 
-        # Disable form submit
-        return false
+        false
     )
 
     # Bind password update 'save' submit event to 'update password' functionality
@@ -33,13 +36,16 @@ $ ->
         return false unless updatePassword.validateEqualFields(repeatPasswords)
 
         # Send new data to server
+        updatePassword.startSubmit()
         url = updatePassword.form.attr("action")
         method = updatePassword.form.attr("method")
         data = updatePassword.form.serialize()
-        updatePassword.submit(url, method, data)
+        xhr = updatePassword.submit(url, method, data)
+        xhr.done (res) -> updatePassword.doneSubmit(res)
+        xhr.fail (res) -> updatePassword.failSubmit(res)
+        xhr.always -> updatePassword.stopSubmit()
 
-        # Disable form submit
-        return false
+        false
     )
 
     # Bind change tab with remove success messages functionality

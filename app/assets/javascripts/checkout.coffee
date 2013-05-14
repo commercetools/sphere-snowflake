@@ -5,8 +5,8 @@ $ ->
     checkoutBilling = $('#checkout-billing.step')
     sections = $('#checkout .step')
 
-    shippingAddress = new @Form $('#form-shipping-address')
-    billingMethod = new @Form $('#form-billing-method')
+    shippingAddress = new Form $('#form-shipping-address')
+    billingMethod = new Form $('#form-billing-method')
 
     # Fill form summary with form data
     fillSummary = (form, summaryList) ->
@@ -100,11 +100,14 @@ $ ->
         return false unless shippingAddress.validateRequired()
 
         # Send new data to server
+        shippingAddress.startSubmit()
         url = shippingAddress.form.attr("action")
         method = shippingAddress.form.attr("method")
         data = shippingAddress.form.serialize()
+        xhr = shippingAddress.submit(url, method, data)
+        xhr.done (res) ->
+            shippingAddress.doneSubmit(res)
 
-        shippingAddress.submit(url, method, data, ->
             # Load payment networks once we have shipping information
             loadPaymentNetworks($('#payment-networks'))
 
@@ -113,10 +116,10 @@ $ ->
 
             # Go to next section
             nextStep(checkoutShipping)
-        )
+        xhr.fail (res) -> shippingAddress.failSubmit(res)
+        xhr.always -> shippingAddress.stopSubmit()
 
-        # Disable form submit
-        return false
+        false
     )
 
     # Bind billing 'next step' click event to 'validate form' and 'next step' functionality

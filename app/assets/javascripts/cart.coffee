@@ -1,64 +1,65 @@
 $ ->
     summaryOrder = '#order-summary'
 
-    createForm = (form) =>
-        return new @Form form, true, 'html'
-
-    getMiniCart = =>
-        return @miniCart
-
     # Bind 'add to cart' button in product detail with 'add to cart' functionality
     $('#product-detail #form-add-to-cart').submit( ->
-        addToCart = createForm $(this)
+        addToCart = new Form $(this), 'html'
 
         # Send new data to server
+        addToCart.startSubmit()
         url = addToCart.form.attr("action")
         method = addToCart.form.attr("method")
         data = addToCart.form.serialize()
-
-        addToCart.submit(url, method, data, (res) ->
+        xhr = addToCart.submit(url, method, data)
+        xhr.done (res) ->
+            addToCart.doneSubmit(res)
             response = $("<div>").html(res)
 
             # Update mini cart
-            getMiniCart().popoverCart.empty().append(response.find('#mini-cart-popover').contents())
+            miniCart.popoverCart.empty().append(response.find('#mini-cart-popover').contents())
 
             # Open mini cart
-            getMiniCart().open('slow')
-            getMiniCart().addCloseDelay(3000, 'slow')
-        )
+            miniCart.open('slow')
+            miniCart.addCloseDelay(3000, 'slow')
+        xhr.fail (res) -> addToCart.failSubmit(res)
+        xhr.always -> addToCart.stopSubmit()
 
-        return false
+        false
     )
 
     # Bind 'add to cart' button in product list with 'add to cart' functionality
     $('#product-list').on('submit', 'form.form-add-to-cart', ->
-        addToCart = createForm $(this)
+        addToCart = new Form $(this), 'html'
 
         # Send new data to server
+        addToCart.startSubmit()
         url = addToCart.form.attr("action")
         method = addToCart.form.attr("method")
         data = addToCart.form.serialize()
-
-        addToCart.submit(url, method, data, (res) ->
+        xhr = addToCart.submit(url, method, data)
+        xhr.done (res) ->
+            addToCart.doneSubmit(res)
             response = $("<div>").html(res)
 
             # Update mini cart
-            getMiniCart().popoverCart.empty().append(response.find('#mini-cart-popover').contents())
+            miniCart.popoverCart.empty().append(response.find('#mini-cart-popover').contents())
 
             # Open mini cart
-            getMiniCart().open('slow')
-            getMiniCart().addCloseDelay(3000, 'slow')
-        )
+            miniCart.open('slow')
+            miniCart.addCloseDelay(3000, 'slow')
+        xhr.fail (res) -> addToCart.failSubmit(res)
+        xhr.always -> addToCart.stopSubmit()
 
-        return false
+        false
     )
 
     # Bind 'update item quantity' input with 'update cart' functionality
     updateDelay = {}
     $("#cart form.form-update-cart input[name=quantity]").change( ->
-        updateCart = createForm $(this).closest('form')
+        updateCart = new Form $(this).closest('form'), 'html'
 
         # Send new data to server
+        updateCart.startSubmit()
         url = updateCart.form.attr("action")
         method = updateCart.form.attr("method")
         data = updateCart.form.serialize()
@@ -68,7 +69,9 @@ $ ->
         clearTimeout updateDelay.timeout if lineItemId is updateDelay.item and updateDelay.timeout?
         updateDelay.item = lineItemId
         updateDelay.timeout = setTimeout ( ->
-            updateCart.submit(url, method, data, (res) ->
+            xhr = updateCart.submit(url, method, data)
+            xhr.done (res) ->
+                updateCart.doneSubmit(res)
                 response = $("<div>").html(res)
 
                 # Update item total price
@@ -78,28 +81,31 @@ $ ->
                 $(summaryOrder).empty().append(response.find(summaryOrder).contents())
 
                 # Update mini cart
-                getMiniCart().popoverCart.empty().append(response.find('#mini-cart-popover').contents())
-            )
+                miniCart.popoverCart.empty().append(response.find('#mini-cart-popover').contents())
+            xhr.fail (res) -> updateCart.failSubmit(res)
+            xhr.always -> updateCart.stopSubmit()
         ), 800
 
-        return false
+        false
     )
 
     # Bind 'remove item' button with 'remove from cart' functionality
     $('#cart form.form-remove-from-cart').submit( ->
-        removeFromCart = createForm $(this)
+        removeFromCart = new Form $(this), 'html'
 
         # Send new data to server
+        removeFromCart.startSubmit()
         url = removeFromCart.form.attr("action")
         method = removeFromCart.form.attr("method")
         data = removeFromCart.form.serialize()
 
-        lineItemId = removeFromCart.inputs.filter('[name=lineItemId]').val()
-
-        removeFromCart.submit(url, method, data, (res) ->
-            response = $("<div>").html(res)
+        xhr = removeFromCart.submit(url, method, data)
+        xhr.done (res) ->
+            removeFromCart.doneSubmit(data)
+            response = $("<div>").html(data)
 
             # Remove line item
+            lineItemId = removeFromCart.inputs.filter('[name=lineItemId]').val()
             $('#item-line-'+ lineItemId).fadeOut(500, ->
                 $(this).remove()
             )
@@ -108,9 +114,11 @@ $ ->
             $(summaryOrder).empty().append(response.find(summaryOrder).contents())
 
             # Update mini cart
-            getMiniCart().popoverCart.empty().append(response.find('#mini-cart-popover').contents())
-        )
+            miniCart.popoverCart.empty().append(response.find('#mini-cart-popover').contents())
+        xhr.fail (res) ->
+            removeFromCart.failSubmit(res)
+            removeFromCart.stopSubmit()
 
-        return false
+        false
     )
 
