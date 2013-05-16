@@ -1,4 +1,4 @@
-package forms;
+package forms.paymentForm;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

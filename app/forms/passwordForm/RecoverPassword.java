@@ -1,4 +1,4 @@
-package forms;
+package forms.passwordForm;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;

@@ -1,4 +1,4 @@
-package forms;
+package forms.cartForm;
 
 import play.data.validation.Constraints;
 

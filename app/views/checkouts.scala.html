@@ -1,4 +1,4 @@
-@(cart: Cart, checkoutId: String, submitUrl: String, addressForm: Form[SetAddress])
+@(cart: Cart, checkoutId: String, submitUrl: String, setAddressForm: Form[addressForm.SetAddress])
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/checkout.js")"></script>
@@ -80,56 +80,56 @@
 
                 <div class="step-body">
                     <div id="shipping-address-form" class="show">
-                        @form.setAddress(addressForm)
+                        @form.setAddress(setAddressForm)
                     </div>
 
                     <div class="address hide">
-                        <ul id="shipping-address-summary" class="form-summary">
+                        <ul id="shipping-address-summary" class="form-summary address">
                             <li>
                                 <span data-form="firstName" class="first-name">
-                                    @addressForm.field("firstName").value
+                                    @setAddressForm.field("firstName").value
                                 </span>
                                 <span data-form="lastName" class="last-name">
-                                    @addressForm.field("lastName").value
+                                    @setAddressForm.field("lastName").value
                                 </span>
                                 <span data-form="company" class="company">
-                                    @addressForm.field("company").value
+                                    @setAddressForm.field("company").value
                                 </span>
                             </li>
                             <li>
                                 <span data-form="street" class="street">
-                                    @addressForm.field("street").value
+                                    @setAddressForm.field("street").value
                                 </span>
                             </li>
                             <li>
                                 <span data-form="street2" class="street">
-                                    @addressForm.field("street2").value
+                                    @setAddressForm.field("street2").value
                                 </span>
                             </li>
                             <li>
                                 <span data-form="postalCode" class="postal-code">
-                                    @addressForm.field("postalCode").value
+                                    @setAddressForm.field("postalCode").value
                                 </span>
                                 <span data-form="city" class="city">
-                                    @addressForm.field("city").value
+                                    @setAddressForm.field("city").value
                                 </span>
                                 <span data-form="country" class="country">
-                                    @addressForm.field("country").value
+                                    @setAddressForm.field("country").value
                                 </span>
                             </li>
                             <li>
                                 <span data-form="phone" class="phone">
-                                    @addressForm.field("phone").value
+                                    @setAddressForm.field("phone").value
                                 </span>
                             </li>
                             <li>
                                 <span data-form="mobile" class="mobile">
-                                    @addressForm.field("mobile").value
+                                    @setAddressForm.field("mobile").value
                                 </span>
                             </li>
                             <li>
                                 <span data-form="email" class="email">
-                                    @addressForm.field("email").value
+                                    @setAddressForm.field("email").value
                                 </span>
                             </li>
                         </ul>

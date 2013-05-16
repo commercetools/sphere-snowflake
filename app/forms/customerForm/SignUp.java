@@ -1,13 +1,14 @@
-package forms;
+package forms.customerForm;
 
-import io.sphere.client.shop.model.Customer;
 import io.sphere.client.shop.model.CustomerName;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.libs.Json;
+import play.mvc.Call;
+import play.mvc.Http;
 
-public class UpdateCustomer {
+public class SignUp {
 
     @Constraints.Required(message = "First name required")
     public String firstName;
@@ -16,29 +17,24 @@ public class UpdateCustomer {
     public String lastName;
 
     @Constraints.Required(message = "Email required")
-    @Constraints.Email(message = "Invalid value for email")
+    @Constraints.Email(message = "Invalid email address")
     public String email;
 
+    @Constraints.Required(message = "Password required")
+    public String password;
 
-    public UpdateCustomer() {
 
-    }
+    public SignUp() {
 
-    public UpdateCustomer(Customer customer) {
-        this.firstName = customer.getFirstName();
-        this.lastName = customer.getLastName();
-        this.email = customer.getEmail();
     }
 
     public CustomerName getCustomerName() {
         return new CustomerName(this.firstName, this.lastName);
     }
 
-    public JsonNode getJson(Customer customer) {
+    public JsonNode getJson(Call call) {
         ObjectNode json = Json.newObject();
-        json.put("customer-firstName", customer.getFirstName());
-        json.put("customer-lastName", customer.getLastName());
-        json.put("customer-email", customer.getEmail());
+        json.put("redirectUrl", call.absoluteURL(Http.Context.current().request()));
         return json;
     }
 }

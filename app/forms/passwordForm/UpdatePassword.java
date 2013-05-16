@@ -1,14 +1,14 @@
-package forms;
+package forms.passwordForm;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.libs.Json;
 
-public class ResetPassword {
+public class UpdatePassword {
 
-    @Constraints.Required(message = "Missing information")
-    public String token;
+    @Constraints.Required(message = "Old password required")
+    public String oldPassword;
 
     @Constraints.Required(message = "New password required")
     public String newPassword;
@@ -17,12 +17,8 @@ public class ResetPassword {
     public String repeatPassword;
 
 
-    public ResetPassword() {
+    public UpdatePassword() {
 
-    }
-
-    public ResetPassword(String token) {
-        this.token = token;
     }
 
     public String validate() {
@@ -37,10 +33,9 @@ public class ResetPassword {
         return json;
     }
 
-    public JsonNode getJsonTokenMatchError() {
+    public JsonNode getJsonPasswordMatchError() {
         ObjectNode json = Json.newObject();
-        json.put("", "Given token is invalid");
+        json.put("oldPassword", "Current password does not match our records");
         return json;
     }
-
 }

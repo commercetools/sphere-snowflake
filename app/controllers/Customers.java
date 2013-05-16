@@ -1,8 +1,9 @@
 package controllers;
 
 import controllers.actions.Authorization;
-import forms.UpdateCustomer;
-import forms.UpdatePassword;
+import forms.addressForm.SetAddress;
+import forms.customerForm.UpdateCustomer;
+import forms.passwordForm.UpdatePassword;
 import io.sphere.client.shop.model.Customer;
 import io.sphere.client.shop.model.CustomerUpdate;
 import play.data.Form;
@@ -19,7 +20,7 @@ public class Customers extends ShopController {
         Customer customer = sphere().currentCustomer().fetch();
         UpdateCustomer updateCustomer = new UpdateCustomer(customer);
         Form<UpdateCustomer> form = form(UpdateCustomer.class).fill(updateCustomer);
-        return ok(views.html.customers.render(customer, form, form(UpdatePassword.class)));
+        return ok(views.html.customers.render(customer, form, form(UpdatePassword.class), form(SetAddress.class)));
     }
 
     public static Result update() {
@@ -28,9 +29,9 @@ public class Customers extends ShopController {
             return badRequest(form.errorsAsJson());
         }
         UpdateCustomer updateCustomer = form.get();
-        CustomerUpdate update = new CustomerUpdate();
-        update.setName(updateCustomer.getCustomerName());
-        update.setEmail(updateCustomer.email);
+        CustomerUpdate update = new CustomerUpdate()
+                .setName(updateCustomer.getCustomerName())
+                .setEmail(updateCustomer.email);
         Customer customer = sphere().currentCustomer().updateCustomer(update);
         return ok(updateCustomer.getJson(customer));
     }

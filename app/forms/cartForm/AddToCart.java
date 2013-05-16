@@ -1,4 +1,4 @@
-package forms;
+package forms.cartForm;
 
 import io.sphere.client.shop.model.Attribute;
 import io.sphere.client.shop.model.Cart;
@@ -32,16 +32,16 @@ public class AddToCart {
         ObjectNode json = Json.newObject();
         json.put("cart-totalPrice", cart.getTotalPrice().toString());
         for (LineItem item : cart.getLineItems()) {
-            String itemId = "lineItem-" + item.getId();
+            String itemId = "-" + item.getId();
             json.put(itemId, item.getId());
-            json.put(itemId + "-productId", item.getProductId());
-            json.put(itemId + "-productName", item.getProductName());
+            json.put("lineItem-productId" + itemId, item.getProductId());
+            json.put("lineItem-productName" + itemId, item.getProductName());
             for (Attribute attr : item.getVariant().getAttributes()) {
-                json.put(itemId + "-attribute-" + attr.getName(), attr.getValue().toString());
+                json.put("lineItem-attribute-" + attr.getName() + itemId, attr.getValue().toString());
             }
-            json.put(itemId + "-quantity", item.getQuantity());
-            json.put(itemId + "-price", item.getPrice().getValue().toString());
-            json.put(itemId + "-totalPrice", item.getTotalPrice().toString());
+            json.put("lineItem-quantity" + itemId, item.getQuantity());
+            json.put("lineItem-price" + itemId, item.getPrice().getValue().toString());
+            json.put("lineItem-totalPrice" + itemId, item.getTotalPrice().toString());
         }
         return json;
     }

@@ -1,7 +1,9 @@
 package controllers;
 
 import controllers.actions.Authorization;
-import forms.*;
+import forms.addressForm.SetAddress;
+import forms.paymentForm.PaymentNetwork;
+import forms.paymentForm.PaymentNotification;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.PaymentState;
 import play.Play;
@@ -33,8 +35,8 @@ public class Checkouts extends ShopController {
         }
         SetAddress setAddress = form.get();
         sphere().currentCart().setShippingAddress(setAddress.getAddress());
-        sphere().currentCart().setCountry(setAddress.getCountryCode());
-        return ok(setAddress.getJson(setAddress.getAddress()));
+        Cart cart = sphere().currentCart().setCountry(setAddress.getCountryCode());
+        return ok(SetAddress.getJson(cart.getShippingAddress()));
     }
 
     public static Result notification(String checkoutId) {

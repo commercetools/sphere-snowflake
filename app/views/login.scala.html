@@ -1,4 +1,4 @@
-@(logInForm: Form[LogIn], signUpForm: Form[SignUp], recoverPasswordForm: Form[RecoverPassword], resetPasswordHtml: String = "")
+@(logInForm: Form[customerForm.LogIn], signUpForm: Form[customerForm.SignUp], recoverPasswordForm: Form[passwordForm.RecoverPassword], resetPasswordHtml: String = "")
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/login.js")"></script>

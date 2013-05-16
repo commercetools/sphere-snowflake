@@ -1,9 +1,9 @@
 package controllers;
 
-import forms.LogIn;
-import forms.RecoverPassword;
-import forms.ResetPassword;
-import forms.SignUp;
+import forms.customerForm.LogIn;
+import forms.passwordForm.RecoverPassword;
+import forms.passwordForm.ResetPassword;
+import forms.customerForm.SignUp;
 import io.sphere.client.shop.model.Customer;
 import io.sphere.client.shop.model.CustomerToken;
 import play.data.Form;
@@ -25,6 +25,7 @@ public class Login extends ShopController {
             return badRequest(form.errorsAsJson());
         }
         SignUp signUp = form.get();
+        // TODO SDK: Deal with already registered user
         sphere().signup(signUp.email, signUp.password, signUp.getCustomerName());
         return ok(signUp.getJson(routes.Customers.show()));
     }

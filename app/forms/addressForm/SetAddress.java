@@ -1,17 +1,11 @@
-package forms;
+package forms.addressForm;
 
 import com.neovisionaries.i18n.CountryCode;
 import io.sphere.client.shop.model.Address;
 import io.sphere.client.shop.model.Customer;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
-import play.libs.Json;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class SetAddress {
+public class SetAddress extends ListAddress {
 
     public String company;
 
@@ -72,22 +66,6 @@ public class SetAddress {
         }
     }
 
-    public JsonNode getJson(Address address) {
-        ObjectNode json = Json.newObject();
-        json.put("address-company", address.getCompany());
-        json.put("address-firstName", address.getFirstName());
-        json.put("address-lastName", address.getLastName());
-        json.put("address-email", address.getEmail());
-        json.put("address-phone", address.getPhone());
-        json.put("address-mobile", address.getMobile());
-        json.put("address-street", address.getStreetName());
-        json.put("address-street2", address.getStreetNumber());
-        json.put("address-postalCode", address.getPostalCode());
-        json.put("address-city", address.getCity());
-        json.put("address-country", address.getCountry().getAlpha2());
-        return json;
-    }
-
     public Address getAddress() {
         Address address = new Address(getCountryCode());
         address.setCompany(company);
@@ -105,12 +83,5 @@ public class SetAddress {
 
     public CountryCode getCountryCode() {
         return CountryCode.getByCode(this.country);
-    }
-
-    public static List<CountryCode> getCountryCodes() {
-        List<CountryCode> countries = new ArrayList<CountryCode>();
-        countries.add(CountryCode.DE);
-        countries.add(CountryCode.AT);
-        return countries;
     }
 }

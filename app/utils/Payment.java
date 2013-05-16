@@ -5,7 +5,7 @@ import controllers.routes;
 import io.sphere.client.shop.model.Attribute;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.LineItem;
-import forms.PaymentNetwork;
+import forms.paymentForm.PaymentNetwork;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

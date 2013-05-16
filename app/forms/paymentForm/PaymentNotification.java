@@ -1,4 +1,4 @@
-package forms;
+package forms.paymentForm;
 
 import io.sphere.client.shop.model.PaymentState;
 import play.data.validation.Constraints;
