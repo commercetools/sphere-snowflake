@@ -25,8 +25,8 @@ public class UpdateCustomer {
     }
 
     public UpdateCustomer(Customer customer) {
-        this.firstName = customer.getFirstName();
-        this.lastName = customer.getLastName();
+        this.firstName = customer.getName().getFirstName();
+        this.lastName = customer.getName().getLastName();
         this.email = customer.getEmail();
     }
 
@@ -36,8 +36,8 @@ public class UpdateCustomer {
 
     public JsonNode getJson(Customer customer) {
         ObjectNode json = Json.newObject();
-        json.put("customer-firstName", customer.getFirstName());
-        json.put("customer-lastName", customer.getLastName());
+        json.put("customer-firstName", customer.getName().getFirstName());
+        json.put("customer-lastName", customer.getName().getLastName());
         json.put("customer-email", customer.getEmail());
         return json;
     }

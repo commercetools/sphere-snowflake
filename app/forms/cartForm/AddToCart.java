@@ -14,7 +14,7 @@ public class AddToCart {
     public String productId;
 
     @Constraints.Required(message = "Variant required")
-    public String variantId;
+    public int variantId;
 
     @Constraints.Required(message = "Quantity required")
     @Constraints.Min(1)

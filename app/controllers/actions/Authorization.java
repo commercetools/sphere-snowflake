@@ -14,7 +14,7 @@ public class Authorization extends Action.Simple {
     public Result call(Http.Context ctx) throws Throwable {
         // Before
         Http.Context.current.set(ctx);
-        if (Sphere.getClient().currentCustomer() == null) {
+        if (!Sphere.getInstance().isLoggedIn()) {
             return Login.show();
         }
         Result result = delegate.call(ctx);

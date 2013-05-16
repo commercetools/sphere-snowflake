@@ -21,7 +21,7 @@ public class Checkouts extends ShopController {
 
     public static Result show() {
         Cart cart = sphere().currentCart().fetch();
-        String checkoutId = sphere().currentCart().createCheckoutSummaryId();
+        String checkoutId = sphere().currentCart().createCheckoutSnapshotId();
         SetAddress draftAddress = new SetAddress(cart.getShippingAddress());
         Form<SetAddress> addressForm = form(SetAddress.class).fill(draftAddress);
         String submitUrl = Play.application().configuration().getString("optile.chargeUrl");
@@ -75,7 +75,7 @@ public class Checkouts extends ShopController {
         if (cart.getTotalPrice().getAmount().doubleValue() <= 0) {
             return noContent();
         }
-        String checkoutId = sphere().currentCart().createCheckoutSummaryId();
+        String checkoutId = sphere().currentCart().createCheckoutSnapshotId();
         Payment payment = new Payment(cart, checkoutId);
         String transactionId = payment.doRequest(Payment.NATIVE_URL, Payment.Operation.LIST);
         if (!payment.isValidResponse(transactionId)) {

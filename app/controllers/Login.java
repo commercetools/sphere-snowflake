@@ -53,7 +53,7 @@ public class Login extends ShopController {
             return badRequest(form.errorsAsJson());
         }
         RecoverPassword recoverPassword = form.get();
-        CustomerToken token = sphere().customers.createPasswordResetToken(recoverPassword.email).execute();
+        CustomerToken token = sphere().customers.createPasswordResetToken(recoverPassword.email);
         System.out.println(token.getCustomerId());
         System.out.println(token.getValue());
         String url = routes.Login.showResetPassword(token.getValue()).absoluteURL(request());

@@ -32,7 +32,7 @@ public class Customers extends ShopController {
         CustomerUpdate update = new CustomerUpdate()
                 .setName(updateCustomer.getCustomerName())
                 .setEmail(updateCustomer.email);
-        Customer customer = sphere().currentCustomer().updateCustomer(update);
+        Customer customer = sphere().currentCustomer().update(update);
         return ok(updateCustomer.getJson(customer));
     }
 

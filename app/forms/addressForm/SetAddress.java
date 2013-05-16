@@ -60,8 +60,8 @@ public class SetAddress extends ListAddress {
 
     public SetAddress(Customer customer) {
         if (customer != null) {
-            this.firstName = customer.getFirstName();
-            this.lastName = customer.getLastName();
+            this.firstName = customer.getName().getFirstName();
+            this.lastName = customer.getName().getLastName();
             this.email = customer.getEmail();
         }
     }

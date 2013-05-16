@@ -13,7 +13,7 @@ import static utils.ControllerHelper.getDefaultCategory;
 @With(SaveContext.class)
 public class Products extends ShopController {
 
-    public static Result select(String productSlug, String variantId) {
+    public static Result select(String productSlug, int variantId) {
         Product product = sphere().products.bySlug(productSlug).fetch().orNull();
         if (product == null) {
             return notFound("Product not found: " + productSlug);

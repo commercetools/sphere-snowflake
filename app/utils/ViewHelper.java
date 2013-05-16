@@ -20,26 +20,26 @@ public class ViewHelper {
 	 * Returns the current Cart in session.
 	 */
 	public static Cart getCurrentCart() {
-		return Sphere.getClient().currentCart().fetch();
+		return Sphere.getInstance().currentCart().fetch();
 	}
 
     public static Customer getCurrentCustomer() {
         Customer customer = null;
-        if (Sphere.getClient().isLoggedIn()) {
-            customer = Sphere.getClient().currentCustomer().fetch();
+        if (Sphere.getInstance().isLoggedIn()) {
+            customer = Sphere.getInstance().currentCustomer().fetch();
         }
         return customer;
     }
 
     public static boolean isLoggedIn() {
-        return Sphere.getClient().isLoggedIn();
+        return Sphere.getInstance().isLoggedIn();
     }
 
 	/**
 	 * Returns the list of root categories
 	 */
 	public static List<Category> getRootCategories() {
-        return Sphere.getClient().categories.getRoots();
+        return Sphere.getInstance().categories.getRoots();
 	}
 
     public static String getCategoryPath(Category category) {
@@ -160,7 +160,7 @@ public class ViewHelper {
     }
 
     public static Call getProductUrl(Product product, Variant variant, Category category) {
-        return routes.Products.select(product.getSlug(), String.valueOf(variant.getId()));
+        return routes.Products.select(product.getSlug(), variant.getId());
     }
 
     public static List<String> getPossibleSizes(Product product, Variant variant) {

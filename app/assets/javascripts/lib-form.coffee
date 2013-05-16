@@ -163,7 +163,6 @@ class window.Form
                 @displayErrorMessage(msg, label)
         catch error
             @displayErrorMessage("Something went wrong...")
-        console.debug "fail"
 
     # Submit form data
     submit: (url, method, data) ->

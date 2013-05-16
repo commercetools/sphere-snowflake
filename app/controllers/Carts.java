@@ -23,7 +23,7 @@ public class Carts extends ShopController {
             return badRequest();
         }
         AddToCart addToCart = form.get();
-        String variantId = addToCart.variantId;
+        int variantId = addToCart.variantId;
         // If size is selected we have to find the correct variant
         if (addToCart.size != null) {
             // Fetch selected product variant
