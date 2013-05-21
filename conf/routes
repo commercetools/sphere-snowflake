@@ -41,11 +41,18 @@ GET     /user                                               controllers.Customer
 POST    /user/update                                        controllers.Customers.update()
 POST    /user/update/password                               controllers.Customers.updatePassword()
 
+# Address
+GET     /user/address                                       controllers.Addresses.show()
+
+POST    /user/address/add                                   controllers.Addresses.add()
+POST    /user/address/update                                controllers.Addresses.update()
+POST    /user/address/remove                                controllers.Addresses.remove()
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                                       controllers.Assets.at(path="/public", file)
 
 # Product
-GET     /:product-$variant<[0-9]+>.html                     controllers.Products.select(product: String, variant: String)
+GET     /:product-$variant<[0-9]+>.html                     controllers.Products.select(product: String, variant: Int)
 
 # Category
 GET     /*categoryPath                                      controllers.Categories.select(categoryPath: String, page: Int ?= 1)

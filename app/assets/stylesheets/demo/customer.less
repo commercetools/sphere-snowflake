@@ -4,3 +4,63 @@
     padding: 20px;
 }
 
+
+#tab-address-book {
+    position: relative;
+
+    #form-add-address {
+        float: right;
+        padding: 5px 10px 10px 5px;
+    }
+
+    #address-list {
+        .unstyled;
+        margin-right: 400px;
+
+        .address-item {
+            text-align: -webkit-match-parent;
+            padding: 8px 12px;
+            margin: 2px 2px 3px 0;
+            line-height: 14px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+
+            .form-update-address {
+                display: none;
+                position: absolute;
+                right: 0;
+                top: 0;
+                padding: 5px 10px 10px 30px;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+                background: @lightest-gray;
+            }
+
+            .form-remove-address, .open-update-address {
+                visibility: hidden;
+                display: inline-block;
+                position: relative;
+                left: 100px;
+            }
+
+            &:hover {
+                background-color: @background;
+
+                .form-remove-address, .open-update-address {
+                    visibility: visible;
+                }
+            }
+
+            &.active {
+                background-color: @lightest-gray;
+
+                .form-update-address {
+                    display: block;
+                }
+            }
+        }
+    }
+}
+

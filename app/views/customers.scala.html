@@ -1,7 +1,122 @@
-@(customer: Customer, updateCustomerForm: Form[UpdateCustomer], updatePasswordForm: Form[UpdatePassword])
+@(customer: Customer, updateCustomerForm: Form[customerForm.UpdateCustomer], updatePasswordForm: Form[passwordForm.UpdatePassword], addAddressForm: Form[addressForm.SetAddress])
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/customer.js")"></script>
+    <script id="address-template" type="text/x-handlebars-template">
+        <li class="address-item" id="address-{{addressId}}">
+            <button type="button" class="btn btn-link open-update-address"><i class="icon-edit"></i> edit</button>
+            <form class="form-remove-address" action="@routes.Addresses.remove" method="post">
+                <input type="hidden" name="addressId" value="{{addressId}}" required />
+                <button type="submit" class="btn btn-link" data-loading-text="removing...."><i class="icon-remove"></i> remove</button>
+            </form>
+            <ul class="address">
+                <li>
+                    <span class="first-name">{{firstName}}</span>
+                    <span class="last-name">{{lastName}}</span>
+                    <span class="company">{{company}}</span>
+                </li>
+                <li>
+                    <span class="street">{{street}}</span>
+                </li>
+                <li>
+                    <span class="street">{{street2}}</span>
+                </li>
+                <li>
+                    <span class="postal-code">{{postalCode}}</span>
+                    <span class="city">{{city}}</span>
+                    <span class="country">{{country}}</span>
+                </li>
+                <li>
+                    <span class="phone">{{phone}}</span>
+                </li>
+                <li>
+                    <span class="mobile">{{mobile}}</span>
+                </li>
+                <li>
+                    <span class="email">{{email}}</span>
+                </li>
+            </ul>
+            <form class="form-update-address" action="@routes.Addresses.update" method="post">
+                <input type="hidden" name="addressId" value="{{addressId}}" required />
+                <h5>Address information</h5>
+                <div class="form">
+                    <div class="control-group">
+                        <label for="shipping-address-company" class="control-label">Company</label>
+                        <div class="controls">
+                            <input type="text" name="company" id="shipping-address-company" value="{{company}}"
+                                   placeholder="Company name (optional)" aria-label="Company (optional)" class="span4" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="shipping-address-firstName" class="control-label">Name</label>
+                        <div class="controls controls-row">
+                            <input type="text" name="firstName" id="shipping-address-firstName" value="{{firstName}}"
+                                   placeholder="First name" aria-label="First name" required class="span2"/>
+                            <input type="text" name="lastName" id="shipping-address-lastName" value="{{lastName}}"
+                                   placeholder="Last name" aria-label="Last name" required class="span2"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="shipping-address-phone" class="control-label">Phone</label>
+                        <div class="controls">
+                            <input type="tel" name="phone" id="shipping-address-phone" value="{{phone}}"
+                                   placeholder="Phone number" aria-label="Phone" required class="span4"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="shipping-address-street" class="control-label">Address</label>
+                        <div class="controls">
+                            <input type="text" name="street" id="shipping-address-street" value="{{street}}"
+                                   placeholder="First address line" aria-label="Address line" required class="span4"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="text" name="street2" id="shipping-address-street2" value="{{street2}}"
+                                   placeholder="Second address line (optional)" aria-label="Address line 2 (optional)" class="span4"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="shipping-address-city" class="control-label">City</label>
+                        <div class="controls controls-row">
+                            <input type="text" name="city" id="shipping-address-city" value="{{city}}"
+                                   placeholder="City" aria-label="City" required class="span2"/>
+                            <input type="text" name="postalCode" id="shipping-address-postalCode" value="{{postalCode}}"
+                                   placeholder="Postal code" aria-label="Postal code" required class="span2"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="shipping-address-country" class="control-label">Country</label>
+                        <div class="controls">
+                            <select name="country" id="shipping-address-country" aria-label="Country" required>
+                                @for(countryCode <- addressForm.ListAddress.getCountryCodes) {
+                                <option value="@countryCode.getAlpha2" {{#ifEq "@countryCode.getAlpha2" country}}selected{{/ifEq}}>@countryCode.getName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <h5>Additional contact information</h5>
+                <div class="form">
+                    <div class="control-group">
+                        <label for="shipping-address-email" class="control-label">Email</label>
+                        <div class="controls">
+                            <input type="email" name="email" id="shipping-address-email" value="{{email}}"
+                                   placeholder="Email address (optional)" aria-label="Email (optional)"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="shipping-address-mobile" class="control-label">Mobile</label>
+                        <div class="controls">
+                            <input type="tel" name="mobile" id="shipping-address-mobile" value="{{mobile}}"
+                                   placeholder="Mobile phone (optional)" aria-label="Mobile (optional)"/>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success" data-loading-text="Saving...">Save</button>
+            </form>
+        </li>
+    </script>
 }
 
 @main("Customer", "customer", scripts){
@@ -28,10 +143,15 @@
                     Change password
                 </a>
             </li>
+            <li>
+                <a href="#tab-address-book" data-toggle="tab">
+                    Address book
+                </a>
+            </li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="tab-profile">
-                <p>Welcome <span data-form-update="customer-firstName">@customer.getFirstName!</span></p>
+                <p>Welcome <span data-form-update="customer-firstName">@customer.getName.getFirstName!</span></p>
             </div>
 
             <div class="tab-pane" id="tab-update-data">
@@ -52,6 +172,20 @@
                     </button>
                     <div class="messages"></div>
                 </form>
+            </div>
+
+            <div class="tab-pane" id="tab-address-book">
+                <form id="form-add-address" action="@routes.Addresses.add" method="post">
+                    @form.setAddress(addAddressForm)
+                    <button type="submit" class="btn btn-success" data-loading-text="Saving...">
+                        Save
+                    </button>
+                    <div class="messages"></div>
+                </form>
+                <button type="button" class="btn btn-link open-add-address"><i class="icon-plus"></i> Add new address</button>
+                <ul id="address-list" data-url="@routes.Addresses.show">
+                    @* Load with template *@
+                </ul>
             </div>
         </div>
     </div>

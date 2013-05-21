@@ -68,6 +68,19 @@ form {
     font-weight: bold;
 }
 
+ul.address {
+    .unstyled;
+
+    span.company:not(:empty), span.city:not(:empty) {
+        &:before {
+            content: "(";
+        }
+        &:after {
+            content: ")";
+        }
+    }
+}
+
 form {
     input[aria-invalid=true], textarea[aria-invalid=true], select[aria-invalid=true] {
         background-color: @light-red;

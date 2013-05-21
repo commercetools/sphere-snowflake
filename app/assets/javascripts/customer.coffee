@@ -1,6 +1,46 @@
 $ ->
+    Handlebars.registerHelper('ifEq', (v1, v2, options) ->
+        if v1 is v2 then options.fn(this) else options.inverse(this)
+    )
+    template = Handlebars.compile $("#address-template").html().trim()
+
     updateCustomer = new Form $('#form-update-customer')
     updatePassword = new Form $('#form-update-password')
+    addAddress = new Form $('#form-add-address')
+
+    addressList = $("#address-list")
+
+    # Load address list on page loaded
+    $.getJSON(addressList.data("url"), (data) ->
+        replaceAddressList data
+    )
+
+    # Replace the whole address list
+    replaceAddressList = (list) ->
+        addressList.empty()
+        addressList.append(template address) for address in list.address
+
+    # Update address list with proper animation
+    updateAddressList = (list) ->
+        removeActiveAddresses()
+        updatedIds = ("address-#{address.addressId}" for address in list.address)
+
+        # Remove addresses that no longer exist
+        removed = $("#address-list .address-item").filter -> return $(this).attr("id") not in updatedIds
+        removed.each -> $(this).fadeOut 500
+
+        # Add new addresses
+        removed.promise().done( ->
+            $(this).remove()
+            for address in list.address when addressList.find("#address-#{address.addressId}").length < 1
+                element = $(template address).hide()
+                addressList.append(element)
+                element.fadeIn 500
+        )
+
+    # Remove all active addresses
+    removeActiveAddresses = ->
+        addressList.find('.address-item').removeClass("active")
 
     # Bind customer update 'save' submit event to 'update customer' functionality
     updateCustomer.form.submit( ->
@@ -48,6 +88,79 @@ $ ->
         false
     )
 
+    # Bind new address 'save' submit event to 'add address' functionality
+    addAddress.form.submit( ->
+        # Remove alert messages
+        addAddress.removeAllMessages()
+
+        # Validate form client side
+        return false unless addAddress.validateRequired()
+
+        # Send new data to server
+        addAddress.startSubmit()
+        url = addAddress.form.attr("action")
+        method = addAddress.form.attr("method")
+        data = addAddress.form.serialize()
+        xhr = addAddress.submit(url, method, data)
+        xhr.done (res) ->
+            addAddress.doneSubmit(res)
+            updateAddressList(res)
+        xhr.fail (res) -> addAddress.failSubmit(res)
+        xhr.always -> addAddress.stopSubmit()
+
+        false
+    )
+
+    # Bind update address 'save' submit event to 'update address' functionality
+    addressList.on('submit', 'form.form-update-address', ->
+        updateAddress = new Form $(this)
+
+        # Remove alert messages
+        updateAddress.removeAllMessages()
+
+        # Validate form client side
+        return false unless updateAddress.validateRequired()
+
+        # Send new data to server
+        updateAddress.startSubmit()
+        url = updateAddress.form.attr("action")
+        method = updateAddress.form.attr("method")
+        data = updateAddress.form.serialize()
+        xhr = updateAddress.submit(url, method, data)
+        xhr.done (res) ->
+            updateAddress.doneSubmit(res)
+            updateAddressList(res)
+        xhr.fail (res) -> updateAddress.failSubmit(res)
+        xhr.always -> updateAddress.stopSubmit()
+
+        false
+    )
+
+    # Bind 'remove address' submit event to 'remove address' functionality
+    addressList.on('submit', 'form.form-remove-address', ->
+        removeAddress = new Form $(this)
+
+        # Remove alert messages
+        removeAddress.removeAllMessages()
+
+        # Validate form client side
+        return false unless removeAddress.validateRequired()
+
+        # Send new data to server
+        removeAddress.startSubmit()
+        url = removeAddress.form.attr("action")
+        method = removeAddress.form.attr("method")
+        data = removeAddress.form.serialize()
+        xhr = removeAddress.submit(url, method, data)
+        xhr.done (res) ->
+            removeAddress.doneSubmit(res)
+            updateAddressList(res)
+        xhr.fail (res) -> removeAddress.failSubmit(res)
+        xhr.always -> removeAddress.stopSubmit()
+
+        false
+    )
+
     # Bind change tab with remove success messages functionality
     $('.tabbable .nav [data-toggle=tab]').click( ->
         updateCustomer.removeSuccessMessages()
@@ -68,4 +181,17 @@ $ ->
             updatePassword.removeAllMessages()
             updatePassword.displayInfoMessage("You have unsaved changes", 700)
             updatePassword.saved = false
+    )
+
+    # Bind click on 'add new address' to show add address form
+    $('.open-add-address').click( ->
+        removeActiveAddresses()
+    )
+
+    # Bind click on 'edit address' to show update address form
+    addressList.on('click', '.open-update-address', ->
+        removeActiveAddresses()
+
+        # Active current address
+        $(this).parent('.address-item').addClass("active")
     )
