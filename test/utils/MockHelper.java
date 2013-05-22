@@ -1,6 +1,7 @@
 package utils;
 
 import io.sphere.client.ProductSort;
+import io.sphere.client.shop.SphereClient;
 import sphere.SearchRequest;
 import io.sphere.client.facets.expressions.FacetExpression;
 import io.sphere.client.filters.expressions.FilterExpression;
@@ -13,7 +14,6 @@ import io.sphere.client.shop.model.*;
 import org.mockito.Mockito;
 import sphere.CurrentCart;
 import sphere.Sphere;
-import sphere.SphereClient;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -28,26 +28,26 @@ public class MockHelper {
     public static int PAGE = 0;
     public static int PAGE_SIZE = 100;
 
-    public static SphereClient mockSphereClient(String categoryName, int categoryLevel, String productName, int numProducts) {
+    public static Sphere mockSphereClient(String categoryName, int categoryLevel, String productName, int numProducts) {
         CategoryTree categories = mockCategories(categoryName, categoryLevel);
         ProductService products = mockProducts(productName, numProducts, PAGE, PAGE_SIZE);
         // Mock sphere client
-        SphereClient sphereClient = mock(SphereClient.class);
+        Sphere sphere = mock(Sphere.class);
         CurrentCart cart = mockCurrentCart();
-        when(sphereClient.currentCart()).thenReturn(cart);
+        when(sphere.currentCart()).thenReturn(cart);
         try {
             Field catField = SphereClient.class.getDeclaredField("categories");
             catField.setAccessible(true);
-            catField.set(sphereClient, categories);
+            catField.set(sphere, categories);
             Field prodField = SphereClient.class.getDeclaredField("products");
             prodField.setAccessible(true);
-            prodField.set(sphereClient, products);
+            prodField.set(sphere, products);
         } catch(Throwable t) {
             // Ignore
         }
         mockStatic(Sphere.class);
-        when(Sphere.getClient()).thenReturn(sphereClient);
-        return sphereClient;
+        when(Sphere.getInstance()).thenReturn(sphere);
+        return sphere;
     }
 
     public static Category mockCategory(String name, int level) {
@@ -102,7 +102,7 @@ public class MockHelper {
         // Mock get variants
         List<Variant> variantList = new ArrayList<Variant>();
         for (int i = 0; i < numVariants + 1; ++i) {
-            variantList.add(mockVariant(String.valueOf(i)));
+            variantList.add(mockVariant(i));
         }
         when(product.getVariants()).thenReturn(new VariantList(variantList));
         // Mock get master variant
@@ -110,7 +110,7 @@ public class MockHelper {
         return product;
     }
 
-    public static Variant mockVariant(String id) {
+    public static Variant mockVariant(int id) {
         Variant variant = mock(Variant.class);
         // Mock get id
         when(variant.getId()).thenReturn(id);
