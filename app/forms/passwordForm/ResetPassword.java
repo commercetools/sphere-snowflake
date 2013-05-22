@@ -39,7 +39,7 @@ public class ResetPassword {
 
     public JsonNode getJsonTokenMatchError() {
         ObjectNode json = Json.newObject();
-        json.put("", "Given token is invalid");
+        json.put("", "Either you followed an invalid link or your request expired");
         return json;
     }
 

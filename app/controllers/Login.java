@@ -81,7 +81,11 @@ public class Login extends ShopController {
             return badRequest(form.errorsAsJson());
         }
         ResetPassword resetPassword = form.get();
-        //sphere().currentCustomer().resetPassword(resetPassword.token, resetPassword.newPassword);
+        Customer customer = sphere().customers.byToken(resetPassword.token).fetch().orNull();
+        if (customer == null) {
+            badRequest(resetPassword.getJsonTokenMatchError());
+        }
+        sphere().customers.resetPassword(customer.getIdAndVersion(), resetPassword.token, resetPassword.newPassword);
         return ok(resetPassword.getJson());
     }
 }
