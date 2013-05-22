@@ -35,8 +35,7 @@ object ApplicationBuild extends Build {
             "org.jsoup"     %   "jsoup"             %   "1.7.1"
         )
         val testDependencies = Seq(
-            "org.powermock" %   "powermock-module-junit4"   %   "1.5"   %   "test",
-            "org.powermock" %   "powermock-api-mockito"     %   "1.5"   %   "test"
+            "org.mockito"   %   "mockito-all"       %       "1.9.5"     %   "test"
         )
     }
 }

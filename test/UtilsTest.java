@@ -3,12 +3,9 @@ import static org.fest.assertions.Assertions.assertThat;
 import io.sphere.client.shop.model.Category;
 import io.sphere.client.shop.model.Product;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
 import utils.MockHelper;
 import utils.ViewHelper;
 
-@RunWith(PowerMockRunner.class)
 public class UtilsTest {
 
 	@Test

@@ -1,51 +1,42 @@
 package utils;
 
-import io.sphere.client.ProductSort;
 import io.sphere.client.shop.SphereClient;
+import sphere.Sphere;
+import sphere.CurrentCart;
 import sphere.SearchRequest;
+import sphere.ProductService;
+import io.sphere.client.ProductSort;
 import io.sphere.client.facets.expressions.FacetExpression;
 import io.sphere.client.filters.expressions.FilterExpression;
 import io.sphere.client.model.Money;
 import io.sphere.client.model.SearchResult;
 import io.sphere.client.model.facets.FacetResult;
 import io.sphere.client.shop.CategoryTree;
-import sphere.ProductService;
 import io.sphere.client.shop.model.*;
 import org.mockito.Mockito;
-import sphere.CurrentCart;
-import sphere.Sphere;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MockHelper {
 
     public static int PAGE = 0;
     public static int PAGE_SIZE = 100;
 
-    public static Sphere mockSphereClient(String categoryName, int categoryLevel, String productName, int numProducts) {
+    public static Sphere mockSphere(String categoryName, int categoryLevel, String productName, int numProducts) {
         CategoryTree categories = mockCategories(categoryName, categoryLevel);
         ProductService products = mockProducts(productName, numProducts, PAGE, PAGE_SIZE);
         // Mock sphere client
         Sphere sphere = mock(Sphere.class);
         CurrentCart cart = mockCurrentCart();
         when(sphere.currentCart()).thenReturn(cart);
-        try {
-            Field catField = SphereClient.class.getDeclaredField("categories");
-            catField.setAccessible(true);
-            catField.set(sphere, categories);
-            Field prodField = SphereClient.class.getDeclaredField("products");
-            prodField.setAccessible(true);
-            prodField.set(sphere, products);
-        } catch(Throwable t) {
-            // Ignore
-        }
-        mockStatic(Sphere.class);
+        // TODO Change when categories and products have corresponding getters
+        //when(sphere.categories).thenReturn(categories);
+        //when(sphere.products).thenReturn(products);
         when(Sphere.getInstance()).thenReturn(sphere);
         return sphere;
     }
