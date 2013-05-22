@@ -37,7 +37,6 @@ public class Categories extends ShopController {
     public static Result select(String categoryPath, int page) {
         String[] categorySlugs = categoryPath.split("/");
         String categorySlug = categorySlugs[categorySlugs.length - 1];
-        System.out.println(sphere().categories);
         Category category = sphere().categories.getBySlug(categorySlug);
         if (category == null) {
             return notFound("Category not found: " + categorySlug);
