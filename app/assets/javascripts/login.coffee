@@ -21,7 +21,6 @@ $ ->
         xhr.done (res) -> logIn.doneSubmit(res)
         xhr.fail (res) -> logIn.stopSubmit() if logIn.failSubmit(res)
 
-        console.debug logIn.allowSubmit
         return logIn.allowSubmit
     )
 

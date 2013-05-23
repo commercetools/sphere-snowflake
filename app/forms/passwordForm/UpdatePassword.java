@@ -5,6 +5,9 @@ import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.libs.Json;
 
+import static utils.ControllerHelper.saveFlash;
+import static utils.ControllerHelper.saveJson;
+
 public class UpdatePassword {
 
     @Constraints.Required(message = "Old password required")
@@ -28,14 +31,22 @@ public class UpdatePassword {
         return null;
     }
 
-    public JsonNode getJson() {
+    public void displaySuccessMessage() {
+        String message = "Password successfully changed!";
+        saveFlash("update-password-success", message);
+
         ObjectNode json = Json.newObject();
-        return json;
+        json.put("success", message);
+        saveJson(json);
     }
 
-    public JsonNode getJsonPasswordMatchError() {
+    public void displayInvalidPasswordError() {
+        String message = "Current password does not match our records";
+        saveFlash("update-password-oldPassword-error", message);
+
         ObjectNode json = Json.newObject();
-        json.put("oldPassword", "Current password does not match our records");
-        return json;
+        json.put("oldPassword", message);
+        saveJson(json);
     }
+
 }

@@ -60,7 +60,7 @@ $ ->
         xhr.fail (res) -> updateCustomer.failSubmit(res)
         xhr.always -> updateCustomer.stopSubmit()
 
-        false
+        return updateCustomer.allowSubmit
     )
 
     # Bind password update 'save' submit event to 'update password' functionality
@@ -85,7 +85,7 @@ $ ->
         xhr.fail (res) -> updatePassword.failSubmit(res)
         xhr.always -> updatePassword.stopSubmit()
 
-        false
+        return updatePassword.allowSubmit
     )
 
     # Bind new address 'save' submit event to 'add address' functionality
@@ -108,7 +108,7 @@ $ ->
         xhr.fail (res) -> addAddress.failSubmit(res)
         xhr.always -> addAddress.stopSubmit()
 
-        false
+        return addAddress.allowSubmit
     )
 
     # Bind update address 'save' submit event to 'update address' functionality
@@ -133,7 +133,7 @@ $ ->
         xhr.fail (res) -> updateAddress.failSubmit(res)
         xhr.always -> updateAddress.stopSubmit()
 
-        false
+        return updateAddress.allowSubmit
     )
 
     # Bind 'remove address' submit event to 'remove address' functionality
@@ -158,7 +158,7 @@ $ ->
         xhr.fail (res) -> removeAddress.failSubmit(res)
         xhr.always -> removeAddress.stopSubmit()
 
-        false
+        return removeAddress.allowSubmit
     )
 
     # Bind change tab with remove success messages functionality

@@ -1,5 +1,6 @@
 package controllers;
 
+import controllers.actions.Ajax;
 import controllers.actions.Authorization;
 import forms.addressForm.SetAddress;
 import forms.customerForm.UpdateCustomer;
@@ -10,41 +11,57 @@ import play.data.Form;
 import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
+import views.html.customers;
 
 import static play.data.Form.form;
+import static utils.ControllerHelper.displayErrors;
 
 @With(Authorization.class)
 public class Customers extends ShopController {
 
     public static Result show() {
         Customer customer = sphere().currentCustomer().fetch();
-        UpdateCustomer updateCustomer = new UpdateCustomer(customer);
-        Form<UpdateCustomer> form = form(UpdateCustomer.class).fill(updateCustomer);
-        return ok(views.html.customers.render(customer, form, form(UpdatePassword.class), form(SetAddress.class)));
+        Form<UpdateCustomer> form = form(UpdateCustomer.class).fill(new UpdateCustomer(customer));
+        return ok(customers.render(customer, form, form(UpdatePassword.class), form(SetAddress.class)));
     }
 
+    @With(Ajax.class)
     public static Result update() {
+        Customer customer = sphere().currentCustomer().fetch();
         Form<UpdateCustomer> form = form(UpdateCustomer.class).bindFromRequest();
+        // Case missing or invalid form data
         if (form.hasErrors()) {
-            return badRequest(form.errorsAsJson());
+            displayErrors("update-customer", form);
+            return badRequest(customers.render(customer, form, form(UpdatePassword.class), form(SetAddress.class)));
         }
+        // Case valid customer update
         UpdateCustomer updateCustomer = form.get();
         CustomerUpdate update = new CustomerUpdate()
                 .setName(updateCustomer.getCustomerName())
                 .setEmail(updateCustomer.email);
-        Customer customer = sphere().currentCustomer().update(update);
-        return ok(updateCustomer.getJson(customer));
+        customer = sphere().currentCustomer().update(update);
+        updateCustomer.displaySuccessMessage(customer);
+        return ok(customers.render(customer, form, form(UpdatePassword.class), form(SetAddress.class)));
     }
 
+    @With(Ajax.class)
     public static Result updatePassword() {
+        Customer customer = sphere().currentCustomer().fetch();
         Form<UpdatePassword> form = form(UpdatePassword.class).bindFromRequest();
+        Form<UpdateCustomer> formCustomer = form(UpdateCustomer.class).fill(new UpdateCustomer(customer));
+        // Case missing or invalid form data
         if (form.hasErrors()) {
-            return badRequest(form.errorsAsJson());
+            displayErrors("update-password", form);
+            return badRequest(customers.render(customer, formCustomer, form, form(SetAddress.class)));
         }
+        // Case invalid old password
         UpdatePassword updatePassword = form.get();
         if (!sphere().currentCustomer().changePassword(updatePassword.oldPassword, updatePassword.newPassword)) {
-            return badRequest(updatePassword.getJsonPasswordMatchError());
+            updatePassword.displayInvalidPasswordError();
+            return badRequest(customers.render(customer, formCustomer, form, form(SetAddress.class)));
         }
-        return ok(updatePassword.getJson());
+        // Case valid password update
+        updatePassword.displaySuccessMessage();
+        return ok(customers.render(customer, formCustomer, form, form(SetAddress.class)));
     }
 }

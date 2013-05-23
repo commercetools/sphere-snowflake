@@ -13,7 +13,7 @@ import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
 import utils.Email;
-import views.html.*;
+import views.html.login;
 import views.html.mail.forgetPassword;
 import views.html.helper.resetPassword;
 
