@@ -5,12 +5,14 @@ class window.Form
         @inputs = @form.find(':input')
         @buttons = @inputs.filter('[type=submit]')
         @messages = @form.find('.messages')
+        @allowSubmit = false
 
     reload: ->
         @labels = @form.find('label, fieldset')
         @inputs = @form.find(':input')
         @buttons = @inputs.filter('[type=submit]')
         @messages = @form.find('.messages')
+        @allowSubmit = false
 
     # Mark fields as valid
     markValid: (fields) ->
@@ -134,19 +136,19 @@ class window.Form
     # Execute some actions on submit success
     doneSubmit: (data) ->
         if @dataType is 'json'
-            return window.location.replace(data.redirectUrl) if data.redirectUrl?
-
             # Update page data
             $.each data, (key, value) ->
                 elem = $("span[data-form-update=#{key}]")
                 elem.text(value)
-
         # Display success message
         @saved = true
-        @displaySuccessMessage("Done!")
+        @displaySuccessMessage(data['success'])
 
     # Execute some actions on submit failure
     failSubmit: (xhr) ->
+        # Not really failing when redirected
+        return false if xhr.status is 303 or @allowSubmit
+
         # When dealing with any other error display default message
         return @displayErrorMessage("Something went wrong...") unless xhr.status is 400
 
@@ -166,8 +168,14 @@ class window.Form
 
     # Submit form data
     submit: (url, method, data) ->
+        url += (if url.split('?')[1] then '&' else '?') + "ajax=true"
         xhr = $.ajax url,
             type: method
             async: @async
             data: data
             dataType: @dataType
+            beforeSend: => return not @allowSubmit
+            statusCode: { 303: =>
+                @allowSubmit = true
+                @form.submit()
+            }

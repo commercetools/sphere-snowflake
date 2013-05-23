@@ -19,11 +19,10 @@ $ ->
         data = logIn.form.serialize()
         xhr = logIn.submit(url, method, data)
         xhr.done (res) -> logIn.doneSubmit(res)
-        xhr.fail (res) ->
-            logIn.failSubmit(res)
-            logIn.stopSubmit()
+        xhr.fail (res) -> logIn.stopSubmit() if logIn.failSubmit(res)
 
-        false
+        console.debug logIn.allowSubmit
+        return logIn.allowSubmit
     )
 
     # Bind 'sign up' submit event to 'sign up' functionality
@@ -44,7 +43,7 @@ $ ->
         xhr.fail (res) -> signUp.failSubmit(res)
         xhr.always -> signUp.stopSubmit()
 
-        false
+        return signUp.allowSubmit
     )
 
     # Bind 'recover password' submit event to 'recover password' functionality
@@ -68,7 +67,7 @@ $ ->
         xhr.fail (res) -> recoverPassword.failSubmit(res)
         xhr.always -> recoverPassword.stopSubmit()
 
-        false
+        return recoverPassword.allowSubmit
     )
 
     # Bind 'recover password' submit event to 'recover password' functionality
@@ -89,10 +88,10 @@ $ ->
             resetPassword.doneSubmit(res)
             # Close form
             setTimeout ( -> $('#reset-password-modal').modal('hide')), 3000
-        xhr.fail (res) -> resetPassword.failSubmit(res)
-        xhr.always -> resetPassword.stopSubmit()
+        xhr.fail (res) ->
+            resetPassword.stopSubmit() if resetPassword.failSubmit(res)
 
-        false
+        return resetPassword.allowSubmit
     )
 
     # Automatically open reset password modal when found
