@@ -1,9 +1,11 @@
 package forms.passwordForm;
 
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.libs.Json;
+
+import static utils.ControllerHelper.saveFlash;
+import static utils.ControllerHelper.saveJson;
 
 public class ResetPassword {
 
@@ -32,15 +34,22 @@ public class ResetPassword {
         return null;
     }
 
-    public JsonNode getJson() {
+    public void displaySuccessMessage() {
+        String message = "Password successfully reset, please try to log in again";
+        saveFlash("success", message);
+
         ObjectNode json = Json.newObject();
-        return json;
+        json.put("success", message);
+        saveJson(json);
     }
 
-    public JsonNode getJsonTokenMatchError() {
+    public void displayInvalidTokenError() {
+        String message = "Either you followed an invalid link or your request expired";
+        saveFlash("error", message);
+
         ObjectNode json = Json.newObject();
-        json.put("", "Either you followed an invalid link or your request expired");
-        return json;
+        json.put("error", message);
+        saveJson(json);
     }
 
 }

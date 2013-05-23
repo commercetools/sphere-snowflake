@@ -1,11 +1,11 @@
 package forms.customerForm;
 
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.libs.Json;
-import play.mvc.Call;
-import play.mvc.Http;
+
+import static utils.ControllerHelper.saveFlash;
+import static utils.ControllerHelper.saveJson;
 
 public class LogIn {
 
@@ -16,22 +16,28 @@ public class LogIn {
     @Constraints.Required(message = "Password required")
     public String password;
 
-
     public LogIn() {
 
     }
 
-    public JsonNode getJson(Call call) {
+    public void displaySuccessMessage(String name) {
+        String message = "Welcome back "+ name +"!";
+        saveFlash("success", message);
+
         ObjectNode json = Json.newObject();
-        json.put("redirectUrl", call.absoluteURL(Http.Context.current().request()));
-        return json;
+        json.put("success", message);
+        saveJson(json);
     }
 
-    public JsonNode getJsonCredentialsMatchError() {
+    public void displayInvalidCredentialsError() {
+        String message = "Invalid credentials";
+        saveFlash("log-in-error", message);
+
         ObjectNode json = Json.newObject();
-        json.put("global", "Invalid credentials");
+        json.put("error", message);
         json.put("email", "");
         json.put("password", "");
-        return json;
+        saveJson(json);
     }
+
 }

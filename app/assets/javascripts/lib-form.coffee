@@ -39,7 +39,7 @@ class window.Form
         invalid = required.filter -> return not $(this).val()
         return true unless invalid.length > 0
 
-        # Mark incorrect fields as invalidx
+        # Mark incorrect fields as invalid
         @markInvalid invalid
 
         # Display error message

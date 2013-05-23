@@ -8,6 +8,9 @@ import play.libs.Json;
 import play.mvc.Call;
 import play.mvc.Http;
 
+import static utils.ControllerHelper.saveFlash;
+import static utils.ControllerHelper.saveJson;
+
 public class SignUp {
 
     @Constraints.Required(message = "First name required")
@@ -32,9 +35,22 @@ public class SignUp {
         return new CustomerName(this.firstName, this.lastName);
     }
 
-    public JsonNode getJson(Call call) {
+    public void displaySuccessMessage() {
+        String message = "We are glad you joined us "+ this.firstName +"!";
+        saveFlash("success", message);
+
         ObjectNode json = Json.newObject();
-        json.put("redirectUrl", call.absoluteURL(Http.Context.current().request()));
-        return json;
+        json.put("success", message);
+        saveJson(json);
     }
+
+    public void displayAlreadyRegisteredError() {
+        String message = "Email already in use";
+        saveFlash("sign-up-email-error", message);
+
+        ObjectNode json = Json.newObject();
+        json.put("email", message);
+        saveJson(json);
+    }
+
 }

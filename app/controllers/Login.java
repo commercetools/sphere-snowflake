@@ -1,45 +1,80 @@
 package controllers;
 
+import controllers.actions.Ajax;
 import forms.customerForm.LogIn;
 import forms.passwordForm.RecoverPassword;
 import forms.passwordForm.ResetPassword;
 import forms.customerForm.SignUp;
+import io.sphere.client.SphereBackendException;
 import io.sphere.client.shop.model.Customer;
 import io.sphere.client.shop.model.CustomerToken;
 import play.data.Form;
 import play.mvc.Result;
+import play.mvc.With;
 import sphere.ShopController;
 import utils.Email;
+import views.html.*;
+import views.html.mail.forgetPassword;
+import views.html.helper.resetPassword;
 
 import static play.data.Form.form;
+import static utils.ControllerHelper.displayErrors;
+import static utils.ControllerHelper.saveFlash;
 
 public class Login extends ShopController {
 
     public static Result show() {
-        return ok(views.html.login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
+        return ok(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
     }
 
+    @With(Ajax.class)
     public static Result signUp() {
         Form<SignUp> form = form(SignUp.class).bindFromRequest();
+        // Case missing or invalid form data
         if (form.hasErrors()) {
-            return badRequest(form.errorsAsJson());
+            displayErrors("sign-up", form);
+            return badRequest(login.render(form(LogIn.class), form, form(RecoverPassword.class), ""));
         }
+        // Case already signed up
         SignUp signUp = form.get();
-        // TODO SDK: Deal with already registered user
-        sphere().signup(signUp.email, signUp.password, signUp.getCustomerName());
-        return ok(signUp.getJson(routes.Customers.show()));
+        if (sphere().login(signUp.email, signUp.password)) {
+            return redirect(routes.Customers.show());
+        }
+        // Case already registered user
+        // TODO SDK: Deal with already registered user nicely
+        try {
+            sphere().signup(signUp.email, signUp.password, signUp.getCustomerName());
+        } catch(SphereBackendException sbe) {
+            signUp.displayAlreadyRegisteredError();
+            return badRequest(login.render(form(LogIn.class), form, form(RecoverPassword.class), ""));
+        }
+        // Case valid sign up
+        signUp.displaySuccessMessage();
+        return redirect(routes.Customers.show());
     }
 
+    @With(Ajax.class)
     public static Result logIn() {
         Form<LogIn> form = form(LogIn.class).bindFromRequest();
-        if (form.hasErrors()) {
-            return badRequest(form.errorsAsJson());
+        // Case already logged in
+        if (sphere().isLoggedIn()) {
+            return redirect(routes.Customers.show());
         }
+        // Case missing or invalid form data
+        if (form.hasErrors()) {
+            displayErrors("log-in", form);
+            return badRequest(login.render(form, form(SignUp.class), form(RecoverPassword.class), ""));
+        }
+        // Case invalid credentials
         LogIn logIn = form.get();
         if (!sphere().login(logIn.email, logIn.password)) {
-            return badRequest(logIn.getJsonCredentialsMatchError());
+            logIn.displayInvalidCredentialsError();
+            return badRequest(login.render(form, form(SignUp.class), form(RecoverPassword.class), ""));
         }
-        return ok(logIn.getJson(routes.Customers.show()));
+        // Case valid log in
+        Customer customer = sphere().currentCustomer().fetch();
+        logIn.displaySuccessMessage(customer.getName().getFirstName());
+        return redirect(routes.Customers.show());
     }
 
     public static Result logOut() {
@@ -47,45 +82,64 @@ public class Login extends ShopController {
         return redirect(session("returnUrl"));
     }
 
+    @With(Ajax.class)
     public static Result recoverPassword() {
         Form<RecoverPassword> form = form(RecoverPassword.class).bindFromRequest();
+        // Case missing or invalid form data
         if (form.hasErrors()) {
-            return badRequest(form.errorsAsJson());
+            displayErrors("recover-password", form);
+            return badRequest(login.render(form(LogIn.class), form(SignUp.class), form, ""));
         }
+        // Case not registered email
         RecoverPassword recoverPassword = form.get();
-        CustomerToken token = sphere().customers.createPasswordResetToken(recoverPassword.email);
-        System.out.println(token.getCustomerId());
-        System.out.println(token.getValue());
+        CustomerToken token;
+        try {
+            token = sphere().customers.createPasswordResetToken(recoverPassword.email);
+        } catch (SphereBackendException sbe) {
+            recoverPassword.displayInvalidEmailError();
+            return badRequest(login.render(form(LogIn.class), form(SignUp.class), form, ""));
+        }
+        // Case valid recover password
         String url = routes.Login.showResetPassword(token.getValue()).absoluteURL(request());
-        String body = views.html.mail.forgetPassword.render(url).body();
-        Email email = new Email(recoverPassword.email, "Password recovery", body);
+        Email email = new Email(recoverPassword.email, "Password recovery", forgetPassword.render(url).body());
+        // TODO Enable send email and change result to OK with login view when email is working
         //email.send();
-        return ok(recoverPassword.getJson(url));
+        recoverPassword.displaySuccessMessage();
+        return redirect(url);
     }
 
     public static Result showResetPassword(String token) {
+        // Case invalid token
         Customer customer = sphere().customers.byToken(token).fetch().orNull();
         if (customer == null) {
-            flash("error", "Either you followed an invalid link or your request expired");
-            badRequest(views.html.login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
+            saveFlash("error", "Either you followed an invalid link or your request expired");
+            badRequest(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
         }
-        ResetPassword resetPassword = new ResetPassword(token);
-        Form<ResetPassword> form = form(ResetPassword.class).fill(resetPassword);
-        String resetPasswordHtml = views.html.helper.resetPassword.render(form).body();
-        return ok(views.html.login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), resetPasswordHtml));
+        // Case success
+        Form<ResetPassword> form = form(ResetPassword.class).fill(new ResetPassword(token));
+        String resetPasswordHtml = resetPassword.render(form).body();
+        return ok(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), resetPasswordHtml));
     }
 
+    @With(Ajax.class)
     public static Result resetPassword() {
         Form<ResetPassword> form = form(ResetPassword.class).bindFromRequest();
+        String resetPasswordHtml = resetPassword.render(form).body();
+        // Case missing or invalid form data
         if (form.hasErrors()) {
-            return badRequest(form.errorsAsJson());
+            displayErrors("reset-password", form);
+            return badRequest(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), resetPasswordHtml));
         }
+        // Case invalid token
         ResetPassword resetPassword = form.get();
         Customer customer = sphere().customers.byToken(resetPassword.token).fetch().orNull();
         if (customer == null) {
-            badRequest(resetPassword.getJsonTokenMatchError());
+            resetPassword.displayInvalidTokenError();
+            return badRequest(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), resetPasswordHtml));
         }
+        // Case valid reset password
         sphere().customers.resetPassword(customer.getIdAndVersion(), resetPassword.token, resetPassword.newPassword);
-        return ok(resetPassword.getJson());
+        resetPassword.displaySuccessMessage();
+        return ok(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
     }
 }
