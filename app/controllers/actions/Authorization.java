@@ -15,9 +15,17 @@ public class Authorization extends Action.Simple {
         // Before
         Http.Context.current.set(ctx);
         if (!Sphere.getInstance().isLoggedIn()) {
+            ctx.flash().put("error", "You need to log in to view this section");
             return Login.show();
         }
+/*        if (!Sphere.getInstance().currentCustomer().fetch().isEmailVerified()) {
+            ctx.flash().put("error", "Your account is not activated");
+            return Login.show();
+        }
+  */
+        // Call
         Result result = delegate.call(ctx);
+
         // After
         return result;
     }

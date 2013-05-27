@@ -1,6 +1,7 @@
 package controllers;
 
 import controllers.actions.Ajax;
+import controllers.actions.Authorization;
 import forms.customerForm.LogIn;
 import forms.passwordForm.RecoverPassword;
 import forms.passwordForm.ResetPassword;
@@ -13,9 +14,9 @@ import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
 import utils.Email;
-import views.html.form.logIn;
 import views.html.login;
 import views.html.mail.forgetPassword;
+import views.html.mail.verifyAccount;
 import views.html.helper.resetPassword;
 
 import static play.data.Form.form;
@@ -26,6 +27,10 @@ public class Login extends ShopController {
 
     public static Result show() {
         return ok(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
+    }
+
+    public static Result showSignUp() {
+        return show();
     }
 
     @With(Ajax.class)
@@ -50,8 +55,23 @@ public class Login extends ShopController {
             return badRequest(login.render(form(LogIn.class), form, form(RecoverPassword.class), ""));
         }
         // Case valid sign up
+        // TODO SDK: Allow email verification
+        //CustomerToken token = sphere().currentCustomer().createEmailVerificationToken(24*60);
+        //String url = routes.Login.verify(token.getValue()).absoluteURL(request());
+        //Email email = new Email(signUp.email, "Activate account", verifyAccount.render(url).body());
+        // TODO Enable send email and change result to OK with login view when email is working
+        //email.send();
         signUp.displaySuccessMessage();
+        //return redirect(url);
         return redirect(routes.Customers.show());
+    }
+
+    public static Result verify(String token) {
+        if (sphere().isLoggedIn()) {
+            sphere().currentCustomer().confirmEmail(token);
+            flash("Great! Your account is now activated");
+        }
+        return redirect(session("returnUrl"));
     }
 
     @With(Ajax.class)

@@ -27,11 +27,12 @@ POST    /checkout/submit/shipping                           controllers.Checkout
 
 # Login
 GET     /user/login                                         controllers.Login.show()
-GET     /user/logout                                        controllers.Login.logOut()
-GET     /user/register                                      controllers.Login.show()
-
 POST    /user/login                                         controllers.Login.logIn()
+GET     /user/logout                                        controllers.Login.logOut()
+
+GET     /user/register                                      controllers.Login.showSignUp()
 POST    /user/register                                      controllers.Login.signUp()
+GET     /user/verify/:token                                 controllers.Login.verify(token: String)
 
 POST    /user/password/recover                              controllers.Login.recoverPassword()
 GET     /user/password/reset/:token                         controllers.Login.showResetPassword(token: String)
