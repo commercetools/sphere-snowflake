@@ -34,9 +34,8 @@ public class Ajax extends Action.Simple {
                 // Manually send temporarily redirection otherwise jQuery may detect it as a non-JSON 200 response
                 result = status(303);
             }
-            ctx.args.remove("json");
         }
-
+        ctx.args.remove("json");
         return result;
     }
 }
