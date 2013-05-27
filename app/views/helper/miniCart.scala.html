@@ -1,5 +1,42 @@
 @(cart: Cart)
 
+<script id="mini-cart-template" type="text/x-handlebars-template">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>DESCRIPTION</th>
+            <th>QTY</th>
+            <th>PRICE</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each item}}
+        <tr class="item-line">
+            <td class="item-description">
+                <div class="item-picture">
+                    <img src="{{image.thumbnail}}" />
+                </div>
+                <div class="clearfix">
+                    <h6><strong>{{productName}}</strong></h6>
+                    <ul class="unstyled">
+                        {{#each attribute}}
+                        <li>{{value}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </td>
+            <td class="item-quantity">{{quantity}}</td>
+            <td class="item-total-price">{{totalPrice}}</td>
+        </tr>
+        {{/each}}
+        </tbody>
+    </table>
+    <div class="subtotal">
+        Order Sub Total
+        <span class="pull-right">{{totalPrice}}</span>
+    </div>
+</script>
+
 <a id="link-cart" href="@routes.Carts.show">
     <div class="btn-mini-cart">
         <i class="icon-shopping-cart"></i>
@@ -11,46 +48,8 @@
     <div class="popover-inner">
         <h3 class="popover-title"></h3>
         <div class="popover-content">
-            <table id="mini-cart-content" class="table">
-                <thead>
-                <tr>
-                    <th>DESCRIPTION</th>
-                    <th>QTY</th>
-                    <th>PRICE</th>
-                </tr>
-                </thead>
-                <tbody>
-                @for(item <- cart.getLineItems) {
-                <tr class="item-line">
-                    <td class="item-description">
-                        <div class="item-picture">
-                            <img src="@item.getVariant.getFeaturedImage.getSize(ImageSize.THUMBNAIL).getUrl" />
-                        </div>
-                        <div class="clearfix">
-                            <h6><strong>@item.getProductName</strong></h6>
-                            <ul class="unstyled">
-                                @if(item.getVariant.hasAttribute("color")) {
-                                <li>@item.getVariant.getString("color")</li>
-                                }
-                                @if(item.getVariant.hasAttribute("size")) {
-                                <li>@item.getVariant.getString("size")</li>
-                                }
-                            </ul>
-                        </div>
-                    </td>
-                    <td class="item-quantity">
-                        @item.getQuantity
-                    </td>
-                    <td class="item-total-price">
-                        @item.getTotalPrice
-                    </td>
-                </tr>
-                }
-                </tbody>
-            </table>
-            <div class="subtotal">
-                Order Sub Total
-                <span class="pull-right">@cart.getTotalPrice</span>
+            <div id="mini-cart-content" data-url="@routes.Carts.get">
+                @* Load with template *@
             </div>
             <div class="bottom">
                 <a href="@routes.Checkouts.show">Proceed to Checkout</a>

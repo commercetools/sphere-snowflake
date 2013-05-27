@@ -8,7 +8,10 @@ import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.libs.Json;
 
-public class AddToCart {
+import static utils.ControllerHelper.saveFlash;
+import static utils.ControllerHelper.saveJson;
+
+public class AddToCart extends ListCart {
 
     @Constraints.Required(message = "Product required")
     public String productId;
@@ -28,21 +31,15 @@ public class AddToCart {
 
     }
 
-    public JsonNode getJson(Cart cart) {
+    public void displaySuccessMessage(Cart cart) {
+        String message = "Item added to cart!";
+        saveFlash("success", message);
+
         ObjectNode json = Json.newObject();
-        json.put("cart-totalPrice", cart.getTotalPrice().toString());
-        for (LineItem item : cart.getLineItems()) {
-            String itemId = "-" + item.getId();
-            json.put(itemId, item.getId());
-            json.put("lineItem-productId" + itemId, item.getProductId());
-            json.put("lineItem-productName" + itemId, item.getProductName());
-            for (Attribute attr : item.getVariant().getAttributes()) {
-                json.put("lineItem-attribute-" + attr.getName() + itemId, attr.getValue().toString());
-            }
-            json.put("lineItem-quantity" + itemId, item.getQuantity());
-            json.put("lineItem-price" + itemId, item.getPrice().getValue().toString());
-            json.put("lineItem-totalPrice" + itemId, item.getTotalPrice().toString());
-        }
-        return json;
+        json.put("success", message);
+        json.putAll(getJson(cart));
+
+        saveJson(json);
     }
+
 }

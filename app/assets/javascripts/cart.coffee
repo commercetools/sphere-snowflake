@@ -1,9 +1,22 @@
 $ ->
-    summaryOrder = '#order-summary'
+    cartContent = $('#cart-content')
+    html = $("#cart-item-template").html()
+    template = Handlebars.compile html.trim() if html?
+
+    # Load address list on page loaded
+    $.getJSON(cartContent.data("url"), (data) ->
+        replaceCart data
+    )
+
+    # Replace the whole cart
+    replaceCart = (cart) ->
+        return unless template?
+        cartContent.empty()
+        cartContent.append(template item) for item in cart.item
 
     # Bind 'add to cart' button in product detail with 'add to cart' functionality
     $('#product-detail #form-add-to-cart').submit( ->
-        addToCart = new Form $(this), 'html'
+        addToCart = new Form $(this)
 
         # Send new data to server
         addToCart.startSubmit()
@@ -12,24 +25,20 @@ $ ->
         data = addToCart.form.serialize()
         xhr = addToCart.submit(url, method, data)
         xhr.done (res) ->
-            addToCart.doneSubmit(res)
-            response = $("<div>").html(res)
-
-            # Update mini cart
-            miniCart.popoverCart.empty().append(response.find('#mini-cart-popover').contents())
-
-            # Open mini cart
+            addToCart.doneSubmit res
+            orderSummary.replace res
+            miniCart.replace res
             miniCart.open('slow')
             miniCart.addCloseDelay(3000, 'slow')
-        xhr.fail (res) -> addToCart.failSubmit(res)
+        xhr.fail (res) -> addToCart.failSubmit res
         xhr.always -> addToCart.stopSubmit()
 
-        false
+        return addToCart.allowSubmit
     )
 
     # Bind 'add to cart' button in product list with 'add to cart' functionality
     $('#product-list').on('submit', 'form.form-add-to-cart', ->
-        addToCart = new Form $(this), 'html'
+        addToCart = new Form $(this)
 
         # Send new data to server
         addToCart.startSubmit()
@@ -38,25 +47,22 @@ $ ->
         data = addToCart.form.serialize()
         xhr = addToCart.submit(url, method, data)
         xhr.done (res) ->
-            addToCart.doneSubmit(res)
-            response = $("<div>").html(res)
-
-            # Update mini cart
-            miniCart.popoverCart.empty().append(response.find('#mini-cart-popover').contents())
-
-            # Open mini cart
+            addToCart.doneSubmit res
+            orderSummary.replace res
+            miniCart.replace res
             miniCart.open('slow')
             miniCart.addCloseDelay(3000, 'slow')
-        xhr.fail (res) -> addToCart.failSubmit(res)
+        xhr.fail (res) -> addToCart.failSubmit res
         xhr.always -> addToCart.stopSubmit()
 
-        false
+        return addToCart.allowSubmit
     )
 
     # Bind 'update item quantity' input with 'update cart' functionality
     updateDelay = {}
-    $("#cart form.form-update-cart input[name=quantity]").change( ->
-        updateCart = new Form $(this).closest('form'), 'html'
+    $("#cart").on("change", "form.form-update-cart input[name=quantity]", ->
+        updateCart = new Form $(this).closest('form')
+        lineItemId = updateCart.inputs.filter('[name=lineItemId]').val()
 
         # Send new data to server
         updateCart.startSubmit()
@@ -64,34 +70,26 @@ $ ->
         method = updateCart.form.attr("method")
         data = updateCart.form.serialize()
 
-        lineItemId = updateCart.inputs.filter('[name=lineItemId]').val()
-
         clearTimeout updateDelay.timeout if lineItemId is updateDelay.item and updateDelay.timeout?
         updateDelay.item = lineItemId
         updateDelay.timeout = setTimeout ( ->
             xhr = updateCart.submit(url, method, data)
             xhr.done (res) ->
-                updateCart.doneSubmit(res)
-                response = $("<div>").html(res)
-
-                # Update item total price
-                $('#item-total-price-'+ lineItemId).text(response.find('#item-total-price-'+ lineItemId).text())
-
-                # Update order summary total price
-                $(summaryOrder).empty().append(response.find(summaryOrder).contents())
-
-                # Update mini cart
-                miniCart.popoverCart.empty().append(response.find('#mini-cart-popover').contents())
-            xhr.fail (res) -> updateCart.failSubmit(res)
+                updateCart.doneSubmit res
+                orderSummary.replace res
+                miniCart.replace res
+                replaceCart res
+            xhr.fail (res) -> updateCart.failSubmit res
             xhr.always -> updateCart.stopSubmit()
         ), 800
 
-        false
+        return updateCart.allowSubmit
     )
 
     # Bind 'remove item' button with 'remove from cart' functionality
-    $('#cart form.form-remove-from-cart').submit( ->
-        removeFromCart = new Form $(this), 'html'
+    $("#cart").on("submit", "form.form-remove-from-cart", ->
+        removeFromCart = new Form $(this)
+        lineItemId = removeFromCart.inputs.filter('[name=lineItemId]').val()
 
         # Send new data to server
         removeFromCart.startSubmit()
@@ -101,24 +99,15 @@ $ ->
 
         xhr = removeFromCart.submit(url, method, data)
         xhr.done (res) ->
-            removeFromCart.doneSubmit(data)
-            response = $("<div>").html(data)
-
+            removeFromCart.doneSubmit res
+            orderSummary.replace res
+            miniCart.replace res
             # Remove line item
-            lineItemId = removeFromCart.inputs.filter('[name=lineItemId]').val()
-            $('#item-line-'+ lineItemId).fadeOut(500, ->
-                $(this).remove()
-            )
-
-            # Update order summary total price
-            $(summaryOrder).empty().append(response.find(summaryOrder).contents())
-
-            # Update mini cart
-            miniCart.popoverCart.empty().append(response.find('#mini-cart-popover').contents())
+            $('#item-line-'+ lineItemId).fadeOut 500, ( -> $(this).remove() )
         xhr.fail (res) ->
-            removeFromCart.failSubmit(res)
+            removeFromCart.failSubmit res
             removeFromCart.stopSubmit()
 
-        false
+        return removeFromCart.allowSubmit
     )
 

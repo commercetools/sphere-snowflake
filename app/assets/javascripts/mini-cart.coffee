@@ -1,6 +1,14 @@
 $ ->
     class @MiniCart
-        constructor: (@buttonCart, @popoverCart) ->
+        constructor: (@buttonCart, @popoverCart, @content) ->
+            html = $("#mini-cart-template").html()
+            @template = Handlebars.compile html.trim() if html?
+
+        # Replace the whole mini cart
+        replace: (cart) ->
+            return unless @template?
+            @content.empty()
+            @content.append(@template cart)
 
         # Fade mini cart in
         open: (speed) ->
@@ -29,7 +37,7 @@ $ ->
         removeCloseDelay: ->
             clearTimeout @closeDelay if @closeDelay?
 
-    window.miniCart = new @MiniCart $('#mini-cart'), $('#mini-cart-popover')
+    window.miniCart = new @MiniCart $('#mini-cart'), $('#mini-cart-popover'), $('#mini-cart-content')
 
     # Bind 'mouse over mini cart' to 'open mini cart' functionality unless showing cart page
     miniCart.buttonCart.hover( ->
@@ -37,3 +45,10 @@ $ ->
     , ->
         miniCart.addCloseDelay(500, '')
     )
+
+    # Load mini cart on page loaded
+    $.getJSON(miniCart.content.data("url"), (data) ->
+        miniCart.replace data
+    )
+
+

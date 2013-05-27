@@ -2,6 +2,54 @@
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/cart.js")"></script>
+
+    <script id="cart-item-template" type="text/x-handlebars-template">
+        <li id="item-line-{{itemId}}" class="item-line">
+            <div class="item-container clearfix">
+                <div class="item-picture">
+                    <img src="{{image.small}}" alt="{{productName}}" />
+                </div>
+                <div class="item-description">
+                    <div class="item-main">
+                        <ul class="item-action">
+                            <li class="item-price">
+                                {{price}}
+                            </li>
+                            <li class="item-quantity">
+                                <fieldset>
+                                    <form class="form-update-cart" action="@routes.Carts.update" method="post">
+                                        <input type="hidden" name="lineItemId" value="{{itemId}}"/>
+                                        <input type="number" name="quantity" min="1" max="10" value="{{quantity}}" class="input-mini" />
+                                    </form>
+                                </fieldset>
+                            </li>
+                            <li class="item-total-price">
+                                <span id="item-total-price-{{itemId}}">{{totalPrice}}</span>
+                            </li>
+                        </ul>
+                        <div class="item-name">
+                            <h5>{{productName}}</h5>
+                        </div>
+                    </div>
+                    <div class="item-detail">
+                        <div class="item-remove">
+                            <form class="form-remove-from-cart" action="@routes.Carts.remove" method="post">
+                                <input type="hidden" name="lineItemId" value="{{itemId}}"/>
+                                <button type="submit" name="remove" data-loading-text="Removing..." class="btn btn-link">
+                                    Remove
+                                </button>
+                            </form>
+                        </div>
+                        <ul class="unstyled">
+                            {{#each attribute}}
+                            <li><strong>{{name}}:</strong> {{value}}</li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </script>
 }
 
 @main("Cart", "cart", scripts){
@@ -18,54 +66,8 @@
             </div>
 
             <div class="step-body">
-                <ul class="cart-content unstyled">
-                    @for(item <- cart.getLineItems) {
-                    <li id="item-line-@item.getId" class="item-line">
-                        <div class="item-container clearfix">
-                            <div class="item-picture">
-                                <img src="@item.getVariant.getFeaturedImage.getSize(ImageSize.SMALL).getUrl" alt="@item.getProductName" />
-                            </div>
-                            <div class="item-description">
-                                <div class="item-main">
-                                    <ul class="item-action">
-                                        <li class="item-price">
-                                            @item.getPrice.getValue
-                                        </li>
-                                        <li class="item-quantity">
-                                            <fieldset>
-                                                <form class="form-update-cart" action="@routes.Carts.update" method="post">
-                                                    <input type="hidden" name="lineItemId" value="@item.getId"/>
-                                                    <input type="number" name="quantity" min="1" max="10" value="@item.getQuantity" class="input-mini" />
-                                                </form>
-                                            </fieldset>
-                                        </li>
-                                        <li class="item-total-price">
-                                            <span id="item-total-price-@item.getId">@item.getTotalPrice</span>
-                                        </li>
-                                    </ul>
-                                    <div class="item-name">
-                                        <h5>@item.getProductName</h5>
-                                    </div>
-                                </div>
-                                <div class="item-detail">
-                                    <div class="item-remove">
-                                        <form class="form-remove-from-cart" action="@routes.Carts.remove" method="post">
-                                            <input type="hidden" name="lineItemId" value="@item.getId"/>
-                                            <button type="submit" name="remove" data-loading-text="Removing..." class="btn btn-link">
-                                                Remove
-                                            </button>
-                                        </form>
-                                    </div>
-                                    <ul class="unstyled">
-                                    @for(attribute <- item.getVariant.getAttributes) {
-                                        <li><strong>@capitalizeInitials(attribute.getName):</strong> @attribute.getString</li>
-                                    }
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    }
+                <ul id="cart-content" data-url="@routes.Carts.get" class="cart-content unstyled">
+                    @* Load with template *@
                 </ul>
             </div>
         </div>

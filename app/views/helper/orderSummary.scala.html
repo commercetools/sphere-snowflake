@@ -1,31 +1,34 @@
 @(cart: Cart)
 
-<div id="order-summary" class="order-summary">
-    <ul class="unstyled">
-        @if(isCustomerAddressSet(cart)) {
+<script id="order-summary-template" type="text/x-handlebars-template">
+    <ul>
+        {{#if totalNetPrice}}
         <li>
             Item total
-            <span>@cart.getTaxedPrice.getTotalNet</span>
+            <span>{{totalNetPrice}}</span>
         </li>
+        {{/if}}
+        {{#if shippingPrice}}
         <li>
             Shipping
-            <span>@getShippingCost</span>
+            <span>{{shippingPrice}}</span>
         </li>
+        {{/if}}
+        {{#if taxPortion}}
         <li>
-            @for(tax <- cart.getTaxedPrice.getTaxPortions) {
-            Tax @getPercentage(tax.getRate) %
-            <span>@tax.getAmount</span>
-            }
+            {{#each taxPortion}}
+            Tax {{rate}} %
+            <span>{{amount}}</span>
+            {{/each}}
         </li>
+        {{/if}}
         <li class="total">
             Total
-            <span>@cart.getTaxedPrice.getTotalGross</span>
+            <span>{{totalPrice}}</span>
         </li>
-        } else {
-        <li class="total">
-            Total
-            <span>@cart.getTotalPrice</span>
-        </li>
-        }
     </ul>
+</script>
+
+<div data-url="@routes.Carts.get" class="order-summary">
+    @* Load with template *@
 </div>
