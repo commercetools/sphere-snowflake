@@ -2,7 +2,8 @@ $ ->
     Handlebars.registerHelper('ifEq', (v1, v2, options) ->
         if v1 is v2 then options.fn(this) else options.inverse(this)
     )
-    template = Handlebars.compile $("#address-template").html().trim()
+    html = $("#address-template").html()
+    template = Handlebars.compile html.trim() if html?
 
     updateCustomer = new Form $('#form-update-customer')
     updatePassword = new Form $('#form-update-password')
@@ -17,11 +18,13 @@ $ ->
 
     # Replace the whole address list
     replaceAddressList = (list) ->
+        return unless template?
         addressList.empty()
         addressList.append(template address) for address in list.address
 
     # Update address list with proper animation
     updateAddressList = (list) ->
+        return unless template?
         removeActiveAddresses()
         updatedIds = ("address-#{address.addressId}" for address in list.address)
 

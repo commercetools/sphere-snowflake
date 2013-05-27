@@ -3,7 +3,14 @@ package forms.addressForm;
 import com.neovisionaries.i18n.CountryCode;
 import io.sphere.client.shop.model.Address;
 import io.sphere.client.shop.model.Customer;
+import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
+import play.libs.Json;
+
+import java.util.List;
+
+import static utils.ControllerHelper.saveFlash;
+import static utils.ControllerHelper.saveJson;
 
 public class UpdateAddress extends ListAddress {
 
@@ -87,5 +94,16 @@ public class UpdateAddress extends ListAddress {
 
     public CountryCode getCountryCode() {
         return CountryCode.getByCode(this.country);
+    }
+
+    public void displaySuccessMessage(List<Address> addresses) {
+        String message = "Address updated!";
+        saveFlash("success", message);
+
+        ObjectNode json = Json.newObject();
+        json.put("success", message);
+        json.putAll(getJson(addresses));
+
+        saveJson(json);
     }
 }
