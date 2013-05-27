@@ -13,6 +13,7 @@ import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
 import utils.Email;
+import views.html.form.logIn;
 import views.html.login;
 import views.html.mail.forgetPassword;
 import views.html.helper.resetPassword;
@@ -56,17 +57,19 @@ public class Login extends ShopController {
     @With(Ajax.class)
     public static Result logIn() {
         Form<LogIn> form = form(LogIn.class).bindFromRequest();
-        // Case already logged in
-        if (sphere().isLoggedIn()) {
-            return redirect(routes.Customers.show());
-        }
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("log-in", form);
             return badRequest(login.render(form, form(SignUp.class), form(RecoverPassword.class), ""));
         }
-        // Case invalid credentials
+        // Case already logged in
         LogIn logIn = form.get();
+        if (sphere().isLoggedIn()) {
+            Customer customer = sphere().currentCustomer().fetch();
+            logIn.displaySuccessMessage(customer.getName().getFirstName());
+            return redirect(routes.Customers.show());
+        }
+        // Case invalid credentials
         if (!sphere().login(logIn.email, logIn.password)) {
             logIn.displayInvalidCredentialsError();
             return badRequest(login.render(form, form(SignUp.class), form(RecoverPassword.class), ""));

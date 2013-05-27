@@ -15,6 +15,8 @@ import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
 import sphere.SearchRequest;
+import views.html.categories;
+import views.html.home;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,7 @@ public class Categories extends ShopController {
         searchRequest = sortBy(searchRequest);
         searchRequest = paging(searchRequest, page);
         SearchResult<Product> searchResult = searchRequest.fetch();
-        return ok(views.html.home.render(searchResult));
+        return ok(home.render(searchResult));
     }
 
     @With(SaveContext.class)
@@ -50,7 +52,7 @@ public class Categories extends ShopController {
         if (searchResult.getCount() < 1) {
             flash("info", "No products found");
         }
-        return ok(views.html.categories.render(searchResult, category));
+        return ok(categories.render(searchResult, category));
     }
 
     public static Result listProducts(String categorySlug, int page) {
