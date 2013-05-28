@@ -39,7 +39,7 @@ public class Carts extends ShopController {
         }
         // Case invalid product
         AddToCart addToCart = form.get();
-        Product product = sphere().products.byId(addToCart.productId).fetch().orNull();
+        Product product = sphere().products().byId(addToCart.productId).fetch().orNull();
         if (product == null) {
             return notFound("Product not found");
         }

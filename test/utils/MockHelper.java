@@ -1,6 +1,5 @@
 package utils;
 
-import io.sphere.client.shop.SphereClient;
 import sphere.Sphere;
 import sphere.CurrentCart;
 import sphere.SearchRequest;
@@ -15,7 +14,6 @@ import io.sphere.client.shop.CategoryTree;
 import io.sphere.client.shop.model.*;
 import org.mockito.Mockito;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -35,8 +33,8 @@ public class MockHelper {
         CurrentCart cart = mockCurrentCart();
         when(sphere.currentCart()).thenReturn(cart);
         // TODO Change when categories and products have corresponding getters
-        //when(sphere.categories).thenReturn(categories);
-        //when(sphere.products).thenReturn(products);
+        when(sphere.categories()).thenReturn(categories);
+        when(sphere.products()).thenReturn(products);
         when(Sphere.getInstance()).thenReturn(sphere);
         return sphere;
     }

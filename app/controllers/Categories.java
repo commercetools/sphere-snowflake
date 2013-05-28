@@ -27,7 +27,7 @@ public class Categories extends ShopController {
 
     @With(SaveContext.class)
     public static Result home(int page) {
-        SearchRequest<Product> searchRequest = sphere().products.all();
+        SearchRequest<Product> searchRequest = sphere().products().all();
         searchRequest = filterBy(searchRequest);
         searchRequest = sortBy(searchRequest);
         searchRequest = paging(searchRequest, page);
@@ -39,12 +39,12 @@ public class Categories extends ShopController {
     public static Result select(String categoryPath, int page) {
         String[] categorySlugs = categoryPath.split("/");
         String categorySlug = categorySlugs[categorySlugs.length - 1];
-        Category category = sphere().categories.getBySlug(categorySlug);
+        Category category = sphere().categories().getBySlug(categorySlug);
         if (category == null) {
             return notFound("Category not found: " + categorySlug);
         }
         FilterExpression categoryFilter = new FilterExpressions.CategoriesOrSubcategories(category);
-        SearchRequest <Product> searchRequest = sphere().products.filter(categoryFilter);
+        SearchRequest <Product> searchRequest = sphere().products().filter(categoryFilter);
         searchRequest = filterBy(searchRequest);
         searchRequest = sortBy(searchRequest);
         searchRequest = paging(searchRequest, page);
@@ -59,14 +59,14 @@ public class Categories extends ShopController {
         Category category = null;
         SearchRequest<Product> searchRequest;
         if (categorySlug.isEmpty()) {
-            searchRequest = sphere().products.all();
+            searchRequest = sphere().products().all();
         } else {
-            category = sphere().categories.getBySlug(categorySlug);
+            category = sphere().categories().getBySlug(categorySlug);
             if (category == null) {
                 return notFound("Category not found: " + categorySlug);
             }
             FilterExpression categoryFilter = new FilterExpressions.CategoriesOrSubcategories(category);
-            searchRequest = sphere().products.filter(categoryFilter);
+            searchRequest = sphere().products().filter(categoryFilter);
         }
         searchRequest = filterBy(searchRequest);
         searchRequest = sortBy(searchRequest);

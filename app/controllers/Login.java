@@ -6,7 +6,7 @@ import forms.customerForm.LogIn;
 import forms.passwordForm.RecoverPassword;
 import forms.passwordForm.ResetPassword;
 import forms.customerForm.SignUp;
-import io.sphere.client.SphereBackendException;
+import io.sphere.client.exceptions.InvalidPasswordException;
 import io.sphere.client.shop.model.Customer;
 import io.sphere.client.shop.model.CustomerToken;
 import play.data.Form;
@@ -48,12 +48,12 @@ public class Login extends ShopController {
         }
         // Case already registered user
         // TODO SDK: Deal with already registered user nicely
-        try {
+//        try {
             sphere().signup(signUp.email, signUp.password, signUp.getCustomerName());
-        } catch(SphereBackendException sbe) {
-            signUp.displayAlreadyRegisteredError();
-            return badRequest(login.render(form(LogIn.class), form, form(RecoverPassword.class), ""));
-        }
+  //      } catch(SphereBackendException sbe) {
+    //        signUp.displayAlreadyRegisteredError();
+      //      return badRequest(login.render(form(LogIn.class), form, form(RecoverPassword.class), ""));
+        //}
         // Case valid sign up
         // TODO SDK: Allow email verification
         //CustomerToken token = sphere().currentCustomer().createEmailVerificationToken(24*60);
@@ -117,8 +117,8 @@ public class Login extends ShopController {
         RecoverPassword recoverPassword = form.get();
         CustomerToken token;
         try {
-            token = sphere().customers.createPasswordResetToken(recoverPassword.email);
-        } catch (SphereBackendException sbe) {
+            token = sphere().customers().createPasswordResetToken(recoverPassword.email);
+        } catch (InvalidPasswordException e) {
             recoverPassword.displayInvalidEmailError();
             return badRequest(login.render(form(LogIn.class), form(SignUp.class), form, ""));
         }
@@ -133,7 +133,7 @@ public class Login extends ShopController {
 
     public static Result showResetPassword(String token) {
         // Case invalid token
-        Customer customer = sphere().customers.byToken(token).fetch().orNull();
+        Customer customer = sphere().customers().byToken(token).fetch().orNull();
         if (customer == null) {
             saveFlash("error", "Either you followed an invalid link or your request expired");
             badRequest(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
@@ -155,13 +155,13 @@ public class Login extends ShopController {
         }
         // Case invalid token
         ResetPassword resetPassword = form.get();
-        Customer customer = sphere().customers.byToken(resetPassword.token).fetch().orNull();
+        Customer customer = sphere().customers().byToken(resetPassword.token).fetch().orNull();
         if (customer == null) {
             resetPassword.displayInvalidTokenError();
             return badRequest(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), resetPasswordHtml));
         }
         // Case valid reset password
-        sphere().customers.resetPassword(customer.getIdAndVersion(), resetPassword.token, resetPassword.newPassword);
+        sphere().customers().resetPassword(customer.getIdAndVersion(), resetPassword.token, resetPassword.newPassword);
         resetPassword.displaySuccessMessage();
         return ok(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
     }

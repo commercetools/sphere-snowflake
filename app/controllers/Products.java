@@ -16,7 +16,7 @@ public class Products extends ShopController {
 
     public static Result select(String productSlug, int variantId) {
         // Case invalid product
-        Product product = sphere().products.bySlug(productSlug).fetch().orNull();
+        Product product = sphere().products().bySlug(productSlug).fetch().orNull();
         if (product == null) {
             return notFound("Product not found: " + productSlug);
         }

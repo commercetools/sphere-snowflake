@@ -39,7 +39,7 @@ public class ViewHelper {
 	 * Returns the list of root categories
 	 */
 	public static List<Category> getRootCategories() {
-        return Sphere.getInstance().categories.getRoots();
+        return Sphere.getInstance().categories().getRoots();
 	}
 
     public static String getCategoryPath(Category category) {

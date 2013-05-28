@@ -5,6 +5,7 @@ import controllers.actions.Authorization;
 import forms.addressForm.SetAddress;
 import forms.customerForm.UpdateCustomer;
 import forms.passwordForm.UpdatePassword;
+import io.sphere.client.exceptions.InvalidPasswordException;
 import io.sphere.client.shop.model.Customer;
 import io.sphere.client.shop.model.CustomerUpdate;
 import play.data.Form;
@@ -56,7 +57,9 @@ public class Customers extends ShopController {
         }
         // Case invalid old password
         UpdatePassword updatePassword = form.get();
-        if (!sphere().currentCustomer().changePassword(updatePassword.oldPassword, updatePassword.newPassword)) {
+        try {
+            sphere().currentCustomer().changePassword(updatePassword.oldPassword, updatePassword.newPassword);
+        } catch (InvalidPasswordException e) {
             updatePassword.displayInvalidPasswordError();
             return badRequest(customers.render(customer, formCustomer, form, form(SetAddress.class)));
         }
