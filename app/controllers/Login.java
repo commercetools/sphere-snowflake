@@ -40,7 +40,7 @@ public class Login extends ShopController {
 
     @With(Ajax.class)
     public static Result signUp() {
-        Form<SignUp> form = form(SignUp.class).bindFromRequest();
+        Form<SignUp> form = signUpForm.bindFromRequest();
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("sign-up", form);
@@ -80,7 +80,7 @@ public class Login extends ShopController {
 
     @With(Ajax.class)
     public static Result logIn() {
-        Form<LogIn> form = form(LogIn.class).bindFromRequest();
+        Form<LogIn> form = logInForm.bindFromRequest();
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("log-in", form);
@@ -111,7 +111,7 @@ public class Login extends ShopController {
 
     @With(Ajax.class)
     public static Result recoverPassword() {
-        Form<RecoverPassword> form = form(RecoverPassword.class).bindFromRequest();
+        Form<RecoverPassword> form = recoverPasswordForm.bindFromRequest();
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("recover-password", form);
@@ -149,7 +149,7 @@ public class Login extends ShopController {
 
     @With(Ajax.class)
     public static Result resetPassword() {
-        Form<ResetPassword> form = form(ResetPassword.class).bindFromRequest();
+        Form<ResetPassword> form = resetPasswordForm.bindFromRequest();
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("reset-password", form);

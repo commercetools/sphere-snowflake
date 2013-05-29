@@ -20,20 +20,25 @@ import static utils.ControllerHelper.displayErrors;
 @With(Authorization.class)
 public class Customers extends ShopController {
 
+    final static Form<UpdateCustomer> updateCustomerForm = form(UpdateCustomer.class);
+    final static Form<UpdatePassword> updatePasswordForm = form(UpdatePassword.class);
+    final static Form<SetAddress> setAddressForm = form(SetAddress.class);
+
+
     public static Result show() {
         Customer customer = sphere().currentCustomer().fetch();
-        Form<UpdateCustomer> form = form(UpdateCustomer.class).fill(new UpdateCustomer(customer));
-        return ok(customers.render(customer, form, form(UpdatePassword.class), form(SetAddress.class)));
+        Form<UpdateCustomer> formCustomer = updateCustomerForm.fill(new UpdateCustomer(customer));
+        return ok(customers.render(customer, formCustomer, updatePasswordForm, setAddressForm));
     }
 
     @With(Ajax.class)
     public static Result update() {
         Customer customer = sphere().currentCustomer().fetch();
-        Form<UpdateCustomer> form = form(UpdateCustomer.class).bindFromRequest();
+        Form<UpdateCustomer> form = updateCustomerForm.bindFromRequest();
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("update-customer", form);
-            return badRequest(customers.render(customer, form, form(UpdatePassword.class), form(SetAddress.class)));
+            return badRequest(customers.render(customer, form, updatePasswordForm, setAddressForm));
         }
         // Case valid customer update
         UpdateCustomer updateCustomer = form.get();
@@ -42,18 +47,18 @@ public class Customers extends ShopController {
                 .setEmail(updateCustomer.email);
         customer = sphere().currentCustomer().update(update);
         updateCustomer.displaySuccessMessage(customer);
-        return ok(customers.render(customer, form, form(UpdatePassword.class), form(SetAddress.class)));
+        return ok(customers.render(customer, form, updatePasswordForm, setAddressForm));
     }
 
     @With(Ajax.class)
     public static Result updatePassword() {
         Customer customer = sphere().currentCustomer().fetch();
-        Form<UpdatePassword> form = form(UpdatePassword.class).bindFromRequest();
-        Form<UpdateCustomer> formCustomer = form(UpdateCustomer.class).fill(new UpdateCustomer(customer));
+        Form<UpdatePassword> form = updatePasswordForm.bindFromRequest();
+        Form<UpdateCustomer> formCustomer = updateCustomerForm.fill(new UpdateCustomer(customer));
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("update-password", form);
-            return badRequest(customers.render(customer, formCustomer, form, form(SetAddress.class)));
+            return badRequest(customers.render(customer, formCustomer, form, setAddressForm));
         }
         // Case invalid old password
         UpdatePassword updatePassword = form.get();
@@ -61,10 +66,10 @@ public class Customers extends ShopController {
             sphere().currentCustomer().changePassword(updatePassword.oldPassword, updatePassword.newPassword);
         } catch (InvalidPasswordException e) {
             updatePassword.displayInvalidPasswordError();
-            return badRequest(customers.render(customer, formCustomer, form, form(SetAddress.class)));
+            return badRequest(customers.render(customer, formCustomer, form, setAddressForm));
         }
         // Case valid password update
         updatePassword.displaySuccessMessage();
-        return ok(customers.render(customer, formCustomer, form, form(SetAddress.class)));
+        return ok(customers.render(customer, formCustomer, form, setAddressForm));
     }
 }

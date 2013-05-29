@@ -2,6 +2,7 @@ package controllers;
 
 import controllers.actions.Ajax;
 import forms.cartForm.ListCart;
+import forms.customerForm.UpdateCustomer;
 import io.sphere.client.shop.model.*;
 import forms.cartForm.AddToCart;
 import forms.cartForm.RemoveFromCart;
@@ -19,6 +20,11 @@ import static utils.ControllerHelper.getDefaultCategory;
 
 public class Carts extends ShopController {
 
+    final static Form<AddToCart> addToCartForm = form(AddToCart.class);
+    final static Form<UpdateCart> updateCartForm = form(UpdateCart.class);
+    final static Form<RemoveFromCart> removeFromCartForm = form(RemoveFromCart.class);
+
+
     public static Result show() {
         Cart cart = sphere().currentCart().fetch();
         return ok(carts.render(cart));
@@ -31,7 +37,7 @@ public class Carts extends ShopController {
 
     @With(Ajax.class)
     public static Result add() {
-        Form<AddToCart> form = form(AddToCart.class).bindFromRequest();
+        Form<AddToCart> form = addToCartForm.bindFromRequest();
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("add-to-cart", form);
@@ -57,7 +63,7 @@ public class Carts extends ShopController {
 
     @With(Ajax.class)
     public static Result update() {
-        Form<UpdateCart> form = form(UpdateCart.class).bindFromRequest();
+        Form<UpdateCart> form = updateCartForm.bindFromRequest();
         Cart cart = sphere().currentCart().fetch();
         // Case missing or invalid form data
         if (form.hasErrors()) {
@@ -75,7 +81,7 @@ public class Carts extends ShopController {
 
     @With(Ajax.class)
     public static Result remove() {
-        Form<RemoveFromCart> form = form(RemoveFromCart.class).bindFromRequest();
+        Form<RemoveFromCart> form = removeFromCartForm.bindFromRequest();
         Cart cart = sphere().currentCart().fetch();
         // Case missing or invalid form data
         if (form.hasErrors()) {
