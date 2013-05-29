@@ -1,11 +1,11 @@
 package controllers;
 
 import controllers.actions.Ajax;
-import controllers.actions.Authorization;
 import forms.customerForm.LogIn;
 import forms.passwordForm.RecoverPassword;
 import forms.passwordForm.ResetPassword;
 import forms.customerForm.SignUp;
+import io.sphere.client.exceptions.EmailAlreadyInUseException;
 import io.sphere.client.exceptions.InvalidPasswordException;
 import io.sphere.client.shop.model.Customer;
 import io.sphere.client.shop.model.CustomerToken;
@@ -17,7 +17,6 @@ import utils.Email;
 import views.html.login;
 import views.html.mail.forgetPassword;
 import views.html.mail.verifyAccount;
-import views.html.helper.resetPassword;
 
 import static play.data.Form.form;
 import static utils.ControllerHelper.displayErrors;
@@ -25,8 +24,14 @@ import static utils.ControllerHelper.saveFlash;
 
 public class Login extends ShopController {
 
+    final static Form<LogIn> logInForm = form(LogIn.class);
+    final static Form<SignUp> signUpForm = form(SignUp.class);
+    final static Form<RecoverPassword> recoverPasswordForm = form(RecoverPassword.class);
+    final static Form<ResetPassword> resetPasswordForm = form(ResetPassword.class);
+
+
     public static Result show() {
-        return ok(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
+        return ok(login.render(false, logInForm, signUpForm, recoverPasswordForm, resetPasswordForm));
     }
 
     public static Result showSignUp() {
@@ -39,21 +44,20 @@ public class Login extends ShopController {
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("sign-up", form);
-            return badRequest(login.render(form(LogIn.class), form, form(RecoverPassword.class), ""));
+            return badRequest(login.render(false, logInForm, form, recoverPasswordForm, resetPasswordForm));
         }
         // Case already signed up
         SignUp signUp = form.get();
         if (sphere().login(signUp.email, signUp.password)) {
             return redirect(routes.Customers.show());
         }
-        // Case already registered user
-        // TODO SDK: Deal with already registered user nicely
-//        try {
+        // Case already registered email
+        try {
             sphere().signup(signUp.email, signUp.password, signUp.getCustomerName());
-  //      } catch(SphereBackendException sbe) {
-    //        signUp.displayAlreadyRegisteredError();
-      //      return badRequest(login.render(form(LogIn.class), form, form(RecoverPassword.class), ""));
-        //}
+        } catch (EmailAlreadyInUseException e) {
+            signUp.displayAlreadyRegisteredError();
+            return badRequest(login.render(false, logInForm, form, recoverPasswordForm, resetPasswordForm));
+        }
         // Case valid sign up
         // TODO SDK: Allow email verification
         //CustomerToken token = sphere().currentCustomer().createEmailVerificationToken(24*60);
@@ -80,7 +84,7 @@ public class Login extends ShopController {
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("log-in", form);
-            return badRequest(login.render(form, form(SignUp.class), form(RecoverPassword.class), ""));
+            return badRequest(login.render(false, form, signUpForm, recoverPasswordForm, resetPasswordForm));
         }
         // Case already logged in
         LogIn logIn = form.get();
@@ -92,7 +96,7 @@ public class Login extends ShopController {
         // Case invalid credentials
         if (!sphere().login(logIn.email, logIn.password)) {
             logIn.displayInvalidCredentialsError();
-            return badRequest(login.render(form, form(SignUp.class), form(RecoverPassword.class), ""));
+            return badRequest(login.render(false, form, signUpForm, recoverPasswordForm, resetPasswordForm));
         }
         // Case valid log in
         Customer customer = sphere().currentCustomer().fetch();
@@ -111,7 +115,7 @@ public class Login extends ShopController {
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("recover-password", form);
-            return badRequest(login.render(form(LogIn.class), form(SignUp.class), form, ""));
+            return badRequest(login.render(false, logInForm, signUpForm, form, resetPasswordForm));
         }
         // Case not registered email
         RecoverPassword recoverPassword = form.get();
@@ -120,7 +124,7 @@ public class Login extends ShopController {
             token = sphere().customers().createPasswordResetToken(recoverPassword.email);
         } catch (InvalidPasswordException e) {
             recoverPassword.displayInvalidEmailError();
-            return badRequest(login.render(form(LogIn.class), form(SignUp.class), form, ""));
+            return badRequest(login.render(false, logInForm, signUpForm, form, resetPasswordForm));
         }
         // Case valid recover password
         String url = routes.Login.showResetPassword(token.getValue()).absoluteURL(request());
@@ -136,33 +140,31 @@ public class Login extends ShopController {
         Customer customer = sphere().customers().byToken(token).fetch().orNull();
         if (customer == null) {
             saveFlash("error", "Either you followed an invalid link or your request expired");
-            badRequest(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
+            badRequest(login.render(false, logInForm, signUpForm, recoverPasswordForm, resetPasswordForm));
         }
         // Case success
-        Form<ResetPassword> form = form(ResetPassword.class).fill(new ResetPassword(token));
-        String resetPasswordHtml = resetPassword.render(form).body();
-        return ok(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), resetPasswordHtml));
+        Form<ResetPassword> form = resetPasswordForm.fill(new ResetPassword(token));
+        return ok(login.render(true, logInForm, signUpForm, recoverPasswordForm, form));
     }
 
     @With(Ajax.class)
     public static Result resetPassword() {
         Form<ResetPassword> form = form(ResetPassword.class).bindFromRequest();
-        String resetPasswordHtml = resetPassword.render(form).body();
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("reset-password", form);
-            return badRequest(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), resetPasswordHtml));
+            return badRequest(login.render(true, logInForm, signUpForm, recoverPasswordForm, form));
         }
         // Case invalid token
         ResetPassword resetPassword = form.get();
         Customer customer = sphere().customers().byToken(resetPassword.token).fetch().orNull();
         if (customer == null) {
             resetPassword.displayInvalidTokenError();
-            return badRequest(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), resetPasswordHtml));
+            return badRequest(login.render(true, logInForm, signUpForm, recoverPasswordForm, form));
         }
         // Case valid reset password
         sphere().customers().resetPassword(customer.getIdAndVersion(), resetPassword.token, resetPassword.newPassword);
         resetPassword.displaySuccessMessage();
-        return ok(login.render(form(LogIn.class), form(SignUp.class), form(RecoverPassword.class), ""));
+        return ok(login.render(false, logInForm, signUpForm, recoverPasswordForm, resetPasswordForm));
     }
 }

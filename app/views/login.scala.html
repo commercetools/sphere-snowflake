@@ -1,4 +1,4 @@
-@(logInForm: Form[customerForm.LogIn], signUpForm: Form[customerForm.SignUp], recoverPasswordForm: Form[passwordForm.RecoverPassword], resetPasswordHtml: String = "")
+@(isResetPassword: Boolean, logInForm: Form[customerForm.LogIn], signUpForm: Form[customerForm.SignUp], recoverPasswordForm: Form[passwordForm.RecoverPassword], resetPasswordForm: Form[passwordForm.ResetPassword])
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/login.js")"></script>
@@ -57,7 +57,24 @@
         </form>
     </div>
 
-    @Html(resetPasswordHtml)
+    @if(isResetPassword){
+    <div id="reset-password-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="reset-password-label" aria-hidden="true">
+        <form id="form-reset-password" action="@routes.Login.resetPassword" method="post">
+            <div class="modal-header">
+                <h3 id="reset-password-label">Reset password</h3>
+            </div>
+            <div class="modal-body">
+                @form.resetPassword(resetPasswordForm)
+                <div class="messages"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success" data-loading-text="Resetting password...">
+                    Reset password
+                </button>
+            </div>
+        </form>
+    </div>
+    }
 
 </div>
 }{
