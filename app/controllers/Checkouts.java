@@ -12,35 +12,44 @@ import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
 import utils.Payment;
+import views.html.checkouts;
 
 import java.util.List;
 
 import static play.data.Form.form;
+import static utils.ControllerHelper.displayErrors;
 
 public class Checkouts extends ShopController {
+
+    final static Form<SetAddress> setAddressForm = form(SetAddress.class);
+    final static Form<PaymentNotification> paymentNotificationForm = form(PaymentNotification.class);
 
     public static Result show() {
         Cart cart = sphere().currentCart().fetch();
         String checkoutId = sphere().currentCart().createCheckoutSnapshotId();
-        SetAddress draftAddress = new SetAddress(cart.getShippingAddress());
-        Form<SetAddress> addressForm = form(SetAddress.class).fill(draftAddress);
         String submitUrl = Play.application().configuration().getString("optile.chargeUrl");
-        return ok(views.html.checkouts.render(cart, checkoutId, submitUrl, addressForm));
+        Form<SetAddress> addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress()));
+        return ok(checkouts.render(cart, checkoutId, submitUrl, addressForm));
     }
 
     public static Result submitShippingAddress() {
-        Form<SetAddress> form = form(SetAddress.class).bindFromRequest();
+        Cart cart = sphere().currentCart().fetch();
+        String checkoutId = sphere().currentCart().createCheckoutSnapshotId();
+        String submitUrl = Play.application().configuration().getString("optile.chargeUrl");
+        Form<SetAddress> form = setAddressForm.bindFromRequest();
         if (form.hasErrors()) {
-            return badRequest(form.errorsAsJson());
+            displayErrors("set-address", form);
+            return badRequest(checkouts.render(cart, checkoutId, submitUrl, form));
         }
         SetAddress setAddress = form.get();
         sphere().currentCart().setShippingAddress(setAddress.getAddress());
-        Cart cart = sphere().currentCart().setCountry(setAddress.getCountryCode());
+        cart = sphere().currentCart().setCountry(setAddress.getCountryCode());
+        setAddress.displaySuccessMessage(cart.getShippingAddress());
         return ok(SetAddress.getJson(cart.getShippingAddress()));
     }
 
     public static Result notification(String checkoutId) {
-        Form<PaymentNotification> form = form(PaymentNotification.class).bindFromRequest();
+        Form<PaymentNotification> form = paymentNotificationForm.bindFromRequest();
         if (form.hasErrors()) {
             return badRequest();
         }

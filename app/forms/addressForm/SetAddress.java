@@ -7,6 +7,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.libs.Json;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static utils.ControllerHelper.saveFlash;
@@ -90,6 +92,10 @@ public class SetAddress extends ListAddress {
 
     public CountryCode getCountryCode() {
         return CountryCode.getByCode(this.country);
+    }
+
+    public void displaySuccessMessage(Address address) {
+        displaySuccessMessage(Collections.singletonList(address));
     }
 
     public void displaySuccessMessage(List<Address> addresses) {
