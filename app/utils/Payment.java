@@ -41,6 +41,7 @@ public class Payment {
 
     public Cart cart;
     public String checkoutId;
+    public String transactionId;
     public String networkGroup;
 
     public enum Operation {
@@ -50,6 +51,7 @@ public class Payment {
     public Payment(Cart cart, String checkoutId) {
         this.cart = cart;
         this.checkoutId = checkoutId;
+        this.transactionId = cart.getId();
         try {
             req = createXml();
         } catch (Exception e) {
@@ -61,8 +63,7 @@ public class Payment {
         this.networkGroup = networkGroup;
     }
 
-    public String doRequest(String url, Operation operation) {
-        String transactionId = cart.getId();
+    public boolean doRequest(String url, Operation operation) {
         try {
             // Build request
             Element root = req.createElementNS("http://dev.btelligent.net/optile/xsd/paymentTransaction/v1.120", "pt:Request");
@@ -96,10 +97,10 @@ public class Payment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return transactionId;
+        return isValidResponse();
     }
 
-    public boolean isValidResponse(String transactionId) {
+    public boolean isValidResponse() {
         if (res == null) return false;
         if (!getTransactionId().equals(transactionId)) return false;
         return true;
