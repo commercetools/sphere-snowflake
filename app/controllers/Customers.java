@@ -27,8 +27,8 @@ public class Customers extends ShopController {
 
     public static Result show() {
         Customer customer = sphere().currentCustomer().fetch();
-        Form<UpdateCustomer> formCustomer = updateCustomerForm.fill(new UpdateCustomer(customer));
-        return ok(customers.render(customer, formCustomer, updatePasswordForm, setAddressForm));
+        Form<UpdateCustomer> customerForm = updateCustomerForm.fill(new UpdateCustomer(customer));
+        return ok(customers.render(customer, customerForm, updatePasswordForm, setAddressForm));
     }
 
     @With(Ajax.class)
@@ -54,11 +54,11 @@ public class Customers extends ShopController {
     public static Result updatePassword() {
         Customer customer = sphere().currentCustomer().fetch();
         Form<UpdatePassword> form = updatePasswordForm.bindFromRequest();
-        Form<UpdateCustomer> formCustomer = updateCustomerForm.fill(new UpdateCustomer(customer));
+        Form<UpdateCustomer> customerForm = updateCustomerForm.fill(new UpdateCustomer(customer));
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("update-password", form);
-            return badRequest(customers.render(customer, formCustomer, form, setAddressForm));
+            return badRequest(customers.render(customer, customerForm, form, setAddressForm));
         }
         // Case invalid old password
         UpdatePassword updatePassword = form.get();
@@ -66,10 +66,10 @@ public class Customers extends ShopController {
             sphere().currentCustomer().changePassword(updatePassword.oldPassword, updatePassword.newPassword);
         } catch (InvalidPasswordException e) {
             updatePassword.displayInvalidPasswordError();
-            return badRequest(customers.render(customer, formCustomer, form, setAddressForm));
+            return badRequest(customers.render(customer, customerForm, form, setAddressForm));
         }
         // Case valid password update
         updatePassword.displaySuccessMessage();
-        return ok(customers.render(customer, formCustomer, form, setAddressForm));
+        return ok(customers.render(customer, customerForm, form, setAddressForm));
     }
 }

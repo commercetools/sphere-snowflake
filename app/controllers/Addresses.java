@@ -38,53 +38,53 @@ public class Addresses extends ShopController {
     public static Result add() {
         Customer customer = sphere().currentCustomer().fetch();
         Form<SetAddress> form = setAddressForm.bindFromRequest();
-        Form<UpdateCustomer> formCustomer = updateCustomerForm.fill(new UpdateCustomer(customer));
+        Form<UpdateCustomer> customerForm = updateCustomerForm.fill(new UpdateCustomer(customer));
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("set-address", form);
-            return badRequest(customers.render(customer, formCustomer, updatePasswordForm, form));
+            return badRequest(customers.render(customer, customerForm, updatePasswordForm, form));
         }
         // Case valid add address
         SetAddress setAddress = form.get();
         CustomerUpdate update = new CustomerUpdate().addAddress(setAddress.getAddress());
         customer = sphere().currentCustomer().update(update);
         setAddress.displaySuccessMessage(customer.getAddresses());
-        return ok(customers.render(customer, formCustomer, updatePasswordForm, setAddressForm));
+        return ok(customers.render(customer, customerForm, updatePasswordForm, setAddressForm));
     }
 
     @With(Ajax.class)
     public static Result update() {
         Customer customer = sphere().currentCustomer().fetch();
         Form<UpdateAddress> form = updateAddressForm.bindFromRequest();
-        Form<UpdateCustomer> formCustomer = updateCustomerForm.fill(new UpdateCustomer(customer));
+        Form<UpdateCustomer> customerForm = updateCustomerForm.fill(new UpdateCustomer(customer));
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("update-address", form);
-            return badRequest(customers.render(customer, formCustomer, updatePasswordForm, setAddressForm));
+            return badRequest(customers.render(customer, customerForm, updatePasswordForm, setAddressForm));
         }
         // Case valid update address
         UpdateAddress updateAddress = form.get();
         CustomerUpdate update = new CustomerUpdate().changeAddress(updateAddress.addressId, updateAddress.getAddress());
         customer = sphere().currentCustomer().update(update);
         updateAddress.displaySuccessMessage(customer.getAddresses());
-        return ok(customers.render(customer, formCustomer, updatePasswordForm, setAddressForm));
+        return ok(customers.render(customer, customerForm, updatePasswordForm, setAddressForm));
     }
 
     @With(Ajax.class)
     public static Result remove() {
         Customer customer = sphere().currentCustomer().fetch();
         Form<RemoveAddress> form = removeAddressForm.bindFromRequest();
-        Form<UpdateCustomer> formCustomer = updateCustomerForm.fill(new UpdateCustomer(customer));
+        Form<UpdateCustomer> customerForm = updateCustomerForm.fill(new UpdateCustomer(customer));
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("remove-address", form);
-            return badRequest(customers.render(customer, formCustomer, updatePasswordForm, setAddressForm));
+            return badRequest(customers.render(customer, customerForm, updatePasswordForm, setAddressForm));
         }
         // Case valid remove address
         RemoveAddress removeAddress = form.get();
         CustomerUpdate update = new CustomerUpdate().removeAddress(removeAddress.addressId);
         customer = sphere().currentCustomer().update(update);
         removeAddress.displaySuccessMessage(customer.getAddresses());
-        return ok(customers.render(customer, formCustomer, updatePasswordForm, setAddressForm));
+        return ok(customers.render(customer, customerForm, updatePasswordForm, setAddressForm));
     }
 }
