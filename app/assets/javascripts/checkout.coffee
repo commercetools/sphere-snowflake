@@ -18,6 +18,8 @@ $ ->
 
     # Load payment method list
     loadPaymentMethod = (listElement) ->
+        listElement.find('.loading-ajax').show()
+
         $.getJSON(listElement.data("url"), (data) ->
             return unless template? and data?
             listElement.empty()
@@ -46,6 +48,7 @@ $ ->
                 id = $(this).parent().attr("for") + "-hint"
                 $('#' + id + '.hint').hide()
             )
+            listElement.find('.loading-ajax').hide()
         )
 
     # Fill form summary with form data

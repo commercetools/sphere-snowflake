@@ -5,8 +5,10 @@ $ ->
             @template = Handlebars.compile html.trim() if html?
 
         load: ->
+            @content.find('.loading-ajax').show()
             $.getJSON(@content.data("url"), (data) =>
                 @replace data
+                @content.find('.loading-ajax').hide()
             )
 
         # Replace the whole order summary
