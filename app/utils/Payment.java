@@ -40,7 +40,7 @@ public class Payment {
     private Document res;
 
     public Cart cart;
-    public String checkoutId;
+    public String cartSnapshot;
     public String transactionId;
     public String networkGroup;
 
@@ -48,9 +48,9 @@ public class Payment {
         LIST, CHARGE
     }
 
-    public Payment(Cart cart, String checkoutId) {
+    public Payment(Cart cart, String cartSnapshot) {
         this.cart = cart;
-        this.checkoutId = checkoutId;
+        this.cartSnapshot = cartSnapshot;
         this.transactionId = cart.getId();
         try {
             req = createXml();
@@ -220,7 +220,7 @@ public class Payment {
             Node returnUrl          = createNode("returnUrl",
                     routes.Checkouts.success().absoluteURL(Http.Context.current().request()));
             Node notificationUrl    = createNode("notificationUrl",
-                    routes.Checkouts.notification(checkoutId).absoluteURL(Http.Context.current().request()));
+                    routes.Checkouts.notification(cartSnapshot).absoluteURL(Http.Context.current().request()));
 
             Element element = req.createElement("callback");
             element.appendChild(cancelUrl);

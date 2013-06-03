@@ -1,7 +1,33 @@
-@(cart: Cart, checkoutId: String, submitUrl: String, setAddressForm: Form[addressForm.SetAddress])
+@(cart: Cart, setAddressForm: Form[addressForm.SetAddress], section: Int = 1)
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/checkout.js")"></script>
+    <script id="payment-method-template" type="text/x-handlebars-template">
+        <input type="hidden" name="referredId" value="{{referredId}}"/>
+        <div class="tabbable tabs-left">
+            <ul class="nav nav-tabs">
+                {{#each group}}
+                {{#each network}}
+                <li class="payment-network">
+                    <a href="#network-{{networkCode}}" data-toggle="tab">
+                        <img src="{{logoUrl}}" class="network-img" alt="{{description}}"/>
+                    </a>
+                </li>
+                {{/each}}
+                {{/each}}
+            </ul>
+            <div id="billing-method-form" class="tab-content">
+                {{#each group}}
+                {{#each network}}
+                <div class="payment-network-form tab-pane" id="network-{{networkCode}}">
+                    <input type="text" name="network" value="{{networkCode}}">
+                    {{{formHtml}}}
+                </div>
+                {{/each}}
+                {{/each}}
+            </div>
+        </div>
+    </script>
 }
 
 @main("Checkout", "checkout", scripts){
@@ -10,7 +36,7 @@
     </div>
 }{
     <div id="checkout">
-        <div id="checkout-cart" class="step current clearfix">
+        <div id="checkout-cart" class="step clearfix current">
 
             <div class="step-header">
                 <span class="step-number">1</span>
@@ -68,7 +94,7 @@
             </div>
         </div>
 
-        <form id="form-shipping-address" action="@routes.Checkouts.submitShippingAddress" method="post">
+        <form id="form-shipping-address" action="@routes.Checkouts.setShippingAddress" method="post">
             <div id="checkout-shipping" class="step disabled clearfix">
                 <div class="step-header">
                     <span class="step-number">2</span>
@@ -145,9 +171,7 @@
             </div>
         </form>
 
-        <input type="hidden" name="checkoutId" value="@checkoutId" />
-
-        <form id="form-billing-method" action="@submitUrl" method="post" autocomplete="off">
+        <form id="form-billing-method" action="@getPaymentUrl" method="post" autocomplete="off">
             <div id="checkout-billing" class="step disabled clearfix">
                 <div class="step-header">
                     <span class="step-number">3</span>
@@ -158,7 +182,7 @@
                 </div>
 
                 <div class="step-body">
-                    <div id="payment-networks" class="show">
+                    <div id="payment-networks" data-url="@routes.Checkouts.getPaymentMethod" class="show">
                         <div class="loading-ajax">Loading...</div>
                     </div>
                     <div class="hide">

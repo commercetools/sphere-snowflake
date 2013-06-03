@@ -1,11 +1,19 @@
 package forms.paymentForm;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
+import play.libs.Json;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +53,48 @@ public class PaymentNetwork {
         this.nextOperationUrl = nextOperationUrl;
         this.registration = registration;
         this.recurrence = recurrence;
+    }
+
+    public static ObjectNode getJson(List<PaymentNetwork> networks, String referredId) {
+        ObjectNode json = Json.newObject();
+        json.put("referredId", referredId);
+        ArrayNode groupsArray = json.putArray("group");
+        for (Map.Entry<String, List<PaymentNetwork>> grouping : group(networks).entrySet()) {
+            ObjectNode group = Json.newObject();
+            group.put("name", grouping.getKey());
+            ArrayNode groupArray = group.putArray("network");
+            for (PaymentNetwork network : grouping.getValue()) {
+                groupArray.add(getJson(network));
+            }
+            groupsArray.add(group);
+        }
+        return json;
+    }
+
+    public static ObjectNode getJson(PaymentNetwork network) {
+        ObjectNode json = Json.newObject();
+        json.put("networkCode", network.networkCode);
+        json.put("description", network.description);
+        json.put("asynchronous", network.asynchronous);
+        json.put("sortOrder", network.sortOrder);
+        json.put("registration", network.registration);
+        json.put("logoUrl", network.logoUrl);
+        json.put("formHtml", network.getFormHtml());
+        return json;
+    }
+
+    public static Map<String, List<PaymentNetwork>> group(List<PaymentNetwork> networks) {
+        Map<String, List<PaymentNetwork>> groups = new HashMap<String, List<PaymentNetwork>>();
+        for (PaymentNetwork network : networks) {
+            if (groups.containsKey(network.grouping)) {
+                groups.get(network.grouping).add(network);
+            } else {
+                List<PaymentNetwork> group = new ArrayList<PaymentNetwork>();
+                group.add(network);
+                groups.put(network.grouping, group);
+            }
+        }
+        return groups;
     }
 
     public String getFormHtml() {

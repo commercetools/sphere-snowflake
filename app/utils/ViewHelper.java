@@ -7,9 +7,9 @@ import com.neovisionaries.i18n.CountryCode;
 import controllers.routes;
 import io.sphere.client.model.Money;
 import io.sphere.client.model.SearchResult;
-import forms.paymentForm.PaymentNetwork;
 import io.sphere.client.shop.model.*;
 import org.apache.commons.lang3.text.WordUtils;
+import play.Play;
 import play.mvc.Call;
 import play.mvc.Http;
 import sphere.Sphere;
@@ -192,17 +192,7 @@ public class ViewHelper {
         return matchingVariantList;
     }
 
-	public static Map<String, List<PaymentNetwork>> groupPaymentNetworks(List<PaymentNetwork> networks) {
-		Map<String, List<PaymentNetwork>> groups = new HashMap<String, List<PaymentNetwork>>();
-		for (PaymentNetwork network : networks) {
-			if (groups.containsKey(network.grouping)) {
-				groups.get(network.grouping).add(network);
-			} else {
-				List<PaymentNetwork> group = new ArrayList<PaymentNetwork>();
-				group.add(network);
-				groups.put(network.grouping, group);
-			}
-		}
-		return groups;
-	}
+    public static String getPaymentUrl() {
+        return Play.application().configuration().getString("optile.chargeUrl");
+    }
 }
