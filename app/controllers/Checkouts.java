@@ -99,14 +99,12 @@ public class Checkouts extends ShopController {
         return ok();
     }
 
-    @With(Authorization.class)
     public static Result success() {
         flash("success", "Your payment has been processed, thank you for shopping with us!");
         // TODO Redirect to somewhere
         return Categories.home(1);
     }
 
-    @With(Authorization.class)
     public static Result failure() {
         flash("error", "Payment process aborted, please start over with another payment method.");
         // TODO Redirect to somewhere
