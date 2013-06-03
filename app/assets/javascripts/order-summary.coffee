@@ -4,6 +4,11 @@ $ ->
             html = $("#order-summary-template").html()
             @template = Handlebars.compile html.trim() if html?
 
+        load: ->
+            $.getJSON(@content.data("url"), (data) =>
+                @replace data
+            )
+
         # Replace the whole order summary
         replace: (cart) ->
             return unless @template?
@@ -13,8 +18,7 @@ $ ->
     window.orderSummary = new @OrderSummary $('.order-summary')
 
     # Load order summary on page loaded
-    $.getJSON(orderSummary.content.data("url"), (data) ->
-        orderSummary.replace data
-    )
+    orderSummary.load()
+
 
 

@@ -4,6 +4,12 @@ $ ->
             html = $("#mini-cart-template").html()
             @template = Handlebars.compile html.trim() if html?
 
+        # Load data and replace mini cart
+        load: ->
+            $.getJSON(@content.data("url"), (data) =>
+                @replace data
+            )
+
         # Replace the whole mini cart
         replace: (cart) ->
             return unless @template?
@@ -47,8 +53,6 @@ $ ->
     )
 
     # Load mini cart on page loaded
-    $.getJSON(miniCart.content.data("url"), (data) ->
-        miniCart.replace data
-    )
+    miniCart.load()
 
 
