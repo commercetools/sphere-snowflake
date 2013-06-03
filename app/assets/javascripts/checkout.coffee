@@ -19,7 +19,7 @@ $ ->
     # Load payment method list
     loadPaymentMethod = (listElement) ->
         $.getJSON(listElement.data("url"), (data) ->
-            return unless template?
+            return unless template? and data?
             listElement.empty()
             listElement.append(template data)
 

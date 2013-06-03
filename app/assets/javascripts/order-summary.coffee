@@ -11,7 +11,7 @@ $ ->
 
         # Replace the whole order summary
         replace: (cart) ->
-            return unless @template?
+            return unless @template? and cart?
             @content.empty()
             @content.append(@template cart)
 
