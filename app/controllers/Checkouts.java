@@ -53,14 +53,19 @@ public class Checkouts extends ShopController {
             sphere().currentCart().setCustomerEmail(setAddress.email);
         }
         sphere().currentCart().setCountry(setAddress.getCountryCode());
+        // TODO Catch proper exception when product does not exist for specified country
         cart = sphere().currentCart().setShippingAddress(setAddress.getAddress());
         setAddress.displaySuccessMessage(cart.getShippingAddress());
         return ok(checkouts.render(cart, form, 2));
     }
 
     public static Result getPaymentMethod() {
-        // Case no payment needed
         Cart cart = sphere().currentCart().fetch();
+        // Case no shipping address
+        if (cart.getShippingAddress() == null) {
+            return noContent();
+        }
+        // Case no payment needed
         if (cart.getTotalPrice().getAmount().doubleValue() <= 0) {
             return noContent();
         }
