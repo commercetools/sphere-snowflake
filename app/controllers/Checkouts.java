@@ -40,11 +40,12 @@ public class Checkouts extends ShopController {
 
     @With(Ajax.class)
     public static Result setShippingAddress() {
-        Cart cart = sphere().currentCart().fetch();
+        Cart cart;
         Form<SetAddress> form = setAddressForm.bindFromRequest();
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("set-address", form);
+            cart = sphere().currentCart().fetch();
             return badRequest(checkouts.render(cart, form, 2));
         }
         // Case valid shipping address
@@ -52,8 +53,7 @@ public class Checkouts extends ShopController {
         if (setAddress.email != null) {
             sphere().currentCart().setCustomerEmail(setAddress.email);
         }
-        sphere().currentCart().setCountry(setAddress.getCountryCode());
-        // TODO Catch proper exception when product does not exist for specified country
+        //sphere().currentCart().setCountry(setAddress.getCountryCode());
         cart = sphere().currentCart().setShippingAddress(setAddress.getAddress());
         setAddress.displaySuccessMessage(cart.getShippingAddress());
         return ok(checkouts.render(cart, form, 2));
@@ -70,8 +70,9 @@ public class Checkouts extends ShopController {
             return noContent();
         }
         // Case failed request
-        String cartSnapshot = sphere().currentCart().createCheckoutSnapshotId();
+        String cartSnapshot = sphere().currentCart().createCartSnapshotId();
         Payment payment = new Payment(cart, cartSnapshot);
+        payment.setPreselectedDeferral("ANY");
         if (!payment.doRequest(Payment.NATIVE_URL, Payment.Operation.LIST)) {
             return internalServerError();
         }
@@ -87,14 +88,23 @@ public class Checkouts extends ShopController {
         if (form.hasErrors()) {
             return badRequest();
         }
-        // Case success payment request
+        // Case not safe order
         PaymentNotification paymentNotification = form.get();
         System.err.println("Notification " + paymentNotification.transactionId);
         System.err.println(paymentNotification.entity + " - " + paymentNotification.statusCode + " - " + paymentNotification.reasonCode);
         System.err.println(paymentNotification.resultCode + ": " + paymentNotification.resultInfo);
-        PaymentState state = paymentNotification.getPaymentState();
-        if (state.equals(PaymentState.Paid)) {
-            sphere().currentCart().createOrder(cartSnapshot, state);
+        //PaymentState state = paymentNotification.getPaymentState();
+        Cart cart = sphere().currentCart().fetch();
+        Payment payment = new Payment(cart, cartSnapshot, paymentNotification.longId);
+        if (!sphere().currentCart().isSafeToCreateOrder(cartSnapshot)) {
+            System.out.println("Canceling payment");
+            payment.doRequest(Payment.NATIVE_URL, Payment.Operation.CANCELATION);
+        } else {
+            System.out.println("Closing payment");
+            if (payment.doRequest(Payment.NATIVE_URL, Payment.Operation.CLOSING)) {
+                System.out.println("Creating order");
+                sphere().currentCart().createOrder(cartSnapshot, PaymentState.Paid);
+            }
         }
         return ok();
     }

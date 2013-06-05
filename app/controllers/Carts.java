@@ -64,10 +64,11 @@ public class Carts extends ShopController {
     @With(Ajax.class)
     public static Result update() {
         Form<UpdateCart> form = updateCartForm.bindFromRequest();
-        Cart cart = sphere().currentCart().fetch();
+        Cart cart;
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("update-cart", form);
+            cart = sphere().currentCart().fetch();
             return badRequest(carts.render(cart));
         }
         // Case valid cart update
@@ -82,10 +83,11 @@ public class Carts extends ShopController {
     @With(Ajax.class)
     public static Result remove() {
         Form<RemoveFromCart> form = removeFromCartForm.bindFromRequest();
-        Cart cart = sphere().currentCart().fetch();
+        Cart cart;
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("remove-from-cart", form);
+            cart = sphere().currentCart().fetch();
             return badRequest(carts.render(cart));
         }
         // Case valid cart update

@@ -42,16 +42,25 @@ public class Payment {
     public Cart cart;
     public String cartSnapshot;
     public String transactionId;
-    public String networkGroup;
+    public String referredId;
+
+    public String preselectedMethod;
+    public String preselectedNetwork;
+    public String preselectedDeferral;
 
     public enum Operation {
-        LIST, CHARGE
+        LIST, CHARGE, CLOSING, CANCELATION
     }
 
     public Payment(Cart cart, String cartSnapshot) {
+        this(cart, cartSnapshot, null);
+    }
+
+    public Payment(Cart cart, String cartSnapshot, String referredId) {
         this.cart = cart;
         this.cartSnapshot = cartSnapshot;
         this.transactionId = cart.getId();
+        this.referredId = referredId;
         try {
             req = createXml();
         } catch (Exception e) {
@@ -59,8 +68,16 @@ public class Payment {
         }
     }
 
-    public void setPreselectedNetwork(String networkGroup) {
-        this.networkGroup = networkGroup;
+    public void setPreselectedMethod(String method) {
+        this.preselectedMethod = method;
+    }
+
+    public void setPreselectedNetwork(String network) {
+        this.preselectedNetwork = network;
+    }
+
+    public void setPreselectedDeferral(String deferral) {
+        this.preselectedDeferral = deferral;
     }
 
     public boolean doRequest(String url, Operation operation) {
@@ -76,13 +93,24 @@ public class Payment {
             Element transactions = req.createElement("transactions");
             Transaction transaction = new Transaction(operation, transactionId);
             transactions.appendChild(transaction.get());
-            transaction.addOrigin()
-                    .addCustomer()
-                    .addCallback()
-                    .addPayment()
-                    .addProducts()
-                    .addPreselection()
-                    .addStyle();
+            switch (operation) {
+                case CLOSING:
+                case CANCELATION:
+                    transaction
+                            .addOrigin()
+                            .addReferredId();
+                    break;
+                case LIST:
+                    transaction
+                            .addOrigin()
+                            .addCustomer()
+                            .addCallback()
+                            .addPayment()
+                            .addPreselection()
+                            .addProducts()
+                            .addStyle();
+                    break;
+            }
             root.appendChild(transactions);
 
             // Send request
@@ -256,10 +284,25 @@ public class Payment {
         }
 
         public Transaction addPreselection() {
-            if (networkGroup != null) {
+            if (preselectedDeferral != null || preselectedMethod != null || preselectedNetwork != null) {
                 Element element = req.createElement("preselection");
-                element.appendChild(createNode("method", networkGroup));
+                if (preselectedMethod != null) {
+                    element.appendChild(createNode("method", preselectedMethod));
+                }
+                if (preselectedNetwork != null) {
+                    element.appendChild(createNode("network", preselectedNetwork));
+                }
+                if (preselectedDeferral != null) {
+                    element.appendChild(createNode("deferral", preselectedDeferral));
+                }
                 transaction.appendChild(element);
+            }
+            return this;
+        }
+
+        public Transaction addReferredId() {
+            if (referredId != null) {
+                transaction.appendChild(createNode("referredId", referredId));
             }
             return this;
         }
