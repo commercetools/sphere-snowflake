@@ -1,6 +1,7 @@
 package controllers;
 
 import controllers.actions.Ajax;
+import controllers.actions.CartNotEmpty;
 import forms.cartForm.ListCart;
 import forms.customerForm.UpdateCustomer;
 import io.sphere.client.shop.model.*;
@@ -24,7 +25,7 @@ public class Carts extends ShopController {
     final static Form<UpdateCart> updateCartForm = form(UpdateCart.class);
     final static Form<RemoveFromCart> removeFromCartForm = form(RemoveFromCart.class);
 
-
+    @With(CartNotEmpty.class)
     public static Result show() {
         Cart cart = sphere().currentCart().fetch();
         return ok(carts.render(cart));
