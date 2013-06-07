@@ -1,8 +1,7 @@
 package controllers.actions;
 
-import org.codehaus.jackson.JsonNode;
-import play.api.mvc.PlainResult;
-import play.api.mvc.ResponseHeader;
+import org.codehaus.jackson.node.ObjectNode;
+import play.core.j.JavaResultExtractor;
 import play.libs.Json;
 import play.mvc.Action;
 import play.mvc.Http;
@@ -22,17 +21,16 @@ public class Ajax extends Action.Simple {
 
         // After
         if (isAjax) {
-            if (result.getWrappedResult() instanceof PlainResult) {
-                JsonNode json = Json.toJson(ctx.args.get("json"));
-                if (json == null) {
-                    json = Json.newObject();
-                }
-                ResponseHeader header = ((PlainResult)result.getWrappedResult()).header();
-                result = status(header.status(), json);
-                ctx.flash().clear();
+            ObjectNode json = Json.newObject();
+            json.put("data", Json.toJson(ctx.args.get("json")));
+
+            String url = JavaResultExtractor.getHeaders(result).get("Location");
+            if (url != null) {
+                json.put("redirect", url);
+                result = ok(json);
             } else {
-                // Manually send temporarily redirection otherwise jQuery may detect it as a non-JSON 200 response
-                result = status(303);
+                result = status(JavaResultExtractor.getStatus(result), json);
+                ctx.flash().clear();
             }
         }
         ctx.args.remove("json");

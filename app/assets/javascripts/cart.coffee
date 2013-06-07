@@ -10,7 +10,7 @@ $ ->
 
     # Replace the whole cart
     replaceCart = (cart) ->
-        return unless template?
+        return unless template? or cart?
         cartContent.empty()
         cartContent.append(template item) for item in cart.item
 
@@ -26,8 +26,8 @@ $ ->
         xhr = addToCart.submit(url, method, data)
         xhr.done (res) ->
             addToCart.doneSubmit res
-            orderSummary.replace res
-            miniCart.replace res
+            orderSummary.replace res.data
+            miniCart.replace res.data
             miniCart.open('slow')
             miniCart.addCloseDelay(3000, 'slow')
         xhr.fail (res) -> addToCart.failSubmit res
@@ -48,8 +48,8 @@ $ ->
         xhr = addToCart.submit(url, method, data)
         xhr.done (res) ->
             addToCart.doneSubmit res
-            orderSummary.replace res
-            miniCart.replace res
+            orderSummary.replace res.data
+            miniCart.replace res.data
             miniCart.open('slow')
             miniCart.addCloseDelay(3000, 'slow')
         xhr.fail (res) -> addToCart.failSubmit res
@@ -76,9 +76,9 @@ $ ->
             xhr = updateCart.submit(url, method, data)
             xhr.done (res) ->
                 updateCart.doneSubmit res
-                orderSummary.replace res
-                miniCart.replace res
-                replaceCart res
+                orderSummary.replace res.data
+                miniCart.replace res.data
+                replaceCart res.data
             xhr.fail (res) -> updateCart.failSubmit res
             xhr.always -> updateCart.stopSubmit()
         ), 800
@@ -100,8 +100,8 @@ $ ->
         xhr = removeFromCart.submit(url, method, data)
         xhr.done (res) ->
             removeFromCart.doneSubmit res
-            orderSummary.replace res
-            miniCart.replace res
+            orderSummary.replace res.data
+            miniCart.replace res.data
             # Remove line item
             $('#item-line-'+ lineItemId).fadeOut 500, ( -> $(this).remove() )
         xhr.fail (res) ->

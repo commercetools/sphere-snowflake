@@ -20,7 +20,9 @@ $ ->
     loadPaymentMethod = (listElement) ->
         listElement.find('.loading-ajax').show()
 
-        $.getJSON(listElement.data("url"), (data) ->
+        xhr = $.getJSON(listElement.data("url"))
+        xhr.done (data) ->
+            return window.location.href = data.redirect if data.redirect?
             return unless template? and data?
             listElement.empty()
             listElement.append(template data)
@@ -49,7 +51,6 @@ $ ->
                 $('#' + id + '.hint').hide()
             )
             listElement.find('.loading-ajax').hide()
-        )
 
     # Fill form summary with form data
     fillSummary = (form, summaryList) ->
@@ -145,4 +146,8 @@ $ ->
 
         # Go to next section
         nextStep(checkoutBilling)
+    )
+
+    $("#shipping-address-list .address-item").click( ->
+
     )

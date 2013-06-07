@@ -18,13 +18,13 @@ $ ->
 
     # Replace the whole address list
     replaceAddressList = (list) ->
-        return unless template?
+        return unless template? or list?
         addressList.empty()
         addressList.append(template address) for address in list.address
 
     # Update address list with proper animation
     updateAddressList = (list) ->
-        return unless template?
+        return unless template? or list?
         removeActiveAddresses()
         updatedIds = ("address-#{address.addressId}" for address in list.address)
 
@@ -107,7 +107,7 @@ $ ->
         xhr = addAddress.submit(url, method, data)
         xhr.done (res) ->
             addAddress.doneSubmit(res)
-            updateAddressList(res)
+            updateAddressList(res.data)
         xhr.fail (res) -> addAddress.failSubmit(res)
         xhr.always -> addAddress.stopSubmit()
 
@@ -132,7 +132,7 @@ $ ->
         xhr = updateAddress.submit(url, method, data)
         xhr.done (res) ->
             updateAddress.doneSubmit(res)
-            updateAddressList(res)
+            updateAddressList(res.data)
         xhr.fail (res) -> updateAddress.failSubmit(res)
         xhr.always -> updateAddress.stopSubmit()
 
@@ -157,7 +157,7 @@ $ ->
         xhr = removeAddress.submit(url, method, data)
         xhr.done (res) ->
             removeAddress.doneSubmit(res)
-            updateAddressList(res)
+            updateAddressList(res.data)
         xhr.fail (res) -> removeAddress.failSubmit(res)
         xhr.always -> removeAddress.stopSubmit()
 
@@ -192,7 +192,7 @@ $ ->
     )
 
     # Bind click on 'edit address' to show update address form
-    addressList.on('click', '.open-update-address', ->
+    addressList.on('click', '.open-update-address, .address-item .address', ->
         removeActiveAddresses()
 
         # Active current address

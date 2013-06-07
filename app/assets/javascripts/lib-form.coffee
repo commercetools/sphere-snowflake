@@ -134,28 +134,28 @@ class window.Form
         @form.find('.loading-ajax').hide()
 
     # Execute some actions on submit success
-    doneSubmit: (data) ->
+    doneSubmit: (res) ->
         if @dataType is 'json'
+            # Redirect when asked
+            return window.location.href = res.redirect if res.redirect?
+
             # Update page data
-            $.each data, (key, value) ->
+            $.each res.data, (key, value) ->
                 elem = $("span[data-form-update=#{key}]")
                 elem.text(value)
         # Display success message
         @saved = true
-        @displaySuccessMessage(data['success'])
+        @displaySuccessMessage(res.data['success'])
 
     # Execute some actions on submit failure
     failSubmit: (xhr) ->
-        # Not really failing when redirected
-        return false if xhr.status is 303 or @allowSubmit
-
         # When dealing with any other error display default message
-        return @displayErrorMessage("Something went wrong...") unless xhr.status is 400
+        return @displayErrorMessage("Something went wrong, please try again") unless xhr.status is 400
 
         # When dealing with bad request display errors
         try
-            data = $.parseJSON xhr.responseText
-            $.each data, (key, msg) =>
+            res = $.parseJSON xhr.responseText
+            $.each res.data, (key, msg) =>
                 # Mark field as invalid
                 field = @inputs.filter("[name=#{key}]")
                 @markInvalid field
@@ -164,7 +164,7 @@ class window.Form
                 label = @labels.filter("[for=#{field.attr('id')}]")
                 @displayErrorMessage(msg, label)
         catch error
-            @displayErrorMessage("Something went wrong...")
+            @displayErrorMessage("Errors found, please review the form")
 
     # Submit form data
     submit: (url, method, data) ->
@@ -174,8 +174,3 @@ class window.Form
             async: @async
             data: data
             dataType: @dataType
-            beforeSend: => return not @allowSubmit
-            statusCode: { 303: =>
-                @allowSubmit = true
-                @form.submit()
-            }

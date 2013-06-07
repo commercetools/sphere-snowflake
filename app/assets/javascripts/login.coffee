@@ -6,6 +6,8 @@ $ ->
 
     # Bind 'log in' submit event to 'log in' functionality
     logIn.form.submit( ->
+        return if logIn.allowSubmit
+
         # Remove alert messages
         logIn.removeAllMessages()
 
@@ -18,7 +20,9 @@ $ ->
         method = logIn.form.attr("method")
         data = logIn.form.serialize()
         xhr = logIn.submit(url, method, data)
-        xhr.done (res) -> logIn.doneSubmit(res)
+        xhr.done (res) ->
+            logIn.allowSubmit = true
+            logIn.form.submit()
         xhr.fail (res) -> logIn.stopSubmit() if logIn.failSubmit(res)
 
         return logIn.allowSubmit
@@ -39,8 +43,7 @@ $ ->
         data = signUp.form.serialize()
         xhr = signUp.submit(url, method, data)
         xhr.done (res) -> signUp.doneSubmit(res)
-        xhr.fail (res) -> signUp.failSubmit(res)
-        xhr.always -> signUp.stopSubmit()
+        xhr.fail (res) -> signUp.stopSubmit() if signUp.failSubmit(res)
 
         return signUp.allowSubmit
     )
