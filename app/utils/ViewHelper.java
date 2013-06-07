@@ -5,11 +5,14 @@ import java.util.*;
 
 import com.neovisionaries.i18n.CountryCode;
 import controllers.routes;
+import forms.cartForm.AddToCart;
+import forms.customerForm.UpdateCustomer;
 import io.sphere.client.model.Money;
 import io.sphere.client.model.SearchResult;
 import io.sphere.client.shop.model.*;
 import org.apache.commons.lang3.text.WordUtils;
 import play.Play;
+import play.data.Form;
 import play.mvc.Call;
 import play.mvc.Http;
 import sphere.Sphere;
@@ -75,10 +78,6 @@ public class ViewHelper {
         }
     }
 
-    public static BigDecimal getPercentage(double amount) {
-        return BigDecimal.valueOf(amount * 100).stripTrailingZeros();
-    }
-
 	/**
 	 * Compares the categories and returns the 'active' class if are the same.
 	 * 
@@ -94,11 +93,15 @@ public class ViewHelper {
 		return active;
 	}
 
-    public static boolean isCustomerAddressSet(Cart cart) {
-        return cart.getShippingAddress() != null;
+    public static BigDecimal getPercentage(double amount) {
+        return BigDecimal.valueOf(amount * 100).stripTrailingZeros();
     }
 
-	/**
+    public static boolean isSet(Object object) {
+        return object != null;
+    }
+
+    /**
 	 * Check whether the given product has more than one attribute value
 	 * 
 	 * @param product

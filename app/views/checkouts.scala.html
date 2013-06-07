@@ -1,4 +1,4 @@
-@(cart: Cart, setAddressForm: Form[addressForm.SetAddress], section: Int = 1)
+@(cart: Cart, cartSnapshot: String, addressBook: List[Address], setAddressForm: Form[addressForm.SetAddress], section: Int = 1)
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/checkout.js")"></script>
@@ -88,9 +88,16 @@
             </div>
 
             <div class="step-footer">
-                <button type="button" class="btn btn-success btn-next">
-                    Next <i class="icon-chevron-right icon-white"></i>
-                </button>
+                <div class="left">
+                    <a href="@routes.Carts.show" class="btn">
+                        <i class="icon-chevron-left"></i> Modify cart
+                    </a>
+                </div>
+                <div class="right">
+                    <button type="button" class="btn btn-success btn-next">
+                        Next <i class="icon-chevron-right icon-white"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -105,6 +112,45 @@
                 </div>
 
                 <div class="step-body">
+                    @if(!addressBook.isEmpty) {
+                    <div id="shipping-address-list" class="show">
+                        <h4>Your address book</h4>
+                        <ul>
+                            @for(address <- addressBook) {
+                            <li class="address-item">
+                                <ul class="address">
+                                    <li>
+                                        <span class="first-name">@address.getFirstName</span>
+                                        <span class="last-name">@address.getLastName</span>
+                                        <span class="company">@address.getCompany</span>
+                                    </li>
+                                    <li>
+                                        <span class="street">@address.getStreetName</span>
+                                    </li>
+                                    <li>
+                                        <span class="street">@address.getStreetNumber</span>
+                                    </li>
+                                    <li>
+                                        <span class="postal-code">@address.getPostalCode</span>
+                                        <span class="city">@address.getCity</span>
+                                        <span class="country">@address.getCountry.getName</span>
+                                    </li>
+                                    <li>
+                                        <span class="phone">@address.getPhone</span>
+                                    </li>
+                                    <li>
+                                        <span class="mobile">@address.getMobile</span>
+                                    </li>
+                                    <li>
+                                        <span class="email">@address.getEmail</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            }
+                        </ul>
+                    </div>
+                    }
+
                     <div id="shipping-address-form" class="show">
                         @form.setAddress(setAddressForm)
                     </div>
@@ -182,7 +228,7 @@
                 </div>
 
                 <div class="step-body">
-                    <div id="payment-networks" data-url="@routes.Checkouts.getPaymentMethod" class="show">
+                    <div id="payment-networks" data-url="@routes.Checkouts.getPaymentMethod(cartSnapshot)" class="show">
                         <div class="loading-ajax">Loading...</div>
                     </div>
                     <div class="hide">

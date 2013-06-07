@@ -15,7 +15,7 @@
 
     #address-list {
         .unstyled;
-        margin-right: 330px;
+        margin-right: 400px;
 
         .address-item {
             text-align: -webkit-match-parent;
@@ -42,11 +42,15 @@
                 visibility: hidden;
                 display: inline-block;
                 position: relative;
-                left: 120px;
+                left: 110px;
             }
 
             &:hover {
                 background-color: @background;
+
+                .address {
+                    cursor: pointer;
+                }
 
                 .form-remove-address, .open-update-address {
                     visibility: visible;

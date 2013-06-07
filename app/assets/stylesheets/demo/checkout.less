@@ -65,6 +65,32 @@
             margin-top: 10px;
         }
 
+        #shipping-address-list {
+            float: right;
+            margin-right: 50px;
+
+            ul {
+                .unstyled;
+
+                .address-item {
+                    padding: 8px 12px;
+                    margin: 2px 2px 3px 0;
+                    line-height: 14px;
+                    -webkit-border-radius: 5px;
+                    -moz-border-radius: 5px;
+                    border-radius: 5px;
+
+                    &:hover {
+                        background-color: @background;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+        #shipping-address-form {
+            float: left;
+        }
+
         .form {
             margin-left: 50px;
         }

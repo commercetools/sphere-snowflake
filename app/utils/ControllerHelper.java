@@ -2,14 +2,17 @@ package utils;
 
 import static play.mvc.Controller.flash;
 
+import java.util.Collections;
 import java.util.List;
 
+import io.sphere.client.shop.model.Address;
 import io.sphere.client.shop.model.Category;
 import io.sphere.client.shop.model.Product;
 import org.codehaus.jackson.JsonNode;
 import play.data.Form;
 import play.data.validation.ValidationError;
 import play.mvc.Http;
+import sphere.Sphere;
 
 public class ControllerHelper {
 
@@ -43,5 +46,12 @@ public class ControllerHelper {
     public static Category getDefaultCategory(Product product) {
         if (product.getCategories().isEmpty()) return null;
         return product.getCategories().get(0);
+    }
+
+    public static List<Address> getAddressBook() {
+        if (Sphere.getInstance().isLoggedIn()) {
+            return Sphere.getInstance().currentCustomer().fetch().getAddresses();
+        }
+        return Collections.emptyList();
     }
 }
