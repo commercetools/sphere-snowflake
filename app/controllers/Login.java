@@ -31,6 +31,9 @@ public class Login extends ShopController {
 
 
     public static Result show() {
+        if (sphere().isLoggedIn()) {
+            sphere().logout();
+        }
         return ok(login.render(false, logInForm, signUpForm, recoverPasswordForm, resetPasswordForm));
     }
 
