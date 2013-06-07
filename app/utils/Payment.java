@@ -246,7 +246,7 @@ public class Payment {
             Node cancelUrl          = createNode("cancelUrl",
                     routes.Checkouts.failure().absoluteURL(Http.Context.current().request()));
             Node returnUrl          = createNode("returnUrl",
-                    routes.Checkouts.success().absoluteURL(Http.Context.current().request()));
+                    routes.Checkouts.success(transactionId).absoluteURL(Http.Context.current().request()));
             Node notificationUrl    = createNode("notificationUrl",
                     routes.Checkouts.notification(cartSnapshot).absoluteURL(Http.Context.current().request()));
 

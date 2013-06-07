@@ -1,0 +1,17 @@
+@(orders: List[Order])
+
+@scripts = {
+}
+
+@main("Order", "order", scripts){
+    <div class="navigation">
+        @helper.topNavigation()
+    </div>
+}{
+    <div id="order">
+        @helper.orderList(orders)
+    </div>
+}{
+
+
+}

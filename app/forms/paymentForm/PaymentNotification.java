@@ -2,6 +2,7 @@ package forms.paymentForm;
 
 import io.sphere.client.shop.model.PaymentState;
 import play.data.validation.Constraints;
+import play.mvc.Http;
 
 public class PaymentNotification {
 
@@ -46,6 +47,12 @@ public class PaymentNotification {
     public String retryAfter;
 
     public PaymentNotification() {
+    }
+
+    public String validate() {
+        System.out.println(Http.Context.current().request().remoteAddress());
+        // Should be 78.46.61.206 or 213.155.71.162
+        return null;
     }
 
     public PaymentState getPaymentState() {

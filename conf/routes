@@ -17,14 +17,16 @@ POST    /cart/remove                                        controllers.Carts.re
 
 # Checkout
 GET     /checkout                                           controllers.Checkouts.show()
+GET     /checkout/summary/:id                               controllers.Checkouts.showSummary(id: String)
 
 GET     /checkout/shipping/address                          controllers.Checkouts.showShippingAddress()
 POST    /checkout/shipping/address                          controllers.Checkouts.setShippingAddress()
 
-GET     /checkout/payment/method                            controllers.Checkouts.getPaymentMethod()
+GET     /checkout/payment/method                            controllers.Checkouts.showPaymentMethod()
+GET     /checkout/payment/method/get                        controllers.Checkouts.getPaymentMethod(cs: String)
 
 GET     /checkout/payment                                   controllers.Checkouts.notification(id: String)
-GET     /checkout/success                                   controllers.Checkouts.success()
+GET     /checkout/success/:id                               controllers.Checkouts.success(id: String)
 GET     /checkout/failure                                   controllers.Checkouts.failure()
 
 # Login
