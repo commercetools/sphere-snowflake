@@ -12,8 +12,8 @@ public class SaveContext extends Action.Simple {
     public Result call(Http.Context ctx) throws Throwable {
         // Before
         ctx.session().put("returnUrl", ctx.request().uri());
-        Result result = delegate.call(ctx);
-        // After
-        return result;
+
+        // Call
+        return delegate.call(ctx);
     }
 }

@@ -24,9 +24,6 @@ public class Authorization extends Action.Simple {
         }
   */
         // Call
-        Result result = delegate.call(ctx);
-
-        // After
-        return result;
+        return delegate.call(ctx);
     }
 }
