@@ -1,6 +1,7 @@
 @(cart: Cart)
 
 <script id="mini-cart-template" type="text/x-handlebars-template">
+    {{#if item}}
     <table class="table">
         <thead>
         <tr>
@@ -35,6 +36,12 @@
         Order Sub Total
         <span class="pull-right">{{totalPrice}}</span>
     </div>
+    <div class="bottom">
+        <a href="@routes.Checkouts.show">Proceed to Checkout</a>
+    </div>
+    {{else}}
+        Oops, your cart is empty!
+    {{/if}}
 </script>
 
 <a id="link-cart" href="@routes.Carts.show">
@@ -50,9 +57,6 @@
         <div class="popover-content">
             <div id="mini-cart-content" data-url="@routes.Carts.get">
                 @* Load with template *@
-            </div>
-            <div class="bottom">
-                <a href="@routes.Checkouts.show">Proceed to Checkout</a>
             </div>
         </div>
     </div>

@@ -4,6 +4,7 @@ import io.sphere.client.shop.model.*;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import play.libs.Json;
+import sphere.Sphere;
 
 import java.math.BigDecimal;
 
@@ -15,6 +16,7 @@ public class ListCart {
 
     public static ObjectNode getJson(Cart cart) {
         ObjectNode json = Json.newObject();
+        if (cart.getTotalQuantity() < 1) return json;
         if (cart.getShippingAddress() != null) {
             json.put("totalPrice", cart.getTaxedPrice().getTotalGross().toString());
             json.put("totalNetPrice", cart.getTaxedPrice().getTotalNet().toString());
