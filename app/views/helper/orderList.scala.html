@@ -1,0 +1,18 @@
+@(orders: List[Order], selected: String = "")
+
+<div class="accordion" id="order-list">
+    @for(order <- orders) {
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#order-list" href="#order-item-@order.getId">
+                @order.getCreatedAt.toString("dddd, dd MMMM yyyy") - @order.getTotalPrice (view details)
+            </a>
+        </div>
+        <div id="order-item-@order.getId" class="accordion-body collapse @if(selected == order.getId){in}">
+            <div class="accordion-inner">
+                @helper.order(order)
+            </div>
+        </div>
+    </div>
+    }
+</div>

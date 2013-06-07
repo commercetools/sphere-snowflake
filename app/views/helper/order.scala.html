@@ -1,0 +1,107 @@
+@(order: Order)
+
+<div class="order-item">
+
+    <div class="order-summary">
+        <ul>
+            <li>
+                Item total
+                <span>@order.getTaxedPrice.getTotalNet</span>
+            </li>
+            <li>
+                Shipping
+                <span>@order.getShippingInfo.getPrice</span>
+            </li>
+            @for(taxPortion <- order.getTaxedPrice.getTaxPortions) {
+            <li>
+                Tax @getPercentage(taxPortion.getRate) %
+                <span>@taxPortion.getAmount</span>
+            </li>
+            }
+            <li class="total">
+                Total
+                <span>@order.getTaxedPrice.getTotalGross</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="order-line-items">
+        <ul>
+        @for(item <- order.getLineItems) {
+            <li>
+                <span>@item.getProductName (@item.getPrice) x @item.getQuantity = @item.getTotalPrice</span>
+                <ul>
+                @for(attribute <- item.getVariant.getAttributes) {
+                    <li>@attribute.getName: @attribute.getString</li>
+                }
+                </ul>
+            </li>
+        }
+        </ul>
+    </div>
+
+    <div class="order-address">
+    @if(isSet(order.getBillingAddress)) {
+        @defining(order.getBillingAddress) { billingAddress =>
+        <ul class="address billing-address">
+            <li>
+                <span class="first-name">@billingAddress.getFirstName</span>
+                <span class="last-name">@billingAddress.getLastName</span>
+                <span class="company">@billingAddress.getCompany</span>
+            </li>
+            <li>
+                <span class="street">@billingAddress.getStreetName</span>
+            </li>
+            <li>
+                <span class="street">@billingAddress.getStreetNumber</span>
+            </li>
+            <li>
+                <span class="postal-code">@billingAddress.getPostalCode</span>
+                <span class="city">@billingAddress.getCity</span>
+                <span class="country">@billingAddress.getCountry.getName</span>
+            </li>
+            <li>
+                <span class="phone">@billingAddress.getPhone</span>
+            </li>
+            <li>
+                <span class="mobile">@billingAddress.getMobile</span>
+            </li>
+            <li>
+                <span class="email">@billingAddress.getEmail</span>
+            </li>
+        </ul>
+        }
+    }
+    @if(isSet(order.getShippingAddress)) {
+        @defining(order.getShippingAddress) { shippingAddress =>
+        <ul class="address shipping-address">
+            <li>
+                <span class="first-name">@shippingAddress.getFirstName</span>
+                <span class="last-name">@shippingAddress.getLastName</span>
+                <span class="company">@shippingAddress.getCompany</span>
+            </li>
+            <li>
+                <span class="street">@shippingAddress.getStreetName</span>
+            </li>
+            <li>
+                <span class="street">@shippingAddress.getStreetNumber</span>
+            </li>
+            <li>
+                <span class="postal-code">@shippingAddress.getPostalCode</span>
+                <span class="city">@shippingAddress.getCity</span>
+                <span class="country">@shippingAddress.getCountry.getName</span>
+            </li>
+            <li>
+                <span class="phone">@shippingAddress.getPhone</span>
+            </li>
+            <li>
+                <span class="mobile">@shippingAddress.getMobile</span>
+            </li>
+            <li>
+                <span class="email">@shippingAddress.getEmail</span>
+            </li>
+        </ul>
+        }
+    }
+    </div>
+</div>
