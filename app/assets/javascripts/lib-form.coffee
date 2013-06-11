@@ -14,6 +14,9 @@ class window.Form
         @messages = @form.find('.messages')
         @allowSubmit = false
 
+    clean: ->
+        @form[0].reset()
+
     # Mark fields as valid
     markValid: (fields) ->
         fields.attr("aria-invalid", "false")
@@ -150,7 +153,7 @@ class window.Form
     # Execute some actions on submit failure
     failSubmit: (xhr) ->
         # When dealing with any other error display default message
-        return @displayErrorMessage("Something went wrong, please try again") unless xhr.status is 400
+        return @displayErrorMessage("Oops, please try again") unless xhr.status is 400
 
         # When dealing with bad request display errors
         try
