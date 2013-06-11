@@ -1,125 +1,77 @@
-@(setAddressForm: Form[addressForm.SetAddress])
-
-@if(flash.containsKey("set-address-error")) {
-<div class="alert alert-error">
-    @flash.get("set-address-error")
-</div>
-}
-@if(flash.containsKey("set-address-success")) {
-<div class="alert alert-success">
-    @flash.get("set-address-success")
-</div>
-}
-@if(flash.containsKey("set-address-info")) {
-<div class="alert alert-info">
-    @flash.get("set-address-info")
-</div>
-}
+@()
 
 <h5>Address information</h5>
-
 <div class="form">
-    @defining(setAddressForm.field("company").value) { company =>
     <div class="control-group">
-        <label for="set-address-company" class="control-label">Company</label>
-        @form.error("set-address-company")
+        <label for="address-company" class="control-label">Company</label>
         <div class="controls">
-            <input type="text" name="company" id="set-address-company" value="@company"
+            <input type="text" name="company" id="address-company" value="{{company}}"
                    placeholder="Company name (optional)" aria-label="Company (optional)" class="span4" />
         </div>
     </div>
-    }
-    @defining(setAddressForm.field("firstName").value, setAddressForm.field("lastName").value) { case(firstName, lastName) =>
     <div class="control-group">
-        <label for="set-address-firstName" class="control-label">Name</label>
-        @form.error("set-address-firstName")
-        @form.error("set-address-lastName")
+        <label for="address-firstName" class="control-label">Name</label>
         <div class="controls controls-row">
-            <input type="text" name="firstName" id="set-address-firstName" value="@firstName"
+            <input type="text" name="firstName" id="address-firstName" value="{{firstName}}"
                    placeholder="First name" aria-label="First name" required class="span2"/>
-            <input type="text" name="lastName" id="set-address-lastName" value="@lastName"
+            <input type="text" name="lastName" id="address-lastName" value="{{lastName}}"
                    placeholder="Last name" aria-label="Last name" required class="span2"/>
         </div>
     </div>
-    }
-    @defining(setAddressForm.field("phone").value) { phone =>
     <div class="control-group">
-        <label for="set-address-phone" class="control-label">Phone</label>
-        @form.error("set-address-phone")
+        <label for="address-phone" class="control-label">Phone</label>
         <div class="controls">
-            <input type="tel" name="phone" id="set-address-phone" value="@phone"
+            <input type="tel" name="phone" id="address-phone" value="{{phone}}"
                    placeholder="Phone number" aria-label="Phone" required class="span4"/>
         </div>
     </div>
-    }
-    @defining(setAddressForm.field("street").value) { street =>
     <div class="control-group">
-        <label for="set-address-street" class="control-label">Address</label>
-        @form.error("set-address-street")
+        <label for="address-street" class="control-label">Address</label>
         <div class="controls">
-            <input type="text" name="street" id="set-address-street" value="@street"
+            <input type="text" name="street" id="address-street" value="{{street}}"
                    placeholder="First address line" aria-label="Address line" required class="span4"/>
         </div>
     </div>
-    }
-    @defining(setAddressForm.field("street2").value) { street2 =>
     <div class="control-group">
-        @form.error("set-address-street2")
         <div class="controls">
-            <input type="text" name="street2" id="set-address-street2" value="@street2"
+            <input type="text" name="street2" id="address-street2" value="{{street2}}"
                    placeholder="Second address line (optional)" aria-label="Address line 2 (optional)" class="span4"/>
         </div>
     </div>
-    }
-    @defining(setAddressForm.field("postalCode").value, setAddressForm.field("city").value) { case(postalCode, city) =>
     <div class="control-group">
-        <label for="set-address-city" class="control-label">City</label>
-        @form.error("set-address-city")
-        @form.error("set-address-postalCode")
+        <label for="address-city" class="control-label">City</label>
         <div class="controls controls-row">
-            <input type="text" name="city" id="set-address-city" value="@city"
+            <input type="text" name="city" id="address-city" value="{{city}}"
                    placeholder="City" aria-label="City" required class="span2"/>
-            <input type="text" name="postalCode" id="set-address-postalCode" value="@postalCode"
+            <input type="text" name="postalCode" id="address-postalCode" value="{{postalCode}}"
                    placeholder="Postal code" aria-label="Postal code" required class="span2"/>
         </div>
     </div>
-    }
-    @defining(setAddressForm.field("country").value) { country =>
     <div class="control-group">
-        <label for="set-address-country" class="control-label">Country</label>
-        @form.error("set-address-country")
+        <label for="address-country" class="control-label">Country</label>
         <div class="controls">
-            <select name="country" id="set-address-country" aria-label="Country" required>
+            <select name="country" id="address-country" aria-label="Country" required>
                 @for(countryCode <- addressForm.ListAddress.getCountryCodes) {
-                <option value="@countryCode.getAlpha2" @if(countryCode.getAlpha2 == country){selected=selected}>@countryCode.getName</option>
+                <option value="@countryCode.getAlpha2" {{#ifEq "@countryCode.getAlpha2" country}}selected{{/ifEq}}>@countryCode.getName</option>
                 }
             </select>
         </div>
     </div>
-    }
 </div>
-
 <h5>Additional contact information</h5>
-
 <div class="form">
-    @defining(setAddressForm.field("email").value) { email =>
     <div class="control-group">
-        <label for="set-address-email" class="control-label">Email</label>
-        @form.error("set-address-email")
+        <label for="address-email" class="control-label">Email</label>
         <div class="controls">
-            <input type="email" name="email" id="set-address-email" value="@email"
+            <input type="email" name="email" id="address-email" value="{{email}}"
                    placeholder="Email address (optional)" aria-label="Email (optional)"/>
         </div>
     </div>
-    }
-    @defining(setAddressForm.field("mobile").value) { mobile =>
     <div class="control-group">
-        <label for="set-address-mobile" class="control-label">Mobile</label>
-        @form.error("set-address-mobile")
+        <label for="address-mobile" class="control-label">Mobile</label>
         <div class="controls">
-            <input type="tel" name="mobile" id="set-address-mobile" value="@mobile"
+            <input type="tel" name="mobile" id="address-mobile" value="{{mobile}}"
                    placeholder="Mobile phone (optional)" aria-label="Mobile (optional)"/>
         </div>
     </div>
-    }
 </div>
