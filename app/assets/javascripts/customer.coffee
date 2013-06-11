@@ -2,8 +2,10 @@ $ ->
     Handlebars.registerHelper('ifEq', (v1, v2, options) ->
         if v1 is v2 then options.fn(this) else options.inverse(this)
     )
-    html = $("#address-template").html()
-    template = Handlebars.compile html.trim() if html?
+    template = {
+        update: Handlebars.compile $("#update-address-template").html().trim()
+        add: Handlebars.compile $("#add-address-template").html().trim()
+    }
 
     updateCustomer = new Form $('#form-update-customer')
     updatePassword = new Form $('#form-update-password')
@@ -11,20 +13,25 @@ $ ->
 
     addressList = $("#address-list")
 
+    # Load new address form on page loaded
+    loadAddressForm = ->
+        return unless template.add?
+        addAddress.form.empty().append(template.add {})
+
     # Load address list on page loaded
-    $.getJSON(addressList.data("url"), (data) ->
-        replaceAddressList data
-    )
+    loadAddressList = ->
+        $.getJSON(addressList.data("url"), (data) ->
+            replaceAddressList data
+        )
 
     # Replace the whole address list
     replaceAddressList = (list) ->
-        return unless template? or list?
+        return unless template.update? or list?
         addressList.empty()
-        addressList.append(template address) for address in list.address
+        addressList.append(template.update address) for address in list.address
 
     # Update address list with proper animation
     updateAddressList = (list) ->
-        return unless template? or list?
         removeActiveAddresses()
         updatedIds = ("address-#{address.addressId}" for address in list.address)
 
@@ -33,10 +40,11 @@ $ ->
         removed.each -> $(this).fadeOut 500
 
         # Add new addresses
+        return unless template.update? or list?
         removed.promise().done( ->
             $(this).remove()
             for address in list.address when addressList.find("#address-#{address.addressId}").length < 1
-                element = $(template address).hide()
+                element = $(template.update address).hide()
                 addressList.append(element)
                 element.fadeIn 500
         )
@@ -188,6 +196,7 @@ $ ->
 
     # Bind click on 'add new address' to show add address form
     $('.open-add-address').click( ->
+        addAddress.clean()
         removeActiveAddresses()
     )
 
@@ -198,3 +207,6 @@ $ ->
         # Active current address
         $(this).parent('.address-item').addClass("active")
     )
+
+    loadAddressForm()
+    loadAddressList()

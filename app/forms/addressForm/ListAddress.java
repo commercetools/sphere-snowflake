@@ -26,6 +26,7 @@ public class ListAddress {
 
     public static ObjectNode getJson(Address address) {
         ObjectNode json = Json.newObject();
+        if (address == null) return json;
         json.put("addressId", address.getId());
         json.put("company", address.getCompany());
         json.put("firstName", address.getFirstName());

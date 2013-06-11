@@ -25,14 +25,13 @@ public class Customers extends ShopController {
 
     final static Form<UpdateCustomer> updateCustomerForm = form(UpdateCustomer.class);
     final static Form<UpdatePassword> updatePasswordForm = form(UpdatePassword.class);
-    final static Form<SetAddress> setAddressForm = form(SetAddress.class);
 
 
     public static Result show() {
         Customer customer = sphere().currentCustomer().fetch();
         List<Order> orders = sphere().currentCustomer().orders().fetch().getResults();
         Form<UpdateCustomer> customerForm = updateCustomerForm.fill(new UpdateCustomer(customer));
-        return ok(customers.render(customer, orders, customerForm, updatePasswordForm, setAddressForm));
+        return ok(customers.render(customer, orders, customerForm, updatePasswordForm));
     }
 
     @With(Ajax.class)
@@ -43,7 +42,7 @@ public class Customers extends ShopController {
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("update-customer", form);
-            return badRequest(customers.render(customer, orders, form, updatePasswordForm, setAddressForm));
+            return badRequest(customers.render(customer, orders, form, updatePasswordForm));
         }
         // Case valid customer update
         UpdateCustomer updateCustomer = form.get();
@@ -52,7 +51,7 @@ public class Customers extends ShopController {
                 .setEmail(updateCustomer.email);
         customer = sphere().currentCustomer().update(update);
         updateCustomer.displaySuccessMessage(customer);
-        return ok(customers.render(customer, orders, form, updatePasswordForm, setAddressForm));
+        return ok(customers.render(customer, orders, form, updatePasswordForm));
     }
 
     @With(Ajax.class)
@@ -64,7 +63,7 @@ public class Customers extends ShopController {
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("update-password", form);
-            return badRequest(customers.render(customer, orders, customerForm, form, setAddressForm));
+            return badRequest(customers.render(customer, orders, customerForm, form));
         }
         // Case invalid old password
         UpdatePassword updatePassword = form.get();
@@ -72,10 +71,10 @@ public class Customers extends ShopController {
             sphere().currentCustomer().changePassword(updatePassword.oldPassword, updatePassword.newPassword);
         } catch (InvalidPasswordException e) {
             updatePassword.displayInvalidPasswordError();
-            return badRequest(customers.render(customer, orders, customerForm, form, setAddressForm));
+            return badRequest(customers.render(customer, orders, customerForm, form));
         }
         // Case valid password update
         updatePassword.displaySuccessMessage();
-        return ok(customers.render(customer, orders, customerForm, form, setAddressForm));
+        return ok(customers.render(customer, orders, customerForm, form));
     }
 }
