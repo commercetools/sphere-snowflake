@@ -32,7 +32,12 @@ public class Addresses extends ShopController {
     final static Form<RemoveAddress> removeAddressForm = form(RemoveAddress.class);
 
 
-    public static Result get() {
+    public static Result get(String id) {
+        Customer customer = sphere().currentCustomer().fetch();
+        return ok(ListAddress.getJson(customer.getAddressById(id)));
+    }
+
+    public static Result getList() {
         Customer customer = sphere().currentCustomer().fetch();
         return ok(ListAddress.getJson(customer.getAddresses()));
     }
@@ -46,14 +51,14 @@ public class Addresses extends ShopController {
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("set-address", form);
-            return badRequest(customers.render(customer, orders, customerForm, updatePasswordForm, form));
+            return badRequest(customers.render(customer, orders, customerForm, updatePasswordForm));
         }
         // Case valid add address
         SetAddress setAddress = form.get();
         CustomerUpdate update = new CustomerUpdate().addAddress(setAddress.getAddress());
         customer = sphere().currentCustomer().update(update);
         setAddress.displaySuccessMessage(customer.getAddresses());
-        return ok(customers.render(customer, orders, customerForm, updatePasswordForm, setAddressForm));
+        return ok(customers.render(customer, orders, customerForm, updatePasswordForm));
     }
 
     @With(Ajax.class)
@@ -65,14 +70,14 @@ public class Addresses extends ShopController {
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("update-address", form);
-            return badRequest(customers.render(customer, orders, customerForm, updatePasswordForm, setAddressForm));
+            return badRequest(customers.render(customer, orders, customerForm, updatePasswordForm));
         }
         // Case valid update address
         UpdateAddress updateAddress = form.get();
         CustomerUpdate update = new CustomerUpdate().changeAddress(updateAddress.addressId, updateAddress.getAddress());
         customer = sphere().currentCustomer().update(update);
         updateAddress.displaySuccessMessage(customer.getAddresses());
-        return ok(customers.render(customer, orders, customerForm, updatePasswordForm, setAddressForm));
+        return ok(customers.render(customer, orders, customerForm, updatePasswordForm));
     }
 
     @With(Ajax.class)
@@ -84,13 +89,13 @@ public class Addresses extends ShopController {
         // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("remove-address", form);
-            return badRequest(customers.render(customer, orders, customerForm, updatePasswordForm, setAddressForm));
+            return badRequest(customers.render(customer, orders, customerForm, updatePasswordForm));
         }
         // Case valid remove address
         RemoveAddress removeAddress = form.get();
         CustomerUpdate update = new CustomerUpdate().removeAddress(removeAddress.addressId);
         customer = sphere().currentCustomer().update(update);
         removeAddress.displaySuccessMessage(customer.getAddresses());
-        return ok(customers.render(customer, orders, customerForm, updatePasswordForm, setAddressForm));
+        return ok(customers.render(customer, orders, customerForm, updatePasswordForm));
     }
 }

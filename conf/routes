@@ -20,6 +20,7 @@ GET     /checkout                                           controllers.Checkout
 GET     /checkout/summary/:id                               controllers.Checkouts.showSummary(id: String)
 
 GET     /checkout/shipping/address                          controllers.Checkouts.showShippingAddress()
+GET     /checkout/shipping/address/get                      controllers.Checkouts.getShippingAddress()
 POST    /checkout/shipping/address                          controllers.Checkouts.setShippingAddress()
 
 GET     /checkout/payment/method                            controllers.Checkouts.showPaymentMethod()
@@ -49,7 +50,8 @@ POST    /user/update                                        controllers.Customer
 POST    /user/update/password                               controllers.Customers.updatePassword()
 
 # Address
-GET     /user/address/get                                   controllers.Addresses.get()
+GET     /user/address/get                                   controllers.Addresses.getList()
+GET     /user/address/get/:id                               controllers.Addresses.get(id: String)
 
 POST    /user/address/add                                   controllers.Addresses.add()
 POST    /user/address/update                                controllers.Addresses.update()

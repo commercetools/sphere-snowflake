@@ -1,12 +1,18 @@
 $ ->
+    Handlebars.registerHelper('ifEq', (v1, v2, options) ->
+        if v1 is v2 then options.fn(this) else options.inverse(this)
+    )
+    template = {
+        payment: Handlebars.compile $("#payment-method-template").html().trim()
+        address: Handlebars.compile $("#shipping-address-template").html().trim()
+    }
+
     marginTop = 78
     checkoutCart = $('#checkout-cart.step')
     checkoutShipping = $('#checkout-shipping.step')
     checkoutBilling = $('#checkout-billing.step')
     sections = $('#checkout .step')
-
-    html = $("#payment-method-template").html()
-    template = Handlebars.compile html.trim() if html?
+    shippingAddressForm = $("#shipping-address-form")
 
     shippingAddress = new Form $('#form-shipping-address')
     billingMethod = new Form $('#form-billing-method')
@@ -15,6 +21,15 @@ $ ->
     updateCheckout = ->
         loadPaymentMethod($('#payment-networks'))
         orderSummary.load()
+
+    replaceShippingAddress = (data) ->
+        shippingAddressForm.empty().append(template.address data)
+
+    # Load shipping address form
+    loadShippingAddress = ->
+        $.getJSON(shippingAddressForm.data("url"), (data) ->
+            replaceShippingAddress data
+        )
 
     # Load payment method list
     loadPaymentMethod = (listElement) ->
@@ -25,7 +40,7 @@ $ ->
             return window.location.href = data.redirect if data.redirect?
             return unless template? and data?
             listElement.empty()
-            listElement.append(template data)
+            listElement.append(template.payment data)
 
             # Disable all form elements until selected
             listElement.find('.payment-network-form :input').attr('disabled', 'disabled')
@@ -149,5 +164,9 @@ $ ->
     )
 
     $("#shipping-address-list .address-item").click( ->
-
+        $.getJSON($(this).data("url"), (data) ->
+            replaceShippingAddress data
+        )
     )
+
+    loadShippingAddress()

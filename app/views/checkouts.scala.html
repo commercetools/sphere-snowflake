@@ -2,6 +2,7 @@
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/checkout.js")"></script>
+
     <script id="payment-method-template" type="text/x-handlebars-template">
         <input type="hidden" name="referredId" value="{{referredId}}"/>
         <div class="tabbable tabs-left">
@@ -27,6 +28,10 @@
                 {{/each}}
             </div>
         </div>
+    </script>
+
+    <script id="shipping-address-template" type="text/x-handlebars-template">
+        @form.setAddress()
     </script>
 }
 
@@ -117,7 +122,7 @@
                         <h4>Your address book</h4>
                         <ul>
                             @for(address <- addressBook) {
-                            <li class="address-item">
+                            <li class="address-item" data-url="@routes.Addresses.get(address.getId)">
                                 <ul class="address">
                                     <li>
                                         <span class="first-name">@address.getFirstName</span>
@@ -151,8 +156,8 @@
                     </div>
                     }
 
-                    <div id="shipping-address-form" class="show">
-                        @form.setAddress(setAddressForm)
+                    <div id="shipping-address-form" data-url="@routes.Checkouts.getShippingAddress" class="show">
+                        @* Load with shipping address template *@
                     </div>
 
                     <div class="address hide">

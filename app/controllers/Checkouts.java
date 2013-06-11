@@ -2,6 +2,7 @@ package controllers;
 
 import controllers.actions.Ajax;
 import controllers.actions.CartNotEmpty;
+import forms.addressForm.ListAddress;
 import forms.addressForm.SetAddress;
 import forms.paymentForm.PaymentNetwork;
 import forms.paymentForm.PaymentNotification;
@@ -47,6 +48,11 @@ public class Checkouts extends ShopController {
         //Order order = sphere().orders().byId(orderId).fetch().orNull();
         //return ok(orders.render(Collections.singletonList(order)));
         return ok("Order created!");
+    }
+
+    public static Result getShippingAddress() {
+        Cart cart = sphere().currentCart().fetch();
+        return ok(ListAddress.getJson(cart.getShippingAddress()));
     }
 
     @With(CartNotEmpty.class)
