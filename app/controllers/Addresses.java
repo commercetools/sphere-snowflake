@@ -2,10 +2,7 @@ package controllers;
 
 import controllers.actions.Ajax;
 import controllers.actions.Authorization;
-import forms.addressForm.ListAddress;
-import forms.addressForm.RemoveAddress;
-import forms.addressForm.SetAddress;
-import forms.addressForm.UpdateAddress;
+import forms.addressForm.*;
 import forms.customerForm.UpdateCustomer;
 import forms.passwordForm.UpdatePassword;
 import io.sphere.client.shop.model.Customer;
@@ -27,7 +24,7 @@ public class Addresses extends ShopController {
 
     final static Form<UpdateCustomer> updateCustomerForm = form(UpdateCustomer.class);
     final static Form<UpdatePassword> updatePasswordForm = form(UpdatePassword.class);
-    final static Form<SetAddress> setAddressForm = form(SetAddress.class);
+    final static Form<AddAddress> addAddressForm = form(AddAddress.class);
     final static Form<UpdateAddress> updateAddressForm = form(UpdateAddress.class);
     final static Form<RemoveAddress> removeAddressForm = form(RemoveAddress.class);
 
@@ -46,7 +43,7 @@ public class Addresses extends ShopController {
     public static Result add() {
         Customer customer = sphere().currentCustomer().fetch();
         List<Order> orders = sphere().currentCustomer().orders().fetch().getResults();
-        Form<SetAddress> form = setAddressForm.bindFromRequest();
+        Form<AddAddress> form = addAddressForm.bindFromRequest();
         Form<UpdateCustomer> customerForm = updateCustomerForm.fill(new UpdateCustomer(customer));
         // Case missing or invalid form data
         if (form.hasErrors()) {
@@ -54,10 +51,10 @@ public class Addresses extends ShopController {
             return badRequest(customers.render(customer, orders, customerForm, updatePasswordForm));
         }
         // Case valid add address
-        SetAddress setAddress = form.get();
-        CustomerUpdate update = new CustomerUpdate().addAddress(setAddress.getAddress());
+        AddAddress addAddress = form.get();
+        CustomerUpdate update = new CustomerUpdate().addAddress(addAddress.getAddress());
         customer = sphere().currentCustomer().update(update);
-        setAddress.displaySuccessMessage(customer.getAddresses());
+        addAddress.displaySuccessMessage(customer.getAddresses());
         return ok(customers.render(customer, orders, customerForm, updatePasswordForm));
     }
 

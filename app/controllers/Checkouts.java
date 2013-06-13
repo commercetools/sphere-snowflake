@@ -7,6 +7,7 @@ import forms.addressForm.SetAddress;
 import forms.paymentForm.PaymentNetwork;
 import forms.paymentForm.PaymentNotification;
 import io.sphere.client.shop.model.Cart;
+import io.sphere.client.shop.model.Customer;
 import io.sphere.client.shop.model.Order;
 import org.codehaus.jackson.node.ObjectNode;
 import play.data.Form;
@@ -35,8 +36,9 @@ public class Checkouts extends ShopController {
     @With(CartNotEmpty.class)
     public static Result show() {
         Cart cart = sphere().currentCart().fetch();
+        Customer customer = sphere().currentCustomer().fetch();
         String cartSnapshot = sphere().currentCart().createCartSnapshotId();
-        Form<SetAddress> addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress()));
+        Form<SetAddress> addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress(), customer));
         return ok(checkouts.render(cart, cartSnapshot, getAddressBook(), addressForm, 1));
     }
 
@@ -58,16 +60,18 @@ public class Checkouts extends ShopController {
     @With(CartNotEmpty.class)
     public static Result showShippingAddress() {
         Cart cart = sphere().currentCart().fetch();
+        Customer customer = sphere().currentCustomer().fetch();
         String cartSnapshot = sphere().currentCart().createCartSnapshotId();
-        Form<SetAddress> addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress()));
+        Form<SetAddress> addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress(), customer));
         return ok(checkouts.render(cart, cartSnapshot, getAddressBook(), addressForm, 2));
     }
 
     @With(CartNotEmpty.class)
     public static Result showPaymentMethod() {
         Cart cart = sphere().currentCart().fetch();
+        Customer customer = sphere().currentCustomer().fetch();
         String cartSnapshot = sphere().currentCart().createCartSnapshotId();
-        Form<SetAddress> addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress()));
+        Form<SetAddress> addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress(), customer));
         return ok(checkouts.render(cart, cartSnapshot, getAddressBook(), addressForm, 3));
     }
 
