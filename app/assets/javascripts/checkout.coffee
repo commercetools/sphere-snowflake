@@ -29,6 +29,7 @@ $ ->
     loadCartSnapshot = (place) ->
         $.getJSON(place.data("url"), (data) ->
             place.empty().append(data.snapshot)
+        )
 
     # Load shipping address form
     loadShippingAddress = ->
