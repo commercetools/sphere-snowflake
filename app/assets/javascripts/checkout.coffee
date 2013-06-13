@@ -19,11 +19,16 @@ $ ->
 
     # Method to be called each time a change has been triggered
     updateCheckout = ->
-        loadPaymentMethod($('#payment-networks'))
+        loadPaymentMethod $('#payment-networks')
         orderSummary.load()
 
     replaceShippingAddress = (data) ->
         shippingAddressForm.empty().append(template.address data)
+
+    # Load updated cart snapshot
+    loadCartSnapshot = (place) ->
+        $.getJSON(place.data("url"), (data) ->
+            place.empty().append(data.snapshot)
 
     # Load shipping address form
     loadShippingAddress = ->

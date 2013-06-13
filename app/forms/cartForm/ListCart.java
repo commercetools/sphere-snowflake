@@ -4,7 +4,6 @@ import io.sphere.client.shop.model.*;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import play.libs.Json;
-import sphere.Sphere;
 
 import java.math.BigDecimal;
 
@@ -12,6 +11,12 @@ public class ListCart {
 
     public ListCart() {
 
+    }
+
+    public static ObjectNode getJson(String snapshot) {
+        ObjectNode json = Json.newObject();
+        json.put("snapshot", snapshot);
+        return json;
     }
 
     public static ObjectNode getJson(Cart cart) {
@@ -66,4 +71,5 @@ public class ListCart {
 
         return json;
     }
+
 }

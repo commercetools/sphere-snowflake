@@ -36,6 +36,11 @@ public class Carts extends ShopController {
         return ok(ListCart.getJson(cart));
     }
 
+    public static Result getSnapshot() {
+        String snapshot = sphere().currentCart().createCartSnapshotId();
+        return ok(ListCart.getJson(snapshot));
+    }
+
     @With(Ajax.class)
     public static Result add() {
         Form<AddToCart> form = addToCartForm.bindFromRequest();

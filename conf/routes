@@ -10,6 +10,7 @@ GET     /product/list/                                      controllers.Categori
 # Cart
 GET     /cart                                               controllers.Carts.show()
 GET     /cart/get                                           controllers.Carts.get()
+GET     /cart/get/snapshot                                  controllers.Carts.getSnapshot()
 
 POST    /cart/add                                           controllers.Carts.add()
 POST    /cart/update                                        controllers.Carts.update()
