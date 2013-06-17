@@ -51,7 +51,7 @@ public class PaymentNotification {
 
     public String validate() {
         System.out.println(Http.Context.current().request().remoteAddress());
-        // Should be 78.46.61.206 or 213.155.71.162
+        // Should be 78.46.61.206 or 213.155.71.162... found 10.244.205.219
         return null;
     }
 

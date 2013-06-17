@@ -86,6 +86,7 @@ public class Checkouts extends ShopController {
         }
         cart = sphere().currentCart().setShippingAddress(setAddress.getAddress());
         setAddress.displaySuccessMessage(cart.getShippingAddress());
+        System.out.println("set shipping " + sphere().currentCart().createCartSnapshotId());
         return ok(checkouts.render(cart, getAddressBook(), form, 2));
     }
 
@@ -106,6 +107,7 @@ public class Checkouts extends ShopController {
             return internalServerError();
         }
         // Case success request
+        System.out.println("Sending payment information " + cartSnapshot);
         List<PaymentNetwork> paymentNetworks = payment.getApplicableNetworks();
         String referredId = payment.getReferredId();
         return ok(PaymentNetwork.getJson(paymentNetworks, referredId));
@@ -124,7 +126,7 @@ public class Checkouts extends ShopController {
         System.err.println(paymentNotification.resultCode + ": " + paymentNotification.resultInfo);
         Cart cart = sphere().currentCart().fetch();
         if (!sphere().currentCart().isSafeToCreateOrder(cartSnapshot)) {
-            System.out.println("Cart changed!");
+            System.out.println("Cart changed! " + cartSnapshot + " - " + sphere().currentCart().createCartSnapshotId());
             return badRequest();
         }
         // Case valid order
