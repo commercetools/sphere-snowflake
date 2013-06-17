@@ -14,6 +14,10 @@ public class SetAddress extends AddAddress {
 
     }
 
+    public SetAddress(Address address) {
+        this(address, null);
+    }
+
     public SetAddress(Address address, Customer customer) {
         if (address != null) {
             this.company = address.getCompany();

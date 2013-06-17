@@ -100,6 +100,12 @@ public class Payment {
                             .addOrigin()
                             .addReferredId();
                     break;
+                case CHARGE:
+                    transaction
+                            .addOrigin()
+                            .addReferredId()
+                            .addPayment();
+                    break;
                 case LIST:
                     transaction
                             .addOrigin()

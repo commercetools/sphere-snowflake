@@ -22,14 +22,9 @@ $ ->
         loadPaymentMethod $('#payment-networks')
         orderSummary.load()
 
+    # Load and replace shipping address form with new data
     replaceShippingAddress = (data) ->
         shippingAddressForm.empty().append(template.address data)
-
-    # Load updated cart snapshot
-    loadCartSnapshot = (place) ->
-        $.getJSON(place.data("url"), (data) ->
-            place.empty().append(data.snapshot)
-        )
 
     # Load shipping address form
     loadShippingAddress = ->

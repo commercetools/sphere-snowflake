@@ -10,7 +10,6 @@ GET     /product/list/                                      controllers.Categori
 # Cart
 GET     /cart                                               controllers.Carts.show()
 GET     /cart/get                                           controllers.Carts.get()
-GET     /cart/get/snapshot                                  controllers.Carts.getSnapshot()
 
 POST    /cart/add                                           controllers.Carts.add()
 POST    /cart/update                                        controllers.Carts.update()
@@ -25,7 +24,7 @@ GET     /checkout/shipping/address/get                      controllers.Checkout
 POST    /checkout/shipping/address                          controllers.Checkouts.setShippingAddress()
 
 GET     /checkout/payment/method                            controllers.Checkouts.showPaymentMethod()
-GET     /checkout/payment/method/get                        controllers.Checkouts.getPaymentMethod(cs: String)
+GET     /checkout/payment/method/get                        controllers.Checkouts.getPaymentMethod()
 
 GET     /checkout/payment                                   controllers.Checkouts.notification(id: String)
 GET     /checkout/success/:id                               controllers.Checkouts.success(id: String)

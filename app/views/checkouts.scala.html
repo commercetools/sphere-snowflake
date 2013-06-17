@@ -1,4 +1,4 @@
-@(cart: Cart, cartSnapshot: String, addressBook: List[Address], setAddressForm: Form[addressForm.SetAddress], section: Int = 1)
+@(cart: Cart, addressBook: List[Address], setAddressForm: Form[addressForm.SetAddress], section: Int = 1)
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/checkout.js")"></script>
@@ -233,7 +233,7 @@
                 </div>
 
                 <div class="step-body">
-                    <div id="payment-networks" data-url="@routes.Checkouts.getPaymentMethod(cartSnapshot)" class="show">
+                    <div id="payment-networks" data-url="@routes.Checkouts.getPaymentMethod" class="show">
                         <div class="loading-ajax">Loading...</div>
                     </div>
                     <div class="hide">
