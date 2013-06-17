@@ -1,9 +1,0 @@
-@(cart: Cart)
-
-@helper.orderSummary(cart)
-
-@helper.miniCart(cart)
-
-@for(item <- cart.getLineItems) {
-<span id="item-total-price-@item.getId">@item.getTotalPrice</span>
-}
