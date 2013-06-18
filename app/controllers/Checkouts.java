@@ -127,6 +127,7 @@ public class Checkouts extends ShopController {
         Cart cart = sphere().currentCart().fetch();
         if (!sphere().currentCart().isSafeToCreateOrder(cartSnapshot)) {
             System.out.println("Cart changed! " + cartSnapshot + " - " + sphere().currentCart().createCartSnapshotId());
+            System.out.println("Cart changed! New cart: " + cart.getIdAndVersion());
             return badRequest();
         }
         // Case valid order
