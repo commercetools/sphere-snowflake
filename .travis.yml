@@ -1,11 +1,25 @@
+--- 
+scala: 
+- 2.10.0
 language: scala
-env:
-  - PLAY_VERSION=2.1.1
-before_script:
-  - wget http://downloads.typesafe.com/play/${PLAY_VERSION}/play-${PLAY_VERSION}.zip
-  - unzip -q play-${PLAY_VERSION}.zip
-script: play-${PLAY_VERSION}/play test
-notifications:
-  email:
+script: sbt test
+env: 
+  global: 
+    secure: |-
+      RrlICA6rzWqHl+GjmjjmOJlBB5yw408q4I1Lzv1EN+OmkpXuahc4oIdJxZe9
+      aXMoYFKhyX9TPgbg7fo8AO4BjC0St/ZaSKE6zFHViXGSVdVCB1e8eXDW6KjE
+      A843q3vDM5fED0mHEX1+Dv3Eyrqs9PPjKsncFcT/xnCYqzrmuiY=
+after_success: 
+- wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+- git remote add heroku git@heroku.com:sphere-snowflake.git
+- echo "Host heroku.com" >> ~/.ssh/config
+- echo "   StrictHostKeyChecking no" >> ~/.ssh/config
+- echo "   CheckHostIP no" >> ~/.ssh/config
+- echo "   UserKnownHostsFile=/dev/null" >> ~/.ssh/config
+- heroku keys:clear
+- yes | heroku keys:add
+- yes | git push heroku master
+notifications: 
+  email: 
     on_success: never
     on_failure: change
