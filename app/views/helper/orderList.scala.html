@@ -5,7 +5,7 @@
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#order-list" href="#order-item-@order.getId">
-                @order.getCreatedAt.toString("dddd, dd MMMM yyyy") - @order.getTotalPrice (view details)
+                @order.getCreatedAt.toString("EE, dd MMMM yyyy") - @order.getTotalPrice (view details)
             </a>
         </div>
         <div id="order-item-@order.getId" class="accordion-body collapse @if(selected == order.getId){in}">

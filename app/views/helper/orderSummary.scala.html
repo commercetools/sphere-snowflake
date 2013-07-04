@@ -5,26 +5,26 @@
         {{#if totalNetPrice}}
         <li>
             Item total
-            <span>{{totalNetPrice}}</span>
+            <span>{{totalNetPrice}} {{currency}}</span>
         </li>
         {{/if}}
         {{#if shippingPrice}}
         <li>
             Shipping
-            <span>{{shippingPrice}}</span>
+            <span>{{shippingPrice}} {{currency}}</span>
         </li>
         {{/if}}
         {{#if taxPortion}}
         <li>
             {{#each taxPortion}}
             Tax {{rate}} %
-            <span>{{amount}}</span>
+            <span>{{amount}} {{currency}}</span>
             {{/each}}
         </li>
         {{/if}}
         <li class="total">
             Total
-            <span>{{totalPrice}}</span>
+            <span>{{totalPrice}} {{currency}}</span>
         </li>
     </ul>
 </script>

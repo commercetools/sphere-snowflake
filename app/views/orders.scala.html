@@ -1,4 +1,4 @@
-@(orders: List[Order])
+@(order: Order)
 
 @scripts = {
 }
@@ -8,8 +8,8 @@
         @helper.topNavigation()
     </div>
 }{
-    <div id="order">
-        @helper.orderList(orders)
+    <div id="orders">
+        @helper.order(order)
     </div>
 }{
 
