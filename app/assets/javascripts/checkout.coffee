@@ -3,11 +3,11 @@ $ ->
         if v1 is v2 then options.fn(this) else options.inverse(this)
     )
     template = {
-        payment: Handlebars.compile $("#payment-method-template").html().trim()
         address: Handlebars.compile $("#shipping-address-template").html().trim()
     }
 
     marginTop = 78
+    checkout = $('#form-checkout')
     checkoutCart = $('#checkout-cart.step')
     checkoutShipping = $('#checkout-shipping.step')
     checkoutBilling = $('#checkout-billing.step')
@@ -16,10 +16,22 @@ $ ->
 
     shippingAddress = new Form $('#form-shipping-address')
     billingMethod = new Form $('#form-billing-method')
+    paymill = new Paymill billingMethod, $('#form-checkout')
+
+    # Toggle payment form
+    billingMethod.inputs.filter('.paymenttype').click ->
+        $(this).addClass('btn-primary disabled')
+        if $(this).val() is 'ELV'
+            $('#payment-form-elv').show()
+            $('#payment-form-cc').hide()
+            $('#btn-paymenttype-cc').removeClass('btn-primary disabled')
+        else
+            $('#payment-form-elv').hide()
+            $('#payment-form-cc').show()
+            $('#btn-paymenttype-elv').removeClass('btn-primary disabled')
 
     # Method to be called each time a change has been triggered
     updateCheckout = ->
-        loadPaymentMethod $('#payment-networks')
         orderSummary.load()
 
     # Load and replace shipping address form with new data
@@ -32,54 +44,20 @@ $ ->
             replaceShippingAddress data
         )
 
-    # Load payment method list
-    loadPaymentMethod = (listElement) ->
-        listElement.find('.loading-ajax').show()
-
-        xhr = $.getJSON(listElement.data("url"))
-        xhr.done (data) ->
-            return window.location.href = data.redirect if data.redirect?
-            return unless template? and data?
-            listElement.empty()
-            listElement.append(template.payment data)
-
-            # Disable all form elements until selected
-            listElement.find('.payment-network-form :input').attr('disabled', 'disabled')
-
-            # Add events on change selected payment method
-            listElement.find('.payment-network').has('a[data-toggle=tab]').click( ->
-                active = listElement.find($(this).find('a[data-toggle=tab]').attr("href"))
-                inactive = active.siblings()
-
-                # Disable form elements of inactive networks
-                inactive.find(':input').attr('disabled', 'disabled')
-
-                # Enable form elements of selected network
-                active.find(':input').removeAttr('disabled')
-            )
-
-            # Show tooltip on hovering input with hint
-            listElement.find('.hint-message').hover( ->
-                id = $(this).parent().attr("for") + "-hint"
-                $('#' + id + '.hint').show()
-            , ->
-                id = $(this).parent().attr("for") + "-hint"
-                $('#' + id + '.hint').hide()
-            )
-            listElement.find('.loading-ajax').hide()
-
     # Fill form summary with form data
     fillSummary = (form, summaryList) ->
-        form.find(':input').not(':disabled').each ->
+        summaryList.find("span").empty()
+        form.find(':input').not(':disabled').not(':hidden').each ->
             value = if $(this).is('select') then $(this).find(':selected').text() else $(this).val()
-            place = summaryList.find('[data-form=' + $(this).attr("name") + ']')
+            name = $(this).attr("name") ? $(this).attr('class')
+            place = summaryList.find("span[data-form=#{name}]")
 
             if place.length > 0
                 # If there is a list element for this value, set here the data
                 place.text(value)
             else
                 # Otherwise append a new list element
-                summaryList.append("<li>" + value + "</li>")
+                summaryList.append("<li><span>" + value + "</span></li>")
 
     # Jump to the next section form
     nextStep = (focused) ->
@@ -140,7 +118,12 @@ $ ->
         xhr.done (res) ->
             shippingAddress.doneSubmit(res)
             updateCheckout()
-            fillSummary($('#shipping-address-form'), $('#shipping-address-summary'))
+            paymill.updatePrice res.data.cart.totalPrice, res.data.cart.currency
+            # Append cart snapshot to checkout form
+            checkout.append "<input type='hidden' name='cartSnapshot' value='#{res.data.cartSnapshot}'/>"
+            # Fill summary form data
+            fillSummary $('#shipping-address-form'), $('#shipping-address-summary')
+            # Go to next section
             nextStep(checkoutShipping)
         xhr.fail (res) -> shippingAddress.failSubmit(res)
         xhr.always -> shippingAddress.stopSubmit()
@@ -149,19 +132,28 @@ $ ->
     )
 
     # Bind billing 'next step' click event to 'validate form' and 'next step' functionality
-    billingMethod.inputs.filter('.btn-next').click( ->
+    billingMethod.form.submit( ->
         # Remove alert messages
         billingMethod.removeAllMessages()
         billingMethod.reload()
 
         # Validate form client side
-        return false unless billingMethod.validateRequired(true)
+        return false unless paymill.validate()
 
-        # Fill form summary data
-        fillSummary($('#billing-method-form'), $('#billing-method-summary'))
+        # Submit payment data to Paymill
+        billingMethod.startSubmit()
+        paymill.submit( (error, result) ->
+            billingMethod.stopSubmit()
+            return billingMethod.displayErrorMessage(error.apierror) if error
+            # Append token to checkout form
+            checkout.append "<input type='hidden' name='paymillToken' value='#{result.token}'/>"
+            # Fill form summary data
+            fillSummary($('#billing-method-form'), $('#billing-method-summary'))
+            # Go to next section
+            nextStep(checkoutBilling)
+        )
 
-        # Go to next section
-        nextStep(checkoutBilling)
+        return billingMethod.allowSubmit
     )
 
     $("#shipping-address-list .address-item").click( ->

@@ -113,40 +113,27 @@
         margin-left: 50px;
     }
 
-    #payment-networks {
-        .payment-network {
-            .network-img {
-                opacity: 0.5;
-            }
+    #billing-method-form {
+        .choose-type {
+            margin-bottom: 20px;
+        }
+        .card-cvc, .card-expiry-month, .card-expiry-year {
+            width: 88px;
+        }
+    }
 
-            &.active .network-img {
-                opacity: 1;
+    .form-summary {
+        span.month:not(:empty) {
+            &:after {
+                content: "/";
             }
         }
-
-        .payment-network-form {
-            .row {
-                margin-left: 20px;
+        span.cvc:not(:empty) {
+            &:before {
+                content: "(";
             }
-
-            input[name=network] {
-                display: none;
-            }
-
-            .hint-message {
-                padding: 0 10px 0;
-            }
-
-            .hint {
-                display: none;
-                position: absolute;
-                background-color: @foreground;
-                border: 1px solid @light-gray;
-                border-radius: 10px;
-                -webkit-box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.1);
-                -moz-box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.1);
-                box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.1);
-                padding: 10px;
+            &:after {
+                content: ")";
             }
         }
     }

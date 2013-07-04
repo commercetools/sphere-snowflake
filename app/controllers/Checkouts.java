@@ -2,20 +2,28 @@ package controllers;
 
 import controllers.actions.Ajax;
 import controllers.actions.CartNotEmpty;
+import de.paymill.Paymill;
+import de.paymill.model.Payment;
+import de.paymill.net.ApiException;
+import de.paymill.service.PaymentService;
 import forms.addressForm.ListAddress;
 import forms.addressForm.SetAddress;
-import forms.paymentForm.PaymentNetwork;
+import forms.paymentForm.DoCheckout;
 import forms.paymentForm.PaymentNotification;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Customer;
+import io.sphere.client.shop.model.Order;
+import io.sphere.client.shop.model.PaymentState;
+import play.Play;
+import play.api.templates.Html;
 import play.data.Form;
 import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
-import utils.Payment;
 import views.html.checkouts;
+import views.html.orders;
 
-import java.util.List;
+import java.util.Collections;
 
 import static play.data.Form.form;
 import static utils.ControllerHelper.displayErrors;
@@ -23,45 +31,25 @@ import static utils.ControllerHelper.getAddressBook;
 
 public class Checkouts extends ShopController {
 
+    final static String paymillKey = Play.application().configuration().getString("paymill.apiKey");
+
     final static Form<SetAddress> setAddressForm = form(SetAddress.class);
-    final static Form<PaymentNotification> paymentNotificationForm = form(PaymentNotification.class);
+    final static Form<DoCheckout> doCheckoutForm = form(DoCheckout.class);
 
 
     @With(CartNotEmpty.class)
     public static Result show() {
-        return showPage(1);
+        return ok(showPage(1));
     }
 
     @With(CartNotEmpty.class)
     public static Result showShippingAddress() {
-        return showPage(2);
+        return ok(showPage(2));
     }
 
     @With(CartNotEmpty.class)
     public static Result showPaymentMethod() {
-        return showPage(3);
-    }
-
-    protected static Result showPage(int page) {
-        Cart cart = sphere().currentCart().fetch();
-        Form<SetAddress> addressForm;
-        if (sphere().isLoggedIn()) {
-            Customer customer = sphere().currentCustomer().fetch();
-            addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress(), customer));
-        } else {
-            addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress()));
-        }
-        return ok(checkouts.render(cart, getAddressBook(), addressForm, page));
-    }
-
-    public static Result showSummary(String orderId) {
-        //while (!sphere().orders().byId(orderId).fetch().isPresent()) {
-            // Waiting for the order to be created by the notification call
-
-        //}
-        //Order order = sphere().orders().byId(orderId).fetch().orNull();
-        //return ok(orders.render(Collections.singletonList(order)));
-        return ok("Order created!");
+        return ok(showPage(3));
     }
 
     public static Result getShippingAddress() {
@@ -85,68 +73,54 @@ public class Checkouts extends ShopController {
             sphere().currentCart().setCustomerEmail(setAddress.email);
         }
         cart = sphere().currentCart().setShippingAddress(setAddress.getAddress());
-        setAddress.displaySuccessMessage(cart.getShippingAddress());
-        System.out.println("set shipping " + sphere().currentCart().createCartSnapshotId());
+        setAddress.displaySuccessMessage(cart, sphere().currentCart().createCartSnapshotId());
         return ok(checkouts.render(cart, getAddressBook(), form, 2));
     }
 
-    public static Result getPaymentMethod() {
-        Cart cart = sphere().currentCart().fetch();
-        String cartSnapshot = sphere().currentCart().createCartSnapshotId();
-        // Case no shipping address
-        if (cart.getShippingAddress() == null) {
-            return noContent();
-        }
-        // Case no payment needed
-        if (cart.getTotalPrice().getAmount().doubleValue() <= 0) {
-            return noContent();
-        }
-        // Case failed request
-        Payment payment = new Payment(cart, cartSnapshot);
-        if (!payment.doRequest(Payment.NATIVE_URL, Payment.Operation.LIST)) {
-            return internalServerError();
-        }
-        // Case success request
-        System.out.println("Sending payment information " + cartSnapshot);
-        List<PaymentNetwork> paymentNetworks = payment.getApplicableNetworks();
-        String referredId = payment.getReferredId();
-        return ok(PaymentNetwork.getJson(paymentNetworks, referredId));
-    }
-
-    public static Result notification(String cartSnapshot) {
-        // Case missing or invalid data
-        Form<PaymentNotification> form = paymentNotificationForm.bindFromRequest();
+    public static Result submit() {
+        Form<DoCheckout> form = doCheckoutForm.bindFromRequest();
+        // Case missing or invalid form data
         if (form.hasErrors()) {
-            return badRequest();
+            displayErrors("", form);
+            return badRequest(showPage(3));
         }
-        // Case not safe order
-        PaymentNotification paymentNotification = form.get();
-        System.err.println("Notification " + paymentNotification.transactionId);
-        System.err.println(paymentNotification.entity + " - " + paymentNotification.statusCode + " - " + paymentNotification.reasonCode);
-        System.err.println(paymentNotification.resultCode + ": " + paymentNotification.resultInfo);
+        // Case cart changed
+        DoCheckout doCheckout = form.get();
+        if (!sphere().currentCart().isSafeToCreateOrder(doCheckout.cartSnapshot)) {
+            flash("info", "Your cart items have changed, please review everything is correct");
+            redirect(routes.Checkouts.show());
+        }
+        // Case payment failure
+        Payment payment;
+        try {
+            Paymill.setApiKey(paymillKey);
+            PaymentService paymentService = Paymill.getService(PaymentService.class);
+            System.out.println(doCheckout.paymillToken);
+            payment = paymentService.create(doCheckout.paymillToken);
+        } catch (ApiException ae) {
+            if (ae.getCode().equals("token_not_found")) {
+                flash("error", "Invalid payment token");
+                return badRequest(showPage(3));
+            }
+            flash("error", "Payment failed unexpectedly, please try again");
+            return internalServerError(showPage(3));
+        }
+        // Case success purchase
+        System.out.println(payment.getCode());
+        Order order = sphere().currentCart().createOrder(doCheckout.cartSnapshot, PaymentState.Paid);
+        flash("success", "Congratulations, you finished your order!");
+        return ok(orders.render(order));
+    }
+
+    protected static Html showPage(int page) {
         Cart cart = sphere().currentCart().fetch();
-        if (!sphere().currentCart().isSafeToCreateOrder(cartSnapshot)) {
-            System.out.println("Cart changed! " + cartSnapshot + " - " + sphere().currentCart().createCartSnapshotId());
-            System.out.println("Cart changed! New cart: " + cart.getIdAndVersion());
-            return badRequest();
+        Form<SetAddress> addressForm;
+        if (sphere().isLoggedIn()) {
+            Customer customer = sphere().currentCustomer().fetch();
+            addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress(), customer));
+        } else {
+            addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress()));
         }
-        // Case valid order
-        System.out.println("Closing payment");
-        Payment payment = new Payment(cart, cartSnapshot, paymentNotification.longId);
-        if (payment.doRequest(Payment.NATIVE_URL, Payment.Operation.CHARGE)) {
-            System.out.println("Creating order");
-            sphere().currentCart().createOrder(cartSnapshot, paymentNotification.getPaymentState());
-        }
-        return ok();
-    }
-
-    public static Result success(String orderId) {
-        flash("success", "Your payment has been processed, thank you for shopping with us!");
-        return redirect(routes.Checkouts.showSummary(orderId));
-    }
-
-    public static Result failure() {
-        flash("error", "Payment process aborted, please start over with another payment method.");
-        return redirect(routes.Checkouts.showPaymentMethod());
+        return checkouts.render(cart, getAddressBook(), addressForm, page);
     }
 }

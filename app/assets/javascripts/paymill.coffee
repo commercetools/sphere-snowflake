@@ -1,33 +1,77 @@
 $ ->
-    paymillForm = new Form $('#form-paymill')
-    cardNumber = paymillForm.inputs.filter('.card-number')
-    cardCvc = paymillForm.inputs.filter('.card-cvc')
-    cardHolder = paymillForm.inputs.filter('.card-holdername')
-    cardMonth = paymillForm.inputs.filter('.card-expiry-month')
-    cardYear = paymillForm.inputs.filter('.card-expiry-year')
-    cardAmount = paymillForm.inputs.filter('.card-amount-int')
-    cardCurrency = paymillForm.inputs.filter('.card-currency')
+    class window.Paymill
+        constructor: (@form) ->
+            @paymentType = @form.inputs.filter('.paymenttype.disabled').val() ? 'cc'
+            @error = false
 
-    validatePaymill = (form) ->
-        if paymill.validateCardNumber cardNumber.val()
-            paymillForm.displayErrorMessage("Invalid card number", cardNumber)
-        if paymill.validateExpiry cardMonth.val() cardYear.val()
-            paymillForm.displayErrorMessage("Invalid expire date", cardMonth)
-        if paymill.validateCvc cardCvc.val() cardNumber.val()
-            paymillForm.displayErrorMessage("Invalid verification code", cardCvc)
+            @cardNumber = @form.inputs.filter('.card-number')
+            @cardCvc = @form.inputs.filter('.card-cvc')
+            @cardMonth = @form.inputs.filter('.card-expiry-month')
+            @cardYear = @form.inputs.filter('.card-expiry-year')
+            @cardHolder = @form.inputs.filter('.card-holdername')
+            @cardAmount = @form.inputs.filter('.card-amount')
+            @cardCurrency = @form.inputs.filter('.card-currency')
 
-    paymillForm.form.submit ->
-        # Deactivate submit button to avoid further clicks
-        paymillForm.find('.submit-button').attr("disabled", "disabled")
+            @elvNumber = @form.inputs.filter('.elv-account')
+            @elvBank = @form.inputs.filter('.elv-bankcode')
+            @elvHolder = @form.inputs.filter('.elv-holdername')
 
-        paymill.createToken({
-            number: cardNumber.val()
-            exp_month: cardMonth.val()
-            exp_year: cardYear.val()
-            cvc: cardCvc.val()
-            amount_int: cardAmount.val()
-            currency: cardCurrency.val()
-            cardholder: cardHolder.val()
-        }, PaymillResponseHandler)
+        # Method to update amount and currency for 3DS credit card
+        updatePrice: (amount, currency) ->
+            @cardAmount.val amount
+            @cardCurrency.val currency
 
-        return false
+        # General method to validate payment data
+        validate: ->
+            switch @paymentType
+                when "cc" then @validateCc()
+                when "elv" then @validateElv()
+            return not @error
+
+        # Method to validate credit card data
+        validateCc: ->
+            if not paymill.validateCardNumber @cardNumber.val()
+                @form.displayErrorMessage(translation["error"]["invalid-card-number"], @cardNumber)
+                @error = true
+            if not paymill.validateExpiry @cardMonth.val(), @cardYear.val()
+                @form.displayErrorMessage(translation["error"]["invalid-card-expiry-date"], @cardMonth)
+                @error = true
+            if not paymill.validateCvc @cardCvc.val(), @cardNumber.val()
+                @form.displayErrorMessage("Invalid verification code", @cardCvc)
+                @error = true
+            if not @cardHolder.val()?
+                @form.displayErrorMessage(translation["error"]["invalid-card-holdername"], @cardHolder)
+                @error = true
+
+        # Method to validate debit bank data
+        validateElv: ->
+            if not paymill.validateAccountNumber @elvAccount.val()
+                @form.displayErrorMessage(translation["error"]["invalid-elv-accountnumber"], @elvAccount)
+                @error = true
+            if not paymill.validateBankCode @elvBank.val()
+                @form.displayErrorMessage(translation["error"]["invalid-elv-bankcode"], @elvBank)
+                @error = true
+            if not @elvHolder.val()?
+                @form.displayErrorMessage(translation["error"]["invalid-elv-holdername"], @elvHolder)
+                @error = true
+
+        # Method to handle form submission
+        submit: (responseHandler) ->
+            switch @paymentType
+                when "ELV" then params = {
+                        number: @elvNumber.val()
+                        bank: @elvBank.val()
+                        accountholder: @elvHolder.val()
+                    }
+                else params = {
+                        number: @cardNumber.val()
+                        exp_month: @cardMonth.val()
+                        exp_year: @cardYear.val()
+                        cvc: @cardCvc.val()
+                        cardholder: @cardHolder.val()
+                        amount: @cardAmount.val() * 100
+                        currency: @cardCurrency.val()
+                    }
+
+            return false if @error
+            paymill.createToken(params, responseHandler)

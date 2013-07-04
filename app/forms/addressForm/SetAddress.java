@@ -1,6 +1,8 @@
 package forms.addressForm;
 
+import forms.cartForm.ListCart;
 import io.sphere.client.shop.model.Address;
+import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Customer;
 import org.codehaus.jackson.node.ObjectNode;
 import play.libs.Json;
@@ -38,13 +40,15 @@ public class SetAddress extends AddAddress {
         }
     }
 
-    public void displaySuccessMessage(Address address) {
+    public void displaySuccessMessage(Cart cart, String cartSnapshot) {
         String message = "Address set!";
         saveFlash("success", message);
 
         ObjectNode json = Json.newObject();
         json.put("success", message);
-        json.putAll(getJson(address));
+        json.put("cartSnapshot", cartSnapshot);
+        json.put("cart", ListCart.getJson(cart));
+        json.putAll(getJson(cart.getShippingAddress()));
 
         saveJson(json);
     }
