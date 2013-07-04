@@ -1,7 +1,7 @@
 $ ->
     cartContent = $('#cart-content')
     html = $("#cart-item-template").html()
-    template = Handlebars.compile html.trim() if html?
+    template = Handlebars.compile $.trim(html) if html?
 
     # Load address list on page loaded
     $.getJSON(cartContent.data("url"), (data) ->

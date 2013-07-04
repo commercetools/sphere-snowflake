@@ -2,7 +2,7 @@ $ ->
     class @MiniCart
         constructor: (@buttonCart, @popoverCart, @content) ->
             html = $("#mini-cart-template").html()
-            @template = Handlebars.compile html.trim() if html?
+            @template = Handlebars.compile $.trim(html) if html?
 
         # Load data and replace mini cart
         load: ->

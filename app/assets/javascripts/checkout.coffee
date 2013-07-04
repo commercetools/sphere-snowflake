@@ -3,7 +3,7 @@ $ ->
         if v1 is v2 then options.fn(this) else options.inverse(this)
     )
     template = {
-        address: Handlebars.compile $("#shipping-address-template").html().trim()
+        address: Handlebars.compile $.trim($("#shipping-address-template").html())
     }
 
     marginTop = 78

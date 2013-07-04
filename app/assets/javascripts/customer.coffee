@@ -3,8 +3,8 @@ $ ->
         if v1 is v2 then options.fn(this) else options.inverse(this)
     )
     template = {
-        update: Handlebars.compile $("#update-address-template").html().trim()
-        add: Handlebars.compile $("#add-address-template").html().trim()
+        update: Handlebars.compile $.trim($("#update-address-template").html())
+        add: Handlebars.compile $.trim($("#add-address-template").html())
     }
 
     updateCustomer = new Form $('#form-update-customer')
