@@ -1,34 +1,11 @@
 @(cart: Cart, addressBook: List[Address], setAddressForm: Form[addressForm.SetAddress], section: Int = 1)
 
 @scripts = {
-    <script src="@routes.Assets.at("javascripts/checkout.js")"></script>
+    <script type="text/javascript">var PAYMILL_PUBLIC_KEY = '17371111561e758000fc6b195c6d5d53';</script>
+    <script type="text/javascript" src="https://bridge.paymill.com/"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/paymill.js")"></script>
 
-    <script id="payment-method-template" type="text/x-handlebars-template">
-        <input type="hidden" name="referredId" value="{{referredId}}"/>
-        <div class="tabbable tabs-left">
-            <ul class="nav nav-tabs">
-                {{#each group}}
-                {{#each network}}
-                <li class="payment-network">
-                    <a href="#network-{{networkCode}}" data-toggle="tab">
-                        <img src="{{logoUrl}}" class="network-img" alt="{{description}}"/>
-                    </a>
-                </li>
-                {{/each}}
-                {{/each}}
-            </ul>
-            <div id="billing-method-form" class="tab-content">
-                {{#each group}}
-                {{#each network}}
-                <div class="payment-network-form tab-pane" id="network-{{networkCode}}">
-                    <input type="text" name="network" value="{{networkCode}}">
-                    {{{formHtml}}}
-                </div>
-                {{/each}}
-                {{/each}}
-            </div>
-        </div>
-    </script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/checkout.js")"></script>
 
     <script id="shipping-address-template" type="text/x-handlebars-template">
         @form.setAddress()
@@ -222,7 +199,7 @@
             </div>
         </form>
 
-        <form id="form-billing-method" action="@getPaymentUrl" method="post" autocomplete="off">
+        <form id="form-billing-method" action="#" autocomplete="off">
             <div id="checkout-billing" class="step disabled clearfix">
                 <div class="step-header">
                     <span class="step-number">3</span>
@@ -233,14 +210,86 @@
                 </div>
 
                 <div class="step-body">
-                    <div id="payment-networks" data-url="@routes.Checkouts.getPaymentMethod" class="show">
-                        <div class="loading-ajax">Loading...</div>
+                    <div id="billing-method-form" class="show">
+                        <div class="clearfix"></div>
+                        <div class="well span5">
+                            <div class="choose-type controls controls-row">
+                                <div class="btn-group span4">
+                                    <button id="btn-paymenttype-cc" type="button" name="type"
+                                            class="paymenttype btn btn-primary disabled" value="Credit Card">Credit card</button>
+                                    <button id="btn-paymenttype-elv" type="button" name="type"
+                                            class="paymenttype btn" value="ELV">ELV</button>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div id="payment-form-cc">
+                                <input class="card-amount-int" type="hidden" />
+                                <input class="card-currency" type="hidden" />
+                                <div class="controls controls-row">
+                                    <div class="span3"><label>Card number</label>
+                                        <input class="card-number" type="text" size="20" value="4111111111111111"/>
+                                    </div>
+                                    <div class="span1"><label>CVC</label>
+                                        <input class="card-cvc" type="text" size="4" value="111"/>
+                                    </div>
+                                </div>
+                                <div class="controls">
+                                    <div class="span4">
+                                        <label>Card holder</label>
+                                        <input class="card-holdername" type="text" size="20" value="John Doe"/>
+                                    </div>
+                                </div>
+                                <div class="controls">
+                                    <div class="span3">
+                                        <label>Valid until (MM/YYYY)</label>
+                                        <input class="card-expiry-month" type="text" size="2" value="12"/>
+                                        <span> / </span>
+                                        <input class="card-expiry-year" type="text" size="4" value="2015"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="payment-form-elv" style="display:none">
+                                <div class="controls">
+                                    <div class="span3">
+                                        <label>Account holder</label>
+                                        <input class="elv-holdername" type="text" size="20" value="John Doe"/>
+                                    </div>
+                                </div>
+                                <div class="controls controls-row">
+                                    <div class="span3"><label>Account number</label>
+                                        <input class="elv-account" type="text" size="20" value="1234567890"/>
+                                    </div>
+                                </div>
+                                <div class="controls">
+                                    <div class="span3">
+                                        <label>Bank code</label>
+                                        <input class="elv-bankcode" type="text" size="20" value="40050150"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="hide">
                         <ul id="billing-method-summary" class="form-summary">
                             <li>
-                                <span data-form="network" class="network">
-                                </span>
+                                <span data-form="elv-holdername" class="name"></span>
+                                <span data-form="card-holdername" class="name"></span>
+                            </li>
+                            <li>
+                                <span data-form="type"></span>
+                            </li>
+                            <li>
+                                <span data-form="card-number" class="number"></span>
+                                <span data-form="card-cvc" class="cvc"></span>
+                            </li>
+                            <li>
+                                <span data-form="card-expiry-month" class="month"></span>
+                                <span data-form="card-expiry-year" class="year"></span>
+                            </li>
+                            <li>
+                                <span data-form="card-amount"></span>
+                                <span data-form="card-currency"></span>
                             </li>
                         </ul>
                     </div>
@@ -248,12 +297,14 @@
 
                 <div class="step-footer">
                     <div class="messages"></div>
-                    <button type="button" class="btn btn-success btn-next">
+                    <button type="submit" class="btn btn-success btn-next submit-button" data-loading-text="Validating...">
                         Next <i class="icon-chevron-right icon-white"></i>
                     </button>
                 </div>
             </div>
+        </form>
 
+        <form id="form-checkout" action="@routes.Checkouts.submit" method="post">
             <div id="checkout-footer" class="footer">
                 <div class="left">
                     <a href="@getReturnUrl" class="btn">
