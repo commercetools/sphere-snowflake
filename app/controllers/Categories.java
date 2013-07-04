@@ -32,7 +32,6 @@ public class Categories extends ShopController {
 
     @With(SaveContext.class)
     public static Result home(int page) {
-        System.out.println(locale);
         SearchRequest<Product> searchRequest = sphere().products().all(locale);
         searchRequest = filterBy(searchRequest);
         searchRequest = sortBy(searchRequest);

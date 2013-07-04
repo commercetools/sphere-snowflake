@@ -13,7 +13,6 @@ import io.sphere.client.model.SearchResult;
 import io.sphere.client.model.facets.FacetResult;
 import io.sphere.client.shop.CategoryTree;
 import io.sphere.client.shop.model.*;
-import org.mockito.Mockito;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -50,12 +49,12 @@ public class SphereTestable {
         // Mock quantity
         when(currentCart.getQuantity()).thenReturn(items.size());
         // Mock add item
-        when(currentCart.addLineItem(Mockito.anyString(), Mockito.anyInt())).thenReturn(cart);
-        when(currentCart.addLineItem(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(cart);
+        when(currentCart.addLineItem(anyString(), anyInt())).thenReturn(cart);
+        when(currentCart.addLineItem(anyString(), anyInt(), anyInt())).thenReturn(cart);
         // Mock remove item
-        when(currentCart.removeLineItem(Mockito.anyString())).thenReturn(cart);
+        when(currentCart.removeLineItem(anyString())).thenReturn(cart);
         // Mock update cart
-        when(currentCart.update(Mockito.any(CartUpdate.class))).thenReturn(cart);
+        when(currentCart.update(any(CartUpdate.class))).thenReturn(cart);
 
         when(sphere.currentCart()).thenReturn(currentCart);
         setSphereInstance(sphere);
@@ -91,8 +90,8 @@ public class SphereTestable {
         when(productService.filter(any(Locale.class), any(FilterExpression.class))).thenReturn(searchRequest);
         when(productService.filter(any(Locale.class), any(Iterable.class))).thenReturn(searchRequest);
         // Mock get by id/slug
-        //when(productService.byId(Mockito.anyString())).thenReturn(mockFetchRequest(null));
-        //when(productService.bySlug(Mockito.anyString())).thenReturn(mockFetchRequest(null));
+        //when(productService.byId(anyString())).thenReturn(mockFetchRequest(null));
+        //when(productService.bySlug(anyString())).thenReturn(mockFetchRequest(null));
         for (Product p : products) {
             FetchRequest<Product> fetchRequest = mockFetchRequest(p);
             when(productService.byId(p.getId())).thenReturn(fetchRequest);
@@ -131,12 +130,12 @@ public class SphereTestable {
         when(product.getImages()).thenReturn(Collections.nCopies(numImages, image));
         // Mock attribute
         Attribute attribute = mockAttribute("attrName", "attrValue");
-        when(product.get(Mockito.anyString())).thenReturn(attribute);
-        when(product.getString(Mockito.anyString())).thenReturn("attrValue");
-        when(product.getInt(Mockito.anyString())).thenReturn(5);
-        when(product.getMoney(Mockito.anyString())).thenReturn(mockMoney(5));
-        when(product.getDouble(Mockito.anyString())).thenReturn(5.0);
-        when(product.getAttribute(Mockito.anyString())).thenReturn(attribute);
+        when(product.get(anyString())).thenReturn(attribute);
+        when(product.getString(anyString())).thenReturn("attrValue");
+        when(product.getInt(anyString())).thenReturn(5);
+        when(product.getMoney(anyString())).thenReturn(mockMoney(5));
+        when(product.getDouble(anyString())).thenReturn(5.0);
+        when(product.getAttribute(anyString())).thenReturn(attribute);
         when(product.getAttributes()).thenReturn(Collections.nCopies(numAttributes, attribute));
         // Mock variants
         List<Variant> variantList = new ArrayList<Variant>();
@@ -156,7 +155,7 @@ public class SphereTestable {
         // Mock get id
         when(variant.getId()).thenReturn(id);
         // Mock get attributes
-        when(variant.get(Mockito.anyString())).thenReturn("attrValue");
+        when(variant.get(anyString())).thenReturn("attrValue");
         // Mock get price
         when(variant.getPrice()).thenReturn(mockPrice(10));
         // Mock get images
@@ -221,16 +220,16 @@ public class SphereTestable {
         SearchRequest<Product> request = mock(SearchRequest.class);
 
         // Mock request filter
-        when(request.filter(Mockito.any(FilterExpression.class))).thenReturn(request);
-        when(request.filter(Mockito.any(Iterable.class))).thenReturn(request);
+        when(request.filter(any(FilterExpression.class))).thenReturn(request);
+        when(request.filter(any(Iterable.class))).thenReturn(request);
         // Mock request facet
-        when(request.facet(Mockito.any(FacetExpression.class))).thenReturn(request);
-        when(request.facet(Mockito.any(Collection.class))).thenReturn(request);
+        when(request.facet(any(FacetExpression.class))).thenReturn(request);
+        when(request.facet(any(Collection.class))).thenReturn(request);
         // Mock request sort
-        when(request.sort(Mockito.any(ProductSort.class))).thenReturn(request);
+        when(request.sort(any(ProductSort.class))).thenReturn(request);
         // Mock request paging
-        when(request.page(Mockito.anyInt())).thenReturn(request);
-        when(request.pageSize(Mockito.anyInt())).thenReturn(request);
+        when(request.page(anyInt())).thenReturn(request);
+        when(request.pageSize(anyInt())).thenReturn(request);
         // Mock request fetch
         int total = products.size();
         int offset = page * pageSize;
