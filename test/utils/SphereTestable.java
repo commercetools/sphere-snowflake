@@ -20,7 +20,6 @@ import java.util.*;
 
 import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Mockito.*;
-import static play.api.i18n.Lang.defaultLang;
 
 public class SphereTestable {
 
@@ -29,6 +28,8 @@ public class SphereTestable {
 
     public String currency = "EUR";
     public CountryCode country = CountryCode.DE;
+    public Locale locale = Locale.ENGLISH;
+
 
     public SphereTestable() {
         sphere = mock(Sphere.class);
@@ -95,7 +96,7 @@ public class SphereTestable {
         for (Product p : products) {
             FetchRequest<Product> fetchRequest = mockFetchRequest(p);
             when(productService.byId(p.getId())).thenReturn(fetchRequest);
-            when(productService.bySlug(p.getSlug(), defaultLang().toLocale())).thenReturn(fetchRequest);
+            when(productService.bySlug(p.getSlug(), locale)).thenReturn(fetchRequest);
         }
 
         when(sphere.products()).thenReturn(productService);
