@@ -21,14 +21,19 @@ import views.html.home;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+
+import static play.api.i18n.Lang.defaultLang;
 
 public class Categories extends ShopController {
 
     public static int PAGE_SIZE = 50;
+    public static Locale locale = defaultLang().toLocale();
 
     @With(SaveContext.class)
     public static Result home(int page) {
-        SearchRequest<Product> searchRequest = sphere().products().all();
+        System.out.println(locale);
+        SearchRequest<Product> searchRequest = sphere().products().all(locale);
         searchRequest = filterBy(searchRequest);
         searchRequest = sortBy(searchRequest);
         searchRequest = paging(searchRequest, page);
@@ -46,7 +51,7 @@ public class Categories extends ShopController {
         }
         FilterExpression categoryFilter =
                 new FilterExpressions.CategoriesOrSubcategories(Collections.singletonList(category));
-        SearchRequest <Product> searchRequest = sphere().products().filter(categoryFilter);
+        SearchRequest <Product> searchRequest = sphere().products().filter(locale, categoryFilter);
         searchRequest = filterBy(searchRequest);
         searchRequest = sortBy(searchRequest);
         searchRequest = paging(searchRequest, page);
@@ -61,7 +66,7 @@ public class Categories extends ShopController {
         Category category = null;
         SearchRequest<Product> searchRequest;
         if (categorySlug.isEmpty()) {
-            searchRequest = sphere().products().all();
+            searchRequest = sphere().products().all(locale);
         } else {
             category = sphere().categories().getBySlug(categorySlug);
             if (category == null) {
@@ -69,7 +74,7 @@ public class Categories extends ShopController {
             }
             FilterExpression categoryFilter =
                     new FilterExpressions.CategoriesOrSubcategories(Collections.singletonList(category));
-            searchRequest = sphere().products().filter(categoryFilter);
+            searchRequest = sphere().products().filter(locale, categoryFilter);
         }
         searchRequest = filterBy(searchRequest);
         searchRequest = sortBy(searchRequest);

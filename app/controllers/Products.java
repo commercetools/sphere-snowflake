@@ -9,14 +9,19 @@ import play.mvc.With;
 import sphere.ShopController;
 import views.html.products;
 
+import java.util.Locale;
+
+import static play.api.i18n.Lang.defaultLang;
 import static utils.ControllerHelper.getDefaultCategory;
 
 @With(SaveContext.class)
 public class Products extends ShopController {
 
+    public static Locale locale = defaultLang().toLocale();
+
     public static Result select(String productSlug, int variantId) {
         // Case invalid product
-        Product product = sphere().products().bySlug(productSlug).fetch().orNull();
+        Product product = sphere().products().bySlug(productSlug, locale).fetch().orNull();
         if (product == null) {
             return notFound("Product not found: " + productSlug);
         }

@@ -6,12 +6,9 @@ import io.sphere.client.shop.model.Category;
 import io.sphere.client.shop.model.Product;
 import org.junit.Before;
 import org.junit.Test;
-import sphere.Sphere;
 import utils.SphereTestable;
 import utils.ViewHelper;
-import views.html.products;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UtilsTest {
