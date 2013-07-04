@@ -25,6 +25,8 @@ import static org.mockito.Mockito.*;
 public class SphereTestable {
 
     private Sphere sphere;
+    public SearchRequest searchRequest;
+
     public String currency = "EUR";
     public CountryCode country = CountryCode.DE;
 
@@ -238,6 +240,7 @@ public class SphereTestable {
         SearchResult<Product> searchResult = new SearchResult<Product>(offset, count, total, result, facetResult, pageSize);
         when(request.fetch()).thenReturn(searchResult);
 
+        searchRequest = request;
         return request;
     }
 

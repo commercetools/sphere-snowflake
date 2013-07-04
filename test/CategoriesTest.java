@@ -1,52 +1,50 @@
 import controllers.routes;
+import io.sphere.client.filters.Filters;
+import io.sphere.client.filters.expressions.FilterExpression;
 import io.sphere.client.shop.model.Category;
 import io.sphere.client.shop.model.Product;
+import org.fluentlenium.core.search.Search;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import org.mockito.Mockito;
 import play.mvc.Result;
-import sphere.SearchRequest;
 import utils.SphereTestable;
-import views.html.products;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 import static play.test.Helpers.*;
 import static utils.TestHelper.*;
 
 public class CategoriesTest {
 
-    private SphereTestable sphere;
+    private SphereTestable sphereTestable;
 
     @Before
     public void mockSphere() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                sphere = new SphereTestable();
+                sphereTestable = new SphereTestable();
             }
         });
     }
 
     private void mockCategoryRequest(int level) {
-        List<Category> categories = sphere.mockCategory("cat", level);
-        sphere.mockCategoryTree(categories);
+        List<Category> categories = sphereTestable.mockCategory("cat", level);
+        sphereTestable.mockCategoryTree(categories);
     }
 
     private void mockProductRequest(int numProducts, int page, int pageSize) {
         List<Product> products = new ArrayList<Product>();
         for (int i = 0 ; i < numProducts; i++) {
-            products.add(sphere.mockProduct("prod" + i+1, 1, 1, 1));
+            products.add(sphereTestable.mockProduct("prod" + i+1, 1, 1, 1));
         }
-        sphere.mockProductService(products, page, pageSize);
+        sphereTestable.mockProductService(products, page, pageSize);
     }
 
     @Test
@@ -177,6 +175,7 @@ public class CategoriesTest {
                 assertOK(result);
                 Document body = contentAsDocument(result);
                 assertThat(body.select("#product-list .product-item").size()).isEqualTo(5);
+                verify(sphereTestable.searchRequest).page(1);
             }
         });
 	}
@@ -192,6 +191,7 @@ public class CategoriesTest {
                 Document body = contentAsDocument(result);
                 assertThat(body.select("#product-list .product-item").size()).isEqualTo(0);
                 assertThat(body.select("#messages .alert-info").hasText()).isTrue();
+                verify(sphereTestable.searchRequest).page(99);
             }
         });
 	}
@@ -206,6 +206,7 @@ public class CategoriesTest {
                 assertOK(result);
                 Document body = contentAsDocument(result);
                 assertThat(body.select("#product-list .product-item").size()).isEqualTo(10);
+                verify(sphereTestable.searchRequest).page(0);
             }
         });
 	}
@@ -214,12 +215,17 @@ public class CategoriesTest {
 	public void filterProductsByPrice() {
         running(fakeApplication(), new Runnable() {
             public void run() {
+                String[] queryString = { "10_20" };
                 mockCategoryRequest(3);
                 mockProductRequest(15, 0, 10);
-                Result result = callAction(routes.ref.Categories.select("cat1/cat2", 1), fakeRequest("GET", "?price=10_20"));
+                Result result = callAction(routes.ref.Categories.select("cat1/cat2", 1),
+                        fakeRequest("GET", "?price=" + queryString[0]));
                 assertOK(result);
                 Document body = contentAsDocument(result);
                 assertThat(body.select("#product-list .product-item").size()).isEqualTo(10);
+                //verify(sphereTestable.searchRequest).filter(Collections.singletonList(
+                 //       new Filters.Price.DynamicRange().parse(Collections.singletonMap("price", queryString))
+                //));
             }
         });
 	}
