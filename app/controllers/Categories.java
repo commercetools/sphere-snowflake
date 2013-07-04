@@ -28,7 +28,7 @@ public class Categories extends ShopController {
 
     @With(SaveContext.class)
     public static Result home(int page) {
-        SearchRequest<Product> searchRequest = sphere().products().all(lang().toLocale());
+        SearchRequest<Product> searchRequest = sphere().products().all();
         searchRequest = filterBy(searchRequest);
         searchRequest = sortBy(searchRequest);
         searchRequest = paging(searchRequest, page);
@@ -46,7 +46,7 @@ public class Categories extends ShopController {
         }
         FilterExpression categoryFilter =
                 new FilterExpressions.CategoriesOrSubcategories(Collections.singletonList(category));
-        SearchRequest <Product> searchRequest = sphere().products().filter(lang().toLocale(), categoryFilter);
+        SearchRequest <Product> searchRequest = sphere().products().filter(categoryFilter);
         searchRequest = filterBy(searchRequest);
         searchRequest = sortBy(searchRequest);
         searchRequest = paging(searchRequest, page);
@@ -61,7 +61,7 @@ public class Categories extends ShopController {
         Category category = null;
         SearchRequest<Product> searchRequest;
         if (categorySlug.isEmpty()) {
-            searchRequest = sphere().products().all(lang().toLocale());
+            searchRequest = sphere().products().all();
         } else {
             category = sphere().categories().getBySlug(categorySlug);
             if (category == null) {
