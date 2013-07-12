@@ -55,9 +55,9 @@ public class CategoriesTest {
 	public void checkSelectCategoryUrl() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                assertUrlNotNull(GET, "/cat");
-                assertUrlNotNull(GET, "/cat1/cat");
-                assertUrlNotNull(GET, "/cat2-cat1/cat");
+                assertUrlNotNull(GET, "/cat1");
+                assertUrlNotNull(GET, "/cat1/cat2");
+                assertUrlNotNull(GET, "/cat1-cat2/cat3");
             }
         });
 	}
@@ -66,9 +66,9 @@ public class CategoriesTest {
     public void checkProductPagingUrl() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                assertUrlNotNull(GET, "/cat", "?page=1");
-                assertUrlNotNull(GET, "/cat1/cat", "?page=1");
-                assertUrlNotNull(GET, "/cat2-cat1/cat", "?page=1");
+                assertUrlNotNull(GET, "/cat1", "?page=1");
+                assertUrlNotNull(GET, "/cat1/cat2", "?page=1");
+                assertUrlNotNull(GET, "/cat1-cat2/cat3", "?page=1");
             }
         });
     }
@@ -77,9 +77,9 @@ public class CategoriesTest {
 	public void checkProductFilterByPriceUrl() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                assertUrlNotNull(GET, "/cat", "?price=10_20");
-                assertUrlNotNull(GET, "/cat1/cat", "?price=10_20");
-                assertUrlNotNull(GET, "/cat2-cat1/cat", "?price=10_20");
+                assertUrlNotNull(GET, "/cat1", "?price=10_20");
+                assertUrlNotNull(GET, "/cat1/cat2", "?price=10_20");
+                assertUrlNotNull(GET, "/cat1-cat2/cat3", "?price=10_20");
             }
         });
 	}
@@ -88,9 +88,9 @@ public class CategoriesTest {
 	public void checkProductFilterByColorUrl() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                assertUrlNotNull(GET, "/cat", "?color=black");
-                assertUrlNotNull(GET, "/cat1/cat", "?color=black");
-                assertUrlNotNull(GET, "/cat2-cat1/cat", "?color=black");
+                assertUrlNotNull(GET, "/cat1", "?color=black");
+                assertUrlNotNull(GET, "/cat1/cat2", "?color=black");
+                assertUrlNotNull(GET, "/cat1-cat2/cat3", "?color=black");
             }
         });
 	}
@@ -114,7 +114,7 @@ public class CategoriesTest {
             public void run() {
                 mockCategoryRequest(1);
                 mockProductRequest(15, 0, 10);
-                Result result = callAction(routes.ref.Categories.select("cat1", 1));
+                Result result = callAction(routes.ref.Categories.select("", "cat1", 1));
                 assertOK(result);
                 Document body = contentAsDocument(result);
                 assertThat(body.select("#product-list .product-item").size()).isEqualTo(10);
@@ -128,7 +128,7 @@ public class CategoriesTest {
             public void run() {
                 mockCategoryRequest(3);
                 mockProductRequest(15, 0, 10);
-                Result result = callAction(routes.ref.Categories.select("cat1-cat2/cat3", 1));
+                Result result = callAction(routes.ref.Categories.select("cat1-cat2/", "cat3", 1));
                 assertOK(result);
                 Document body = contentAsDocument(result);
                 assertThat(body.select("#product-list .product-item").size()).isEqualTo(10);
@@ -140,7 +140,7 @@ public class CategoriesTest {
 	public void showInvalidCategory() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                Result result = callAction(routes.ref.Categories.select("non-existing-category", 1));
+                Result result = callAction(routes.ref.Categories.select("", "non-existing-category", 1));
                 assertNotFound(result);
             }
         });
@@ -152,7 +152,7 @@ public class CategoriesTest {
             public void run() {
                 mockCategoryRequest(3);
                 mockProductRequest(15, 0, 10);
-                Result result = callAction(routes.ref.Categories.select("non-existing-category/cat3", 1));
+                Result result = callAction(routes.ref.Categories.select("non-existing-category/" , "cat3", 1));
                 assertOK(result);
                 Document body = contentAsDocument(result);
                 assertThat(body.select("#product-list .product-item").size()).isEqualTo(10);
@@ -166,7 +166,7 @@ public class CategoriesTest {
             public void run() {
                 mockCategoryRequest(3);
                 mockProductRequest(15, 1, 10);
-                Result result = callAction(routes.ref.Categories.select("cat1-cat2/cat3", 2));
+                Result result = callAction(routes.ref.Categories.select("cat1-cat2/", "cat3", 2));
                 assertOK(result);
                 Document body = contentAsDocument(result);
                 assertThat(body.select("#product-list .product-item").size()).isEqualTo(5);
@@ -181,7 +181,7 @@ public class CategoriesTest {
             public void run() {
                 mockCategoryRequest(3);
                 mockProductRequest(15, 99, 10);
-                Result result = callAction(routes.ref.Categories.select("cat1/cat2", 100));
+                Result result = callAction(routes.ref.Categories.select("cat1/", "cat2", 100));
                 assertOK(result);
                 Document body = contentAsDocument(result);
                 assertThat(body.select("#product-list .product-item").size()).isEqualTo(0);
@@ -197,7 +197,7 @@ public class CategoriesTest {
             public void run() {
                 mockCategoryRequest(3);
                 mockProductRequest(15, -3, 10);
-                Result result = callAction(routes.ref.Categories.select("cat1/cat2", -2));
+                Result result = callAction(routes.ref.Categories.select("cat1/", "cat2", -2));
                 assertOK(result);
                 Document body = contentAsDocument(result);
                 assertThat(body.select("#product-list .product-item").size()).isEqualTo(10);
@@ -213,7 +213,7 @@ public class CategoriesTest {
                 String[] queryString = { "10_20" };
                 mockCategoryRequest(3);
                 mockProductRequest(15, 0, 10);
-                Result result = callAction(routes.ref.Categories.select("cat1/cat2", 1),
+                Result result = callAction(routes.ref.Categories.select("cat1/", "cat2", 1),
                         fakeRequest("GET", "?price=" + queryString[0]));
                 assertOK(result);
                 Document body = contentAsDocument(result);
@@ -231,7 +231,7 @@ public class CategoriesTest {
             public void run() {
                 mockCategoryRequest(3);
                 mockProductRequest(15, 0, 10);
-                Result result = callAction(routes.ref.Categories.select("cat1/cat2", 1), fakeRequest("GET", "?color=schwarz"));
+                Result result = callAction(routes.ref.Categories.select("cat1/", "cat2", 1), fakeRequest("GET", "?color=schwarz"));
                 assertOK(result);
                 Document body = contentAsDocument(result);
                 assertThat(body.select("#product-list .product-item").size()).isEqualTo(10);

@@ -2,10 +2,13 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+# Redirect without trailing slash
+GET     /*path/                                             controllers.Application.redirect(path: String)
+
 # Home
 GET     /                                                   controllers.Categories.home(page: Int ?= 1)
 
-GET     /product/list/                                      controllers.Categories.listProducts(category: String ?= "", page: Int ?= 1)
+GET     /product/list                                       controllers.Categories.listProducts(category: String ?= "", page: Int ?= 1)
 
 # Cart
 GET     /cart                                               controllers.Carts.show()
@@ -59,4 +62,4 @@ GET     /assets/*file                                       controllers.Assets.a
 GET     /:product-$variant<[0-9]+>.html                     controllers.Products.select(product: String, variant: Int)
 
 # Category
-GET     /*categoryPath                                      controllers.Categories.select(categoryPath: String, page: Int ?= 1)
+GET     /$path<([^.]+/)?>$category<[^/.]+>                  controllers.Categories.select(path: String, category: String, page: Int ?= 1)

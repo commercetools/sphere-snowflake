@@ -5,7 +5,7 @@
         <ul class="nav nav-pills" role="navigation">
             @for(category <- getRootCategories) {
             <li id="header-menu-@category.getSlug" class="@getActiveClass(category, currentCategory)">
-                <a href="@getCategoryUrl(category)" id="link-@category.getSlug" class="dropdown-toggle">
+                <a href="@getCategoryUrl(category)" id="link-category-@category.getSlug" class="dropdown-toggle">
                     @category.getName
                 </a>
                 @if(!category.getChildren.isEmpty) {
@@ -13,7 +13,7 @@
                     <ul class="nav nav-pills dropdown-list" role="menu" aria-labelledBy="category-@category.getSlug">
                         @for(subcategory <- category.getChildren) {
                         <li id="header-submenu-@subcategory.getSlug" class="@getActiveClass(subcategory, currentCategory)">
-                            <a href="@getCategoryUrl(subcategory)" id="link-@subcategory.getSlug">
+                            <a href="@getCategoryUrl(subcategory)" id="link-category-@subcategory.getSlug">
                                 <small>@subcategory.getName</small>
                             </a>
                         </li>

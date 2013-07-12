@@ -57,8 +57,6 @@ public class ViewHelper {
             }
             path += ancestorsPath + "/";
         }
-        // Add current category
-        path += category.getPathInTree().get(level - 1).getSlug();
         return path;
     }
 
@@ -159,7 +157,7 @@ public class ViewHelper {
     }
 
     public static Call getCategoryUrl(Category category, int page) {
-        return routes.Categories.select(getCategoryPath(category), page);
+        return routes.Categories.select(getCategoryPath(category), category.getSlug(), page);
     }
 
     public static Call getProductUrl(Product product, Variant variant, Category category) {
@@ -193,9 +191,5 @@ public class ViewHelper {
         }
         matchingVariantList.removeAll(Collections.singleton(null));
         return matchingVariantList;
-    }
-
-    public static String getPaymentUrl() {
-        return Play.application().configuration().getString("optile.chargeUrl");
     }
 }

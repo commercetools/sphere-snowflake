@@ -37,9 +37,9 @@ public class Categories extends ShopController {
     }
 
     @With(SaveContext.class)
-    public static Result select(String categoryPath, int page) {
-        String[] categorySlugs = categoryPath.split("/");
-        String categorySlug = categorySlugs[categorySlugs.length - 1];
+    public static Result select(String categoryPath, String categorySlug, int page) {
+        System.out.println(categoryPath);
+        System.out.println(categorySlug);
         Category category = sphere().categories().getBySlug(categorySlug);
         if (category == null) {
             return notFound("Category not found: " + categorySlug);
