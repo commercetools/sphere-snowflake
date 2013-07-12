@@ -64,13 +64,11 @@ public class IntegrationTest {
         });
     }
 
-    @Ignore
     @Test
     public void showSubcategory() {
         running(testServer(3333, fakeApplication()), HTMLUNIT, new F.Callback<TestBrowser>() {
             public void invoke(TestBrowser browser) {
                 goToSubcategory(browser);
-                System.out.println(browser.pageSource());
                 assertThat(browser.$("body.category").isEmpty()).isFalse();
                 assertThat(browser.title()).isEqualTo("cat2");
             }
@@ -83,12 +81,12 @@ public class IntegrationTest {
 
     public void goToCategory(TestBrowser browser) {
         goToHome(browser);
-        browser.$("#link-cat1").click();
+        browser.$("#link-category-cat1").click();
     }
 
     public void goToSubcategory(TestBrowser browser) {
         goToCategory(browser);
-        browser.$("#link-cat2").click();
+        browser.$("#link-category-cat2").click();
     }
 
 }
