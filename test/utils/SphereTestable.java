@@ -107,9 +107,12 @@ public class SphereTestable {
         List<Category> categories = new ArrayList<Category>();
         List<Category> tree = new ArrayList<Category>();
         for (int i = 0; i < level - 1; ++i) {
-            Category ancestor = mockCategoryNode(name, tree);
-            categories.add(ancestor);
-            tree.add(ancestor);
+            Category category = mockCategoryNode(name, tree);
+            categories.add(category);
+            if (!tree.isEmpty()) {
+                when(tree.get(tree.size() - 1).getChildren()).thenReturn(Collections.singletonList(category));
+            }
+            tree.add(category);
         }
         categories.add(mockCategoryNode(name, tree));
         return categories;
@@ -294,14 +297,14 @@ public class SphereTestable {
         when(category.getSlug()).thenReturn(name + level);
         // Mock description
         when(category.getDescription()).thenReturn("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+        // Mock root
+        when(category.isRoot()).thenReturn(level < 2);
         // Mock parent
         Category parent = null;
         if (level > 1) {
             parent = ancestors.get(ancestors.size() - 1);
         }
         when(category.getParent()).thenReturn(parent);
-        // Mock root
-        when(category.isRoot()).thenReturn(level < 2);
         // Mock category tree
         List<Category> categoryTree = new ArrayList<Category>(ancestors);
         when(category.getPathInTree()).thenReturn(categoryTree);
