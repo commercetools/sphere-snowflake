@@ -3,10 +3,15 @@ $ ->
     html = $("#cart-item-template").html()
     template = Handlebars.compile $.trim(html) if html?
 
-    # Load address list on page loaded
-    $.getJSON(cartContent.data("url"), (data) ->
-        replaceCart data
-    )
+    # Load cart contents on page loaded
+    loadCart = ->
+        url = cartContent.data("url")
+        if url?
+            cartContent.find('.loading-ajax').show()
+            $.getJSON(url, (data) ->
+                replaceCart data
+                cartContent.find('.loading-ajax').hide()
+            )
 
     # Replace the whole cart
     replaceCart = (cart) ->
@@ -110,4 +115,6 @@ $ ->
 
         return removeFromCart.allowSubmit
     )
+
+    loadCart()
 

@@ -30,19 +30,27 @@ $ ->
             $('#payment-form-cc').show()
             $('#btn-paymenttype-elv').removeClass('btn-primary disabled')
 
+
     # Method to be called each time a change has been triggered
     updateCheckout = ->
         orderSummary.load()
+
+
+    # Load shipping address form
+    loadShippingAddress = ->
+        url = shippingAddressForm.data("url")
+        if url?
+            shippingAddressForm.find('.loading-ajax').show()
+            $.getJSON(url, (data) ->
+                replaceShippingAddress data
+                shippingAddressForm.find('.loading-ajax').hide()
+            )
+
 
     # Load and replace shipping address form with new data
     replaceShippingAddress = (data) ->
         shippingAddressForm.empty().append(template.address data)
 
-    # Load shipping address form
-    loadShippingAddress = ->
-        $.getJSON(shippingAddressForm.data("url"), (data) ->
-            replaceShippingAddress data
-        )
 
     # Fill form summary with form data
     fillSummary = (form, summaryList) ->
@@ -58,6 +66,7 @@ $ ->
             else
                 # Otherwise append a new list element
                 summaryList.append("<li><span>" + value + "</span></li>")
+
 
     # Jump to the next section form
     nextStep = (focused) ->
@@ -78,7 +87,7 @@ $ ->
 
 
     # Bind 'change' button click event to allow editing a section form
-    $('#checkout .btn-edit').click( ->
+    $('#checkout .btn-edit').click ->
         selected = $(this).parentsUntil('.step').parent()
         focused = sections.not('.disabled').not('.visited')
 
@@ -93,16 +102,16 @@ $ ->
 
         # Set scroll position to selected section
         $('html, body').animate scrollTop: selected.offset().top - marginTop, 'slow'
-    )
+
 
     # Bind cart 'next step' click event to 'next step' functionality
-    checkoutCart.find('.btn-next').click( ->
+    checkoutCart.find('.btn-next').click ->
         updateCheckout()
         nextStep(checkoutCart)
-    )
+
 
     # Bind shipping address submit event to 'set address' and 'next step' functionality
-    shippingAddress.form.submit( ->
+    shippingAddress.form.submit ->
         # Remove alert messages
         shippingAddress.removeAllMessages()
 
@@ -129,10 +138,10 @@ $ ->
         xhr.always -> shippingAddress.stopSubmit()
 
         return shippingAddress.allowSubmit
-    )
+
 
     # Bind billing 'next step' click event to 'validate form' and 'next step' functionality
-    billingMethod.form.submit( ->
+    billingMethod.form.submit ->
         # Remove alert messages
         billingMethod.removeAllMessages()
         billingMethod.reload()
@@ -154,12 +163,16 @@ $ ->
         )
 
         return billingMethod.allowSubmit
-    )
 
-    $("#shipping-address-list .address-item").click( ->
-        $.getJSON($(this).data("url"), (data) ->
-            replaceShippingAddress data
-        )
-    )
+
+    $("#shipping-address-list .address-item").click ->
+        url = $(this).data("url")
+        if url?
+            $(this).find('.loading-ajax').show()
+            $.getJSON(url, (data) ->
+                replaceShippingAddress data
+                $(this).find('.loading-ajax').hide()
+            )
+
 
     loadShippingAddress()

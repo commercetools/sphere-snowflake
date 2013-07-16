@@ -20,9 +20,13 @@ $ ->
 
     # Load address list on page loaded
     loadAddressList = ->
-        $.getJSON(addressList.data("url"), (data) ->
-            replaceAddressList data
-        )
+        url = addressList.data("url")
+        if url?
+            addressList.find('.loading-ajax').show()
+            $.getJSON(url, (data) ->
+                replaceAddressList data
+                addressList.find('.loading-ajax').hide()
+            )
 
     # Replace the whole address list
     replaceAddressList = (list) ->
