@@ -1,33 +1,43 @@
-<div id="top-navigation" class="navbar">
-    <div class="container">
-        <ul class="nav" role="navigation">
-            <li class="nav-link">
-                <a class="brand" href="/">Sphere</a>
-            </li>
-        </ul>
-        <ul class="nav pull-right">
-        @if(isLoggedIn) {
-            <li class="nav-link">
-                <a href="@routes.Customers.show">
-                    Hi <span data-form-update="customer-firstName">@getCurrentCustomer.getName.getFirstName</span>
-                </a>
-            </li>
-            <li class="nav-link">|</li>
-            <li class="nav-link">
-                <a href="@routes.Login.logOut">Sign out</a>
-            </li>
-        } else {
-            <li class="nav-link">
-                <a href="@routes.Login.showSignUp">Register</a>
-            </li>
-            <li class="nav-link">|</li>
-            <li class="nav-link">
-                <a href="@routes.Login.show">Login</a>
-            </li>
-        }
-            <li id="mini-cart">
-                @helper.miniCart(getCurrentCart)
-            </li>
-        </ul>
+<div id="top-navigation" class="navbar navbar-static-top">
+    <div class="navbar-inner">
+        <div class="container container-fluid">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <ul class="nav" role="navigation">
+                <li class="nav-link">
+                    <a class="brand" href="/">Sphere</a>
+                </li>
+            </ul>
+            <div class="nav-collapse collapse">
+                <ul class="nav pull-right">
+                @if(isLoggedIn) {
+                    <li class="nav-link">
+                        <a href="@routes.Customers.show">
+                            Hi <span data-form-update="customer-firstName">@getCurrentCustomer.getName.getFirstName</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@routes.Login.logOut">Sign out</a>
+                    </li>
+                } else {
+                    <li class="nav-link">
+                        <a href="@routes.Login.showSignUp">Register</a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@routes.Login.show">Login</a>
+                    </li>
+                }
+                    <li class="nav-link hidden-desktop">
+                        <a href="@routes.Carts.show">Cart</a>
+                    </li>
+                    <li id="mini-cart" class="visible-desktop">
+                        @helper.miniCart(getCurrentCart)
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>

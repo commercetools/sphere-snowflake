@@ -2,6 +2,7 @@
 
 <div id="main-navigation" class="navbar">
     <div class="container parent-menu">
+
         <ul class="nav nav-pills" role="navigation">
             @for(category <- getRootCategories) {
             <li id="header-menu-@category.getSlug" class="@getActiveClass(category, currentCategory)">
@@ -9,7 +10,7 @@
                     @category.getName
                 </a>
                 @if(!category.getChildren.isEmpty) {
-                <div class="child-menu @getActiveClass(category, currentCategory)">
+                <div class="child-menu @getActiveClass(category, currentCategory) visible-desktop">
                     <ul class="nav nav-pills dropdown-list" role="menu" aria-labelledBy="category-@category.getSlug">
                         @for(subcategory <- category.getChildren) {
                         <li id="header-submenu-@subcategory.getSlug" class="@getActiveClass(subcategory, currentCategory)">
@@ -24,5 +25,18 @@
             </li>
             }
         </ul>
+
+        <ul class="nav nav-pills hidden-desktop" role="navigation">
+            @if(isSet(currentCategory)) {
+                @for(subcategory <- currentCategory.getChildren) {
+                <li class="@getActiveClass(subcategory, currentCategory)">
+                    <a href="@getCategoryUrl(subcategory)">
+                        @subcategory.getName
+                    </a>
+                </li>
+                }
+            }
+        </ul>
+
     </div>
 </div>
