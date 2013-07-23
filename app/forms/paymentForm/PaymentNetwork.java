@@ -99,6 +99,7 @@ public class PaymentNetwork {
 
     public String getFormHtml() {
         try {
+            System.out.println(localizedFormUrl);
             Document doc = Jsoup.connect(localizedFormUrl).get();
             // Convert all popups into regular links
             Elements onclickLinks = doc.select("a[onclick]");
