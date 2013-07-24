@@ -28,7 +28,6 @@ public class SphereTestable {
 
     public String currency = "EUR";
     public CountryCode country = CountryCode.DE;
-    public Locale locale = Locale.ENGLISH;
 
 
     public SphereTestable() {
@@ -96,7 +95,7 @@ public class SphereTestable {
         for (Product p : products) {
             FetchRequest<Product> fetchRequest = mockFetchRequest(p);
             when(productService.byId(p.getId())).thenReturn(fetchRequest);
-            when(productService.bySlug(p.getSlug(), locale)).thenReturn(fetchRequest);
+            when(productService.bySlug(p.getSlug())).thenReturn(fetchRequest);
         }
 
         when(sphere.products()).thenReturn(productService);
