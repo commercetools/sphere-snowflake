@@ -2,7 +2,7 @@ $ ->
     class @OrderSummary
         constructor: (@content) ->
             html = $("#order-summary-template").html()
-            @template = $.trim(Handlebars.compile html) if html?
+            @template = Handlebars.compile $.trim(html) if html?
 
         load: ->
             url = @content.data("url")
