@@ -1,4 +1,3 @@
----
 scala:
 - 2.10.0
 language: scala
@@ -6,12 +5,18 @@ before_script:
 - sed -i "s;^sphere.project=.*;sphere.project="${SPHERE_PROJECT}";g" conf/application.conf
 - sed -i "s;^sphere.clientId=.*;sphere.clientId="${SPHERE_CLIENT_ID}";g" conf/application.conf
 - sed -i "s;^sphere.clientSecret=.*;sphere.clientSecret="${SPHERE_CLIENT_SECRET}";g" conf/application.conf
+- git config user.name "Travis CI"
+- git config user.email "automation@commercetools.de"
+- git commit -m 'Set configuration.' conf/application.conf
 script: sbt test
 env:
   global:
   - SPHERE_PROJECT="snowflake2"
   - SPHERE_CLIENT_ID="QKStD-HjZLZGRqie2SPvzXSt"
   - SPHERE_CLIENT_SECRET="lnkNveGqslWKwt-qVE5yqVE0KBKM-sQL"
+  - secure: VEOm3bU/eApcgvsSUpsuV30S/4NXZaobrcp869886fBHBF9yK2eXl16zFKB12Pvd4khl8+L/2d1710eGq/inNTY9ZnSZpJj1M/3rpZevhX+Nx+t4iUPvHm8FcEpvYIXU1RbeKv2ECCXlus/QpD7sHNf+XCNg6aokFg7gcnFTl94=
+  - secure: feoxx60yT5Frux370o8e/167k7z7DPhF3k124KsPaTUoZVE93yEsk2RPDK/dxrzkEcizDiUKbRTq9vaQB0klbnLDoBNO027pEJwgqdct0Az7Cx4Q85YqASUt/XcqB4m7ZMT3dmOq6mPipUZM2ubSbV60OMDLF8fHoekXGCGyAYY=
+  - secure: I0eezJeNe/zscH8xZm7bvDqjAaXAyIQxFjMtyamgy2jZVdx2TXF7uNpACepvWFb6BRWzRLjd+4ZhQRypMFZk12YuWQf/rRhLolrSjSd8SyOwnZ/EII8LJ5Tn4zvnv3LWpLFbBUyEwWiF+6d7AUEnnTVX5RLNI4qi0oS+KoNHgPo=
 notifications:
   email:
     on_success: never
