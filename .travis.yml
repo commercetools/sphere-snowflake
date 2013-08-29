@@ -3,22 +3,14 @@ scala:
 - 2.10.0
 language: scala
 script: sbt test
-after_success:
-- wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
-- git remote add heroku git@heroku.com:sphere-snowflake.git
-- echo "Host heroku.com" >> ~/.ssh/config
-- echo "   StrictHostKeyChecking no" >> ~/.ssh/config
-- echo "   CheckHostIP no" >> ~/.ssh/config
-- echo "   UserKnownHostsFile=/dev/null" >> ~/.ssh/config
-- heroku keys:clear
-- yes | heroku keys:add
-- yes | git push heroku master
 notifications: 
   email: 
     on_success: never
     on_failure: change
+deploy:
+  provider: heroku
 env:
-  global:
+  api_key:
     secure: |-
       RrlICA6rzWqHl+GjmjjmOJlBB5yw408q4I1Lzv1EN+OmkpXuahc4oIdJxZe9
       aXMoYFKhyX9TPgbg7fo8AO4BjC0St/ZaSKE6zFHViXGSVdVCB1e8eXDW6KjE
