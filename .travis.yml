@@ -9,7 +9,6 @@ notifications:
     on_failure: change
 deploy:
   provider: heroku
-env:
   api_key:
     secure: |-
       RrlICA6rzWqHl+GjmjjmOJlBB5yw408q4I1Lzv1EN+OmkpXuahc4oIdJxZe9
