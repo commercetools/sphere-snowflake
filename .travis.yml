@@ -1,16 +1,12 @@
---- 
-scala: 
+scala:
 - 2.10.0
 language: scala
 script: sbt test
-notifications: 
-  email: 
+notifications:
+  email:
     on_success: never
     on_failure: change
 deploy:
   provider: heroku
   api_key:
-    secure: |-
-      RrlICA6rzWqHl+GjmjjmOJlBB5yw408q4I1Lzv1EN+OmkpXuahc4oIdJxZe9
-      aXMoYFKhyX9TPgbg7fo8AO4BjC0St/ZaSKE6zFHViXGSVdVCB1e8eXDW6KjE
-      A843q3vDM5fED0mHEX1+Dv3Eyrqs9PPjKsncFcT/xnCYqzrmuiY=
+    secure: J+COjnPZhnFDPhMDNQRc1+gt5NYSXzQOMLhWuevVyN8v4xHM8xdjtBaN0Hfs9kMsoKBhDs04nrJLygqQDcRm0j+cu0vdTON4cvr7WMKJDFv04ivLUJAns8T4Ai6+eTPK2pb6RKvlFP62E1umh70eWaYt7YBqIzjpAdIFUDWd5Us=
