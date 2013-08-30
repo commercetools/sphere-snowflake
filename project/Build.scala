@@ -15,7 +15,6 @@ object ApplicationBuild extends Build {
 
     lazy val main = play.Project(appName, appVersion, appDependencies).settings(
         Seq(
-            resolvers += "sphere" at "http://public-repo.ci.cloud.commercetools.de/content/repositories/releases",
             lessEntryPoints <<= baseDirectory(customLessEntryPoints),
             libraryDependencies ++= Libs.appDependencies,
             libraryDependencies ++= Libs.testDependencies,
