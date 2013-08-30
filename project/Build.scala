@@ -37,7 +37,7 @@ object ApplicationBuild extends Build {
             "de.paymill"            %   "paymill-java"      %   "2.6-ct"
         )
         val testDependencies = Seq(
-            "org.mockito"   %   "mockito-all"       %       "1.9.5"     %   "test"
+            "org.mockito"   %   "mockito-all"       %       "1.9.5"     %   "test",
             "play"          %%  "play-test"         %       "2.1.3"     %   "test" exclude("com.novocode", "junit-interface"),
             "com.novocode"  %   "junit-interface"   %       "0.9"       %   "test"
         )
