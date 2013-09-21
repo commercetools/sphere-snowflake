@@ -24,6 +24,25 @@
       </configuration>
     </com.cloudbees.plugins.deployer.DeployNowJobProperty>
     <com.gmail.ikeike443.PlayAutoTestJobProperty/>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>SPHERE_PROJECT_KEY</name>
+          <description>Please enter your sphere project key. (Note: Please don't mix it up with the project name.)</description>
+          <defaultValue>snowflake2</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>SPHERE_CLIENT_ID</name>
+          <description>Please enter the client id of your sphere project.</description>
+          <defaultValue>QKStD-HjZLZGRqie2SPvzXSt</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>SPHERE_CLIENT_SECRET</name>
+          <description>Please enter the client secret of your sphere project.</description>
+          <defaultValue>lnkNveGqslWKwt-qVE5yqVE0KBKM-sQL</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
   </properties>
   <scm class="hudson.plugins.git.GitSCM">
     <configVersion>2</configVersion>
@@ -74,6 +93,12 @@
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <builders>
+    <hudson.tasks.Shell>
+      <command>set -e
+sed -i "s;^sphere.project=.*;sphere.project="${SPHERE_PROJECT_KEY}";g" conf/application.conf
+sed -i "s;^sphere.clientId=.*;sphere.clientId="${SPHERE_CLIENT_ID}";g" conf/application.conf
+sed -i "s;^sphere.clientSecret=.*;sphere.clientSecret="${SPHERE_CLIENT_SECRET}";g" conf/application.conf</command>
+    </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=384M -jar /opt/sbt/sbt-launch-0.12.2.jar -Dsbt.log.noformat=true clean compile test dist</command>
     </hudson.tasks.Shell>
