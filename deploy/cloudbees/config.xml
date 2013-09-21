@@ -41,6 +41,11 @@
           <description>Please enter the client secret of your sphere project.</description>
           <defaultValue>lnkNveGqslWKwt-qVE5yqVE0KBKM-sQL</defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>SPHERE_LANGUAGE</name>
+          <description>Please enter the default language of your sphere project. (If you use the sample data keep 'en'.)</description>
+          <defaultValue>en</defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -98,6 +103,7 @@
 sed -i "s;^sphere.project=.*;sphere.project="${SPHERE_PROJECT_KEY}";g" conf/application.conf
 sed -i "s;^sphere.clientId=.*;sphere.clientId="${SPHERE_CLIENT_ID}";g" conf/application.conf
 sed -i "s;^sphere.clientSecret=.*;sphere.clientSecret="${SPHERE_CLIENT_SECRET}";g" conf/application.conf</command>
+sed -i "s;^sphere.defaultLocale=.*;sphere.defaultLocale="${SPHERE_LANGUAGE}";g" conf/application.conf</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=384M -jar /opt/sbt/sbt-launch-0.12.2.jar -Dsbt.log.noformat=true clean compile test dist</command>
