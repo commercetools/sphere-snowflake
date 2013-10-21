@@ -3,6 +3,7 @@ SET LAUNCHER_LOCAL=%HOMEDRIVE%%HOMEPATH%\.sbt\sbt-launch.jar
 
 IF NOT EXIST %LAUNCHER_LOCAL% (
     REM echo //SBT launcher is not present on '%LAUNCHER_LOCAL%', try to download: 
+	mkdir %HOMEDRIVE%%HOMEPATH%\.sbt
     
     REM create Java source file for download SBT
     echo import java.io.*; > LauncherDownloader.java
@@ -26,4 +27,4 @@ IF NOT EXIST %LAUNCHER_LOCAL% (
     del LauncherDownloader.java LauncherDownloader.class
 )
 
-java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=768M -jar sbt-launch.jar %*
+java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=768M -jar %LAUNCHER_LOCAL% %*
