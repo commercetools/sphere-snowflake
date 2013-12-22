@@ -1,6 +1,6 @@
 package controllers;
 
-import controllers.actions.Ajax;
+import controllers.actions.FormHandler;
 import controllers.actions.Authorization;
 import forms.addressForm.*;
 import forms.customerForm.UpdateCustomer;
@@ -39,7 +39,7 @@ public class Addresses extends ShopController {
         return ok(ListAddress.getJson(customer.getAddresses()));
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result add() {
         Customer customer = sphere().currentCustomer().fetch();
         List<Order> orders = sphere().currentCustomer().orders().fetch().getResults();
@@ -58,7 +58,7 @@ public class Addresses extends ShopController {
         return ok(customers.render(customer, orders, customerForm, updatePasswordForm));
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result update() {
         Customer customer = sphere().currentCustomer().fetch();
         List<Order> orders = sphere().currentCustomer().orders().fetch().getResults();
@@ -77,7 +77,7 @@ public class Addresses extends ShopController {
         return ok(customers.render(customer, orders, customerForm, updatePasswordForm));
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result remove() {
         Customer customer = sphere().currentCustomer().fetch();
         List<Order> orders = sphere().currentCustomer().orders().fetch().getResults();

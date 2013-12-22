@@ -1,6 +1,6 @@
 package controllers;
 
-import controllers.actions.Ajax;
+import controllers.actions.FormHandler;
 import forms.customerForm.LogIn;
 import forms.passwordForm.RecoverPassword;
 import forms.passwordForm.ResetPassword;
@@ -16,7 +16,6 @@ import sphere.ShopController;
 import utils.Email;
 import views.html.login;
 import views.html.mail.forgetPassword;
-import views.html.mail.verifyAccount;
 
 import static play.data.Form.form;
 import static utils.ControllerHelper.displayErrors;
@@ -41,7 +40,7 @@ public class Login extends ShopController {
         return show();
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result signUp() {
         Form<SignUp> form = signUpForm.bindFromRequest();
         // Case missing or invalid form data
@@ -81,7 +80,7 @@ public class Login extends ShopController {
         return redirect(session("returnUrl"));
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result logIn() {
         Form<LogIn> form = logInForm.bindFromRequest();
         // Case missing or invalid form data
@@ -112,7 +111,7 @@ public class Login extends ShopController {
         return redirect(session("returnUrl"));
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result recoverPassword() {
         Form<RecoverPassword> form = recoverPasswordForm.bindFromRequest();
         // Case missing or invalid form data
@@ -150,7 +149,7 @@ public class Login extends ShopController {
         return ok(login.render(true, logInForm, signUpForm, recoverPasswordForm, form));
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result resetPassword() {
         Form<ResetPassword> form = resetPasswordForm.bindFromRequest();
         // Case missing or invalid form data

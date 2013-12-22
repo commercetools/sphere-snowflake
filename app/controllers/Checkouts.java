@@ -1,6 +1,6 @@
 package controllers;
 
-import controllers.actions.Ajax;
+import controllers.actions.FormHandler;
 import controllers.actions.CartNotEmpty;
 import de.paymill.Paymill;
 import de.paymill.model.Payment;
@@ -9,7 +9,6 @@ import de.paymill.service.PaymentService;
 import forms.addressForm.ListAddress;
 import forms.addressForm.SetAddress;
 import forms.paymentForm.DoCheckout;
-import forms.paymentForm.PaymentNotification;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Customer;
 import io.sphere.client.shop.model.Order;
@@ -22,8 +21,6 @@ import play.mvc.With;
 import sphere.ShopController;
 import views.html.checkouts;
 import views.html.orders;
-
-import java.util.Collections;
 
 import static play.data.Form.form;
 import static utils.ControllerHelper.displayErrors;
@@ -57,7 +54,7 @@ public class Checkouts extends ShopController {
         return ok(ListAddress.getJson(cart.getShippingAddress()));
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result setShippingAddress() {
         Cart cart;
         Form<SetAddress> form = setAddressForm.bindFromRequest();

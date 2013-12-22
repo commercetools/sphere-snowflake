@@ -1,8 +1,7 @@
 package controllers;
 
-import controllers.actions.Ajax;
+import controllers.actions.FormHandler;
 import controllers.actions.Authorization;
-import forms.addressForm.SetAddress;
 import forms.customerForm.UpdateCustomer;
 import forms.passwordForm.UpdatePassword;
 import io.sphere.client.exceptions.InvalidPasswordException;
@@ -34,7 +33,7 @@ public class Customers extends ShopController {
         return ok(customers.render(customer, orders, customerForm, updatePasswordForm));
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result update() {
         Customer customer = sphere().currentCustomer().fetch();
         List<Order> orders = sphere().currentCustomer().orders().fetch().getResults();
@@ -54,7 +53,7 @@ public class Customers extends ShopController {
         return ok(customers.render(customer, orders, form, updatePasswordForm));
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result updatePassword() {
         Customer customer = sphere().currentCustomer().fetch();
         List<Order> orders = sphere().currentCustomer().orders().fetch().getResults();

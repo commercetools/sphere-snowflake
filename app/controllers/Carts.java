@@ -1,9 +1,8 @@
 package controllers;
 
-import controllers.actions.Ajax;
+import controllers.actions.FormHandler;
 import controllers.actions.CartNotEmpty;
 import forms.cartForm.ListCart;
-import forms.customerForm.UpdateCustomer;
 import io.sphere.client.shop.model.*;
 import forms.cartForm.AddToCart;
 import forms.cartForm.RemoveFromCart;
@@ -36,7 +35,7 @@ public class Carts extends ShopController {
         return ok(ListCart.getJson(cart));
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result add() {
         Form<AddToCart> form = addToCartForm.bindFromRequest();
         // Case missing or invalid form data
@@ -62,17 +61,17 @@ public class Carts extends ShopController {
         return ok(products.render(product, variant, getDefaultCategory(product)));
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result update() {
         Form<UpdateCart> form = updateCartForm.bindFromRequest();
         Cart cart;
-        // Case missing or invalid form data
+        // Case missing or invalid form data, display errors
         if (form.hasErrors()) {
             displayErrors("update-cart", form);
             cart = sphere().currentCart().fetch();
             return badRequest(carts.render(cart));
         }
-        // Case valid cart update
+        // Case valid cart update, update quantity and display success message
         UpdateCart updateCart = form.get();
         CartUpdate cartUpdate = new CartUpdate()
                 .setLineItemQuantity(updateCart.lineItemId, updateCart.quantity);
@@ -81,7 +80,7 @@ public class Carts extends ShopController {
         return ok(carts.render(cart));
     }
 
-    @With(Ajax.class)
+    @With(FormHandler.class)
     public static Result remove() {
         Form<RemoveFromCart> form = removeFromCartForm.bindFromRequest();
         Cart cart;
