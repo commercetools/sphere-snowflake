@@ -8,14 +8,13 @@ $ ->
         url = cartContent.data("url")
         if url?
             cartContent.find('.loading-ajax').show()
-            $.getJSON(url, (data) ->
+            $.getJSON url, (data) ->
                 replaceCart data
                 cartContent.find('.loading-ajax').hide()
-            )
 
     # Replace the whole cart
     replaceCart = (cart) ->
-        return unless template? or cart?
+        return unless template? and cart?
         cartContent.empty()
         cartContent.append(template item) for item in cart.item
 
@@ -65,7 +64,7 @@ $ ->
 
     # Bind 'update item quantity' input with 'update cart' functionality
     updateDelay = {}
-    $("#cart").on("change", "form.form-update-cart input[name=quantity]", ->
+    $("#cart").on "change", "form.form-update-cart input[name=quantity]", ->
         updateCart = new Form $(this).closest('form')
         lineItemId = updateCart.inputs.filter('[name=lineItemId]').val()
 
@@ -89,7 +88,6 @@ $ ->
         ), 800
 
         return updateCart.allowSubmit
-    )
 
     # Bind 'remove item' button with 'remove from cart' functionality
     $("#cart").on("submit", "form.form-remove-from-cart", ->
