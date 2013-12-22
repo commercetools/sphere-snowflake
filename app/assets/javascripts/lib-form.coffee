@@ -144,7 +144,7 @@ class window.Form
 
             # Update page data
             $.each res.data, (key, value) ->
-                elem = $("span[data-form-update=#{key}]")
+                elem = $("span[data-form-update-#{key}]")
                 elem.text(value)
         # Display success message
         @saved = true
