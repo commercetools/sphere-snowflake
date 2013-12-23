@@ -114,7 +114,7 @@ public class ControllerHelper {
     /* Returns the address book of the current customer. */
     public static List<Address> getAddressBook() {
         if (Sphere.getInstance().isLoggedIn()) {
-            return Sphere.getInstance().currentCustomer().fetch().getAddresses();
+            return getCurrentCustomer().getAddresses();
         }
         return Collections.emptyList();
     }
