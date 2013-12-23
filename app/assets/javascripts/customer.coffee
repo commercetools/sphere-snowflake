@@ -54,10 +54,8 @@ $ ->
     updateCustomer.form.submit( ->
         # Remove alert messages
         updateCustomer.removeAllMessages()
-
         # Validate form client side
         return false unless updateCustomer.validateRequired()
-
         # Send new data to server
         updateCustomer.startSubmit()
         url = updateCustomer.form.attr("action")
@@ -67,7 +65,6 @@ $ ->
         xhr.done (res) -> updateCustomer.doneSubmit(res)
         xhr.fail (res) -> updateCustomer.failSubmit(res)
         xhr.always -> updateCustomer.stopSubmit()
-
         return updateCustomer.allowSubmit
     )
 
@@ -75,14 +72,11 @@ $ ->
     updatePassword.form.submit( ->
         # Remove alert messages
         updatePassword.removeAllMessages()
-
         # Validate form client side
         return false unless updatePassword.validateRequired()
-
         # Validate repeat password match
         repeatPasswords = updatePassword.inputs.filter('[name=newPassword], [name=repeatPassword]')
         return false unless updatePassword.validateEqualFields(repeatPasswords)
-
         # Send new data to server
         updatePassword.startSubmit()
         url = updatePassword.form.attr("action")
@@ -92,7 +86,6 @@ $ ->
         xhr.done (res) -> updatePassword.doneSubmit(res)
         xhr.fail (res) -> updatePassword.failSubmit(res)
         xhr.always -> updatePassword.stopSubmit()
-
         return updatePassword.allowSubmit
     )
 
@@ -100,10 +93,8 @@ $ ->
     addAddress.form.submit( ->
         # Remove alert messages
         addAddress.removeAllMessages()
-
         # Validate form client side
         return false unless addAddress.validateRequired()
-
         # Send new data to server
         addAddress.startSubmit()
         url = addAddress.form.attr("action")
@@ -115,21 +106,16 @@ $ ->
             updateAddressList(res.data)
         xhr.fail (res) -> addAddress.failSubmit(res)
         xhr.always -> addAddress.stopSubmit()
-
         return addAddress.allowSubmit
     )
 
     # "Update address" functionality handler bound to submit event
     addressList.on('submit', 'form.form-update-address', ->
         updateAddress = new Form $(this)
-        addressId = updateAddress.inputs.filter("[name=addressId]").val()
-
         # Remove alert messages
         updateAddress.removeAllMessages()
-
         # Validate form client side
         return false unless updateAddress.validateRequired()
-
         # Send new data to server
         updateAddress.startSubmit()
         url = updateAddress.form.attr("action")
@@ -141,7 +127,6 @@ $ ->
             updateAddressList(res.data)
         xhr.fail (res) -> updateAddress.failSubmit(res)
         xhr.always -> updateAddress.stopSubmit()
-
         return updateAddress.allowSubmit
     )
 
@@ -149,13 +134,10 @@ $ ->
     addressList.on('submit', 'form.form-remove-address', ->
         removeAddress = new Form $(this)
         addressId = removeAddress.inputs.filter("[name=addressId]").val()
-
         # Remove alert messages
         removeAddress.removeAllMessages()
-
         # Validate form client side
         return false unless removeAddress.validateRequired()
-
         # Send new data to server
         removeAddress.startSubmit()
         url = removeAddress.form.attr("action")
@@ -169,7 +151,6 @@ $ ->
                 updateAddressList(res.data)
         xhr.fail (res) -> removeAddress.failSubmit(res)
         xhr.always -> removeAddress.stopSubmit()
-
         return removeAddress.allowSubmit
     )
 
@@ -204,7 +185,6 @@ $ ->
     # Show selected address in the form when user clicks on "edit address"
     addressList.on('click', '.open-update-address, .address-item .address', ->
         removeActiveAddresses()
-
         # Active current address
         $(this).parent('.address-item').addClass("active")
     )
