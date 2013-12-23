@@ -92,7 +92,7 @@ public class Checkouts extends ShopController {
         try {
             Paymill.setApiKey(paymillKey);
             PaymentService paymentService = Paymill.getService(PaymentService.class);
-            System.out.println(doCheckout.paymillToken);
+            play.Logger.debug("Payment token received: " + doCheckout.paymillToken);
             payment = paymentService.create(doCheckout.paymillToken);
         } catch (ApiException ae) {
             if (ae.getCode().equals("token_not_found")) {
@@ -102,9 +102,10 @@ public class Checkouts extends ShopController {
             flash("error", "Payment failed unexpectedly, please try again");
             return internalServerError(showPage(3));
         }
+        play.Logger.debug("Payment executed with code " + payment.getCode());
         // Case success purchase
-        System.out.println(payment.getCode());
         Order order = sphere().currentCart().createOrder(doCheckout.cartSnapshot, PaymentState.Paid);
+        play.Logger.debug("Order created");
         flash("success", "Congratulations, you finished your order!");
         return ok(orders.render(order));
     }
