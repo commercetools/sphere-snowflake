@@ -5,10 +5,10 @@ import controllers.actions.Authorization;
 import forms.addressForm.*;
 import forms.customerForm.UpdateCustomer;
 import forms.passwordForm.UpdatePassword;
-import io.sphere.client.shop.model.Customer;
 import io.sphere.client.shop.model.CustomerUpdate;
 import io.sphere.client.shop.model.Order;
 import play.data.Form;
+import play.mvc.Content;
 import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
@@ -17,7 +17,7 @@ import views.html.customers;
 import java.util.List;
 
 import static play.data.Form.form;
-import static utils.ControllerHelper.displayErrors;
+import static utils.ControllerHelper.*;
 
 @With(Authorization.class)
 public class Addresses extends ShopController {
@@ -30,69 +30,64 @@ public class Addresses extends ShopController {
 
 
     public static Result get(String id) {
-        Customer customer = sphere().currentCustomer().fetch();
-        return ok(ListAddress.getJson(customer.getAddressById(id)));
+        return ok(ListAddress.getJson(getCurrentCustomer().getAddressById(id)));
     }
 
     public static Result getList() {
-        Customer customer = sphere().currentCustomer().fetch();
-        return ok(ListAddress.getJson(customer.getAddresses()));
+        return ok(ListAddress.getJson(getCurrentCustomer().getAddresses()));
     }
 
     @With(FormHandler.class)
     public static Result add() {
-        Customer customer = sphere().currentCustomer().fetch();
-        List<Order> orders = sphere().currentCustomer().orders().fetch().getResults();
-        Form<AddAddress> form = addAddressForm.bindFromRequest();
-        Form<UpdateCustomer> customerForm = updateCustomerForm.fill(new UpdateCustomer(customer));
         // Case missing or invalid form data
+        Form<AddAddress> form = addAddressForm.bindFromRequest();
         if (form.hasErrors()) {
             displayErrors("set-address", form);
-            return badRequest(customers.render(customer, orders, customerForm, updatePasswordForm));
+            return badRequest(showPage());
         }
         // Case valid add address
         AddAddress addAddress = form.get();
         CustomerUpdate update = new CustomerUpdate().addAddress(addAddress.getAddress());
-        customer = sphere().currentCustomer().update(update);
-        addAddress.displaySuccessMessage(customer.getAddresses());
-        return ok(customers.render(customer, orders, customerForm, updatePasswordForm));
+        setCurrentCustomer(sphere().currentCustomer().update(update));
+        addAddress.displaySuccessMessage(getAddressBook());
+        return ok(showPage());
     }
 
     @With(FormHandler.class)
     public static Result update() {
-        Customer customer = sphere().currentCustomer().fetch();
-        List<Order> orders = sphere().currentCustomer().orders().fetch().getResults();
-        Form<UpdateAddress> form = updateAddressForm.bindFromRequest();
-        Form<UpdateCustomer> customerForm = updateCustomerForm.fill(new UpdateCustomer(customer));
         // Case missing or invalid form data
+        Form<UpdateAddress> form = updateAddressForm.bindFromRequest();
         if (form.hasErrors()) {
             displayErrors("update-address", form);
-            return badRequest(customers.render(customer, orders, customerForm, updatePasswordForm));
+            return badRequest(showPage());
         }
         // Case valid update address
         UpdateAddress updateAddress = form.get();
         CustomerUpdate update = new CustomerUpdate().changeAddress(updateAddress.addressId, updateAddress.getAddress());
-        customer = sphere().currentCustomer().update(update);
-        updateAddress.displaySuccessMessage(customer.getAddresses());
-        return ok(customers.render(customer, orders, customerForm, updatePasswordForm));
+        setCurrentCustomer(sphere().currentCustomer().update(update));
+        updateAddress.displaySuccessMessage(getAddressBook());
+        return ok(showPage());
     }
 
     @With(FormHandler.class)
     public static Result remove() {
-        Customer customer = sphere().currentCustomer().fetch();
-        List<Order> orders = sphere().currentCustomer().orders().fetch().getResults();
-        Form<RemoveAddress> form = removeAddressForm.bindFromRequest();
-        Form<UpdateCustomer> customerForm = updateCustomerForm.fill(new UpdateCustomer(customer));
         // Case missing or invalid form data
+        Form<RemoveAddress> form = removeAddressForm.bindFromRequest();
         if (form.hasErrors()) {
             displayErrors("remove-address", form);
-            return badRequest(customers.render(customer, orders, customerForm, updatePasswordForm));
+            return badRequest(showPage());
         }
         // Case valid remove address
         RemoveAddress removeAddress = form.get();
         CustomerUpdate update = new CustomerUpdate().removeAddress(removeAddress.addressId);
-        customer = sphere().currentCustomer().update(update);
-        removeAddress.displaySuccessMessage(customer.getAddresses());
-        return ok(customers.render(customer, orders, customerForm, updatePasswordForm));
+        setCurrentCustomer(sphere().currentCustomer().update(update));
+        removeAddress.displaySuccessMessage(getAddressBook());
+        return ok(showPage());
+    }
+
+    protected static Content showPage() {
+        Form<UpdateCustomer> customerForm = updateCustomerForm.fill(new UpdateCustomer(getCurrentCustomer()));
+        List<Order> orders = sphere().currentCustomer().orders().fetch().getResults();
+        return customers.render(getCurrentCustomer(), orders, customerForm, updatePasswordForm);
     }
 }

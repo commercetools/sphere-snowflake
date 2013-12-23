@@ -21,43 +21,36 @@ $ ->
     # Load address list on page loaded
     loadAddressList = ->
         url = addressList.data("url")
-        if url?
-            addressList.find('.loading-ajax').show()
-            $.getJSON(url, (data) ->
-                replaceAddressList data
-                addressList.find('.loading-ajax').hide()
-            )
+        return unless url?
+        addressList.find('.loading-ajax').show()
+        $.getJSON url, (data) ->
+            replaceAddressList data
+            addressList.find('.loading-ajax').hide()
 
     # Replace the whole address list
     replaceAddressList = (list) ->
-        return unless template.update? or list?
+        return unless template.update? and list?
         addressList.empty()
         addressList.append(template.update address) for address in list.address
 
     # Update address list with proper animation
     updateAddressList = (list) ->
+        # Clean addresses form
         removeActiveAddresses()
-        updatedIds = ("address-#{address.addressId}" for address in list.address)
-
-        # Remove addresses that no longer exist
-        removed = $("#address-list .address-item").filter -> return $(this).attr("id") not in updatedIds
-        removed.each -> $(this).fadeOut 500
-
-        # Add new addresses
-        return unless template.update? or list?
-        removed.promise().done( ->
-            $(this).remove()
-            for address in list.address when addressList.find("#address-#{address.addressId}").length < 1
-                element = $(template.update address).hide()
-                addressList.append(element)
-                element.fadeIn 500
-        )
+        addAddress.clean()
+        # Find all new addresses for later
+        newList = (address for address in list.address when addressList.find("#address-#{address.addressId}").length < 1)
+        # Replace all addresses
+        replaceAddressList(list)
+        # Fade in new addresses
+        return unless newList?
+        addressList.find("#address-#{address.addressId}").hide().fadeIn 500 for address in newList
 
     # Remove all active addresses
     removeActiveAddresses = ->
         addressList.find('.address-item').removeClass("active")
 
-    # Bind customer update 'save' submit event to 'update customer' functionality
+    # "Update customer" functionality handler bound to submit event
     updateCustomer.form.submit( ->
         # Remove alert messages
         updateCustomer.removeAllMessages()
@@ -78,7 +71,7 @@ $ ->
         return updateCustomer.allowSubmit
     )
 
-    # Bind password update 'save' submit event to 'update password' functionality
+    # "Update password" functionality handler bound to submit event
     updatePassword.form.submit( ->
         # Remove alert messages
         updatePassword.removeAllMessages()
@@ -103,7 +96,7 @@ $ ->
         return updatePassword.allowSubmit
     )
 
-    # Bind new address 'save' submit event to 'add address' functionality
+    # "Add address" functionality handler bound to submit event
     addAddress.form.submit( ->
         # Remove alert messages
         addAddress.removeAllMessages()
@@ -126,9 +119,10 @@ $ ->
         return addAddress.allowSubmit
     )
 
-    # Bind update address 'save' submit event to 'update address' functionality
+    # "Update address" functionality handler bound to submit event
     addressList.on('submit', 'form.form-update-address', ->
         updateAddress = new Form $(this)
+        addressId = updateAddress.inputs.filter("[name=addressId]").val()
 
         # Remove alert messages
         updateAddress.removeAllMessages()
@@ -151,9 +145,10 @@ $ ->
         return updateAddress.allowSubmit
     )
 
-    # Bind 'remove address' submit event to 'remove address' functionality
+    # "Remove address" functionality handler bound to submit event
     addressList.on('submit', 'form.form-remove-address', ->
         removeAddress = new Form $(this)
+        addressId = removeAddress.inputs.filter("[name=addressId]").val()
 
         # Remove alert messages
         removeAddress.removeAllMessages()
@@ -169,20 +164,22 @@ $ ->
         xhr = removeAddress.submit(url, method, data)
         xhr.done (res) ->
             removeAddress.doneSubmit(res)
-            updateAddressList(res.data)
+            removed = $("#address-#{addressId}").fadeOut 500, ->
+                $(this).remove()
+                updateAddressList(res.data)
         xhr.fail (res) -> removeAddress.failSubmit(res)
         xhr.always -> removeAddress.stopSubmit()
 
         return removeAddress.allowSubmit
     )
 
-    # Bind change tab with remove success messages functionality
+    # Remove success messages from all forms when changing tab
     $('.tabbable .nav [data-toggle=tab]').click( ->
         updateCustomer.removeSuccessMessages()
         updatePassword.removeSuccessMessages()
     )
 
-    # Bind change input value with remove all messages functionality
+    # Remove all messages and show "unsaved changes" message when user modifies the customer form
     updateCustomer.inputs.change( ->
         if updateCustomer.saved is true
             updateCustomer.removeAllMessages()
@@ -190,7 +187,7 @@ $ ->
             updateCustomer.saved = false
     )
 
-    # Bind change input value with remove all messages functionality
+    # Remove all messages and show "unsaved changes" message when user modifies the password form
     updatePassword.inputs.change( ->
         if updatePassword.saved is true
             updatePassword.removeAllMessages()
@@ -198,13 +195,13 @@ $ ->
             updatePassword.saved = false
     )
 
-    # Bind click on 'add new address' to show add address form
+    # Clean address form when user clicks on "new address"
     $('.open-add-address').click( ->
         addAddress.clean()
         removeActiveAddresses()
     )
 
-    # Bind click on 'edit address' to show update address form
+    # Show selected address in the form when user clicks on "edit address"
     addressList.on('click', '.open-update-address, .address-item .address', ->
         removeActiveAddresses()
 
