@@ -5,6 +5,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.libs.Json;
 
+import static utils.ControllerHelper.getCurrentCart;
 import static utils.ControllerHelper.saveFlash;
 import static utils.ControllerHelper.saveJson;
 
@@ -18,13 +19,13 @@ public class RemoveFromCart extends ListCart {
 
     }
 
-    public void displaySuccessMessage(Cart cart) {
+    public void displaySuccessMessage() {
         String message = "Item removed from cart!";
         saveFlash("success", message);
 
         ObjectNode json = Json.newObject();
         json.put("success", message);
-        json.putAll(getJson(cart));
+        json.putAll(getJson(getCurrentCart()));
 
         saveJson(json);
     }

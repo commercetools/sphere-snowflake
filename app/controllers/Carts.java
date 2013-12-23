@@ -8,6 +8,7 @@ import forms.cartForm.AddToCart;
 import forms.cartForm.RemoveFromCart;
 import forms.cartForm.UpdateCart;
 import play.data.Form;
+import play.mvc.Content;
 import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
@@ -15,8 +16,7 @@ import views.html.carts;
 import views.html.products;
 
 import static play.data.Form.form;
-import static utils.ControllerHelper.displayErrors;
-import static utils.ControllerHelper.getDefaultCategory;
+import static utils.ControllerHelper.*;
 
 public class Carts extends ShopController {
 
@@ -24,77 +24,77 @@ public class Carts extends ShopController {
     final static Form<UpdateCart> updateCartForm = form(UpdateCart.class);
     final static Form<RemoveFromCart> removeFromCartForm = form(RemoveFromCart.class);
 
-    @With(CartNotEmpty.class)
-    public static Result show() {
-        Cart cart = sphere().currentCart().fetch();
-        return ok(carts.render(cart));
+    public static Result get() {
+        return ok(ListCart.getJson(getCurrentCart()));
     }
 
-    public static Result get() {
-        Cart cart = sphere().currentCart().fetch();
-        return ok(ListCart.getJson(cart));
+    @With(CartNotEmpty.class)
+    public static Result show() {
+        return ok(carts.render(getCurrentCart()));
     }
 
     @With(FormHandler.class)
     public static Result add() {
+        // Case missing or invalid form data, display errors
         Form<AddToCart> form = addToCartForm.bindFromRequest();
-        // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("add-to-cart", form);
-            return badRequest(); // TODO Decide where to return to
+            return redirect(routes.Categories.home(1));
         }
-        // Case invalid product
+        // Case invalid product, return not found
         AddToCart addToCart = form.get();
         Product product = sphere().products().byId(addToCart.productId).fetch().orNull();
         if (product == null) {
-            return notFound("Product not found");
+            addToCart.displayInvalidProductError();
+            return notFound();
         }
-        // Case invalid variant
+        // Case invalid variant, return not found
         Variant variant = product.getVariants().byId(addToCart.variantId).orNull();
         if (variant == null) {
-            return notFound("Product variant not found");
+            addToCart.displayInvalidProductError();
+            return notFound();
         }
-        // Case valid product to add to cart
+        // Case valid, add product to cart
         int variantId = getMatchedSizeVariant(product, variant, addToCart.size);
-        Cart cart = sphere().currentCart().addLineItem(addToCart.productId, variantId, addToCart.quantity);
-        addToCart.displaySuccessMessage(cart);
+        setCurrentCart(sphere().currentCart().addLineItem(addToCart.productId, variantId, addToCart.quantity));
+        addToCart.displaySuccessMessage();
         return ok(products.render(product, variant, getDefaultCategory(product)));
     }
 
     @With(FormHandler.class)
     public static Result update() {
-        Form<UpdateCart> form = updateCartForm.bindFromRequest();
-        Cart cart;
         // Case missing or invalid form data, display errors
+        Form<UpdateCart> form = updateCartForm.bindFromRequest();
         if (form.hasErrors()) {
             displayErrors("update-cart", form);
-            cart = sphere().currentCart().fetch();
-            return badRequest(carts.render(cart));
+            return badRequest(showPage());
         }
-        // Case valid cart update, update quantity and display success message
+        // Case valid, update quantity
         UpdateCart updateCart = form.get();
         CartUpdate cartUpdate = new CartUpdate()
                 .setLineItemQuantity(updateCart.lineItemId, updateCart.quantity);
-        cart = sphere().currentCart().update(cartUpdate);
-        updateCart.displaySuccessMessage(cart);
-        return ok(carts.render(cart));
+        setCurrentCart(sphere().currentCart().update(cartUpdate));
+        updateCart.displaySuccessMessage();
+        return ok(showPage());
     }
 
     @With(FormHandler.class)
     public static Result remove() {
+        // Case missing or invalid form data, display errors
         Form<RemoveFromCart> form = removeFromCartForm.bindFromRequest();
-        Cart cart;
-        // Case missing or invalid form data
         if (form.hasErrors()) {
             displayErrors("remove-from-cart", form);
-            cart = sphere().currentCart().fetch();
-            return badRequest(carts.render(cart));
+            return badRequest(showPage());
         }
-        // Case valid cart update
+        // Case valid, remove item
         RemoveFromCart removeFromCart = form.get();
-        cart = sphere().currentCart().removeLineItem(removeFromCart.lineItemId);
-        removeFromCart.displaySuccessMessage(cart);
-        return ok(carts.render(cart));
+        setCurrentCart(sphere().currentCart().removeLineItem(removeFromCart.lineItemId));
+        removeFromCart.displaySuccessMessage();
+        return ok(showPage());
+    }
+
+    protected static Content showPage() {
+        return carts.render(getCurrentCart());
     }
 
     protected static int getMatchedSizeVariant(Product product, Variant variant, String size) {
