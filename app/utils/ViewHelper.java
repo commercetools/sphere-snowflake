@@ -139,7 +139,7 @@ public class ViewHelper {
      * Returns
      *
      */
-    public static Call getListProductsUrl(SearchResult<Product> search, Category category) {
+    public static Call getListProductsUrl(SearchResult<Product> search, Category category, String sort) {
         if (search.getCurrentPage() >= search.getTotalPages() - 1) {
             return null;
         }
@@ -149,7 +149,7 @@ public class ViewHelper {
         if (category != null) {
             categorySlug = category.getSlug();
         }
-        return routes.Categories.listProducts(categorySlug, nextPage);
+        return routes.Categories.listProducts(categorySlug, sort, nextPage);
     }
 
     public static Call getCategoryUrl(Category category) {
@@ -157,7 +157,11 @@ public class ViewHelper {
     }
 
     public static Call getCategoryUrl(Category category, int page) {
-        return routes.Categories.select(getCategoryPath(category), category.getSlug(), page);
+        return routes.Categories.select(category.getSlug(), "", page);
+    }
+
+    public static Call getCategoryUrl(Category category, String sort, int page) {
+        return routes.Categories.select(category.getSlug(), sort, page);
     }
 
     public static Call getProductUrl(Product product, Variant variant, Category category) {

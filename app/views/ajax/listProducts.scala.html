@@ -1,9 +1,9 @@
-@(search: SearchResult[Product], category: Category = null)
+@(search: SearchResult[Product], category: Category = null, sort: String = "")
 
 @if(search.getCount > 0) {
 
     @helper.productList(search, category)
 
-    @helper.productPager(search, category)
+    @helper.productPager(search, category, sort)
 
 }

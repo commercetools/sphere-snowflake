@@ -1,8 +1,8 @@
-@(search: SearchResult[Product], category: Category)
+@(search: SearchResult[Product], category: Category, sort: String = "")
 
 <ul id="product-list-pager" class="pager">
     <li class="more @if(search.getCurrentPage >= search.getTotalPages - 1){disabled}">
-        <a href="#" id="load-more" data-url="@getListProductsUrl(search, category)">
+        <a href="#" id="load-more" data-url="@getListProductsUrl(search, category, sort)">
             Load more
         </a>
     </li>

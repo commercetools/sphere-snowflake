@@ -1,6 +1,7 @@
 package controllers;
 
 import controllers.actions.SaveContext;
+import io.sphere.client.ProductSort;
 import io.sphere.client.facets.Facet;
 import io.sphere.client.facets.Facets;
 import io.sphere.client.facets.expressions.FacetExpression;
@@ -27,26 +28,27 @@ public class Categories extends ShopController {
     public static int PAGE_SIZE = 50;
 
     @With(SaveContext.class)
-    public static Result home(int page) {
+    public static Result home(String sort, int page) {
         SearchRequest<Product> searchRequest = sphere().products().all();
         searchRequest = filterBy(searchRequest);
-        searchRequest = sortBy(searchRequest);
+        searchRequest = sortBy(searchRequest, sort);
         searchRequest = paging(searchRequest, page);
         SearchResult<Product> searchResult = searchRequest.fetch();
         return ok(home.render(searchResult));
     }
 
     @With(SaveContext.class)
-    public static Result select(String categoryPath, String categorySlug, int page) {
+    public static Result select(String categorySlug, String sort, int page) {
         Category category = sphere().categories().getBySlug(categorySlug);
         if (category == null) {
-            return notFound("Category not found: " + categorySlug);
+            flash("error", "Category not found");
+            return notFound();
         }
         FilterExpression categoryFilter =
                 new FilterExpressions.CategoriesOrSubcategories(Collections.singletonList(category));
         SearchRequest <Product> searchRequest = sphere().products().filter(categoryFilter);
         searchRequest = filterBy(searchRequest);
-        searchRequest = sortBy(searchRequest);
+        searchRequest = sortBy(searchRequest, sort);
         searchRequest = paging(searchRequest, page);
         SearchResult<Product> searchResult = searchRequest.fetch();
         if (searchResult.getCount() < 1) {
@@ -55,7 +57,7 @@ public class Categories extends ShopController {
         return ok(categories.render(searchResult, category));
     }
 
-    public static Result listProducts(String categorySlug, int page) {
+    public static Result listProducts(String categorySlug, String sort, int page) {
         Category category = null;
         SearchRequest<Product> searchRequest;
         if (categorySlug.isEmpty()) {
@@ -70,10 +72,10 @@ public class Categories extends ShopController {
             searchRequest = sphere().products().filter(lang().toLocale(), categoryFilter);
         }
         searchRequest = filterBy(searchRequest);
-        searchRequest = sortBy(searchRequest);
+        searchRequest = sortBy(searchRequest, sort);
         searchRequest = paging(searchRequest, page);
         SearchResult<Product> searchResult = searchRequest.fetch();
-        return ok(views.html.ajax.listProducts.render(searchResult, category));
+        return ok(views.html.ajax.listProducts.render(searchResult, category, sort));
     }
 
     protected static SearchRequest<Product> filterBy(SearchRequest<Product> searchRequest) {
@@ -98,14 +100,21 @@ public class Categories extends ShopController {
         return searchRequest;
     }
 
-    protected static SearchRequest<Product> sortBy(SearchRequest<Product> searchRequest) {
+    protected static SearchRequest<Product> sortBy(SearchRequest<Product> searchRequest, String sort) {
+        if (sort.equals("price_asc")) {
+            searchRequest = searchRequest.sort(ProductSort.price.asc);
+        } else if (sort.equals("price_desc")) {
+            searchRequest = searchRequest.sort(ProductSort.price.desc);
+        } else if (sort.equals("name_asc")) {
+            searchRequest = searchRequest.sort(ProductSort.name.asc);
+        } else if (sort.equals("name_desc")) {
+            searchRequest = searchRequest.sort(ProductSort.name.desc);
+        }
         return searchRequest;
     }
 
     protected static SearchRequest<Product> paging(SearchRequest<Product> searchRequest, int currentPage) {
-        if (currentPage < 1) {
-            currentPage = 1;
-        }
+        if (currentPage < 1) currentPage = 1;
         // Convert page from 1..N to 0..N-1
         currentPage--;
         return searchRequest.page(currentPage).pageSize(PAGE_SIZE);

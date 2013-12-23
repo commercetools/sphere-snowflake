@@ -39,7 +39,7 @@ public class Carts extends ShopController {
         Form<AddToCart> form = addToCartForm.bindFromRequest();
         if (form.hasErrors()) {
             displayErrors("add-to-cart", form);
-            return redirect(routes.Categories.home(1));
+            return redirect(routes.Categories.home("", 1));
         }
         // Case invalid product, return not found
         AddToCart addToCart = form.get();
