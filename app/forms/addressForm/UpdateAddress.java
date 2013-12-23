@@ -9,6 +9,7 @@ import play.libs.Json;
 
 import java.util.List;
 
+import static utils.ControllerHelper.getAddressBook;
 import static utils.ControllerHelper.saveFlash;
 import static utils.ControllerHelper.saveJson;
 
@@ -96,13 +97,13 @@ public class UpdateAddress extends ListAddress {
         return CountryCode.getByCode(this.country);
     }
 
-    public void displaySuccessMessage(List<Address> addresses) {
+    public void displaySuccessMessage() {
         String message = "Address updated!";
         saveFlash("success", message);
 
         ObjectNode json = Json.newObject();
         json.put("success", message);
-        json.putAll(getJson(addresses));
+        json.putAll(getJson(getAddressBook()));
 
         saveJson(json);
     }

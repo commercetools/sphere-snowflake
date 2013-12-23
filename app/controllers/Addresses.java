@@ -49,7 +49,7 @@ public class Addresses extends ShopController {
         AddAddress addAddress = form.get();
         CustomerUpdate update = new CustomerUpdate().addAddress(addAddress.getAddress());
         setCurrentCustomer(sphere().currentCustomer().update(update));
-        addAddress.displaySuccessMessage(getAddressBook());
+        addAddress.displaySuccessMessage();
         return ok(showPage());
     }
 
@@ -65,7 +65,7 @@ public class Addresses extends ShopController {
         UpdateAddress updateAddress = form.get();
         CustomerUpdate update = new CustomerUpdate().changeAddress(updateAddress.addressId, updateAddress.getAddress());
         setCurrentCustomer(sphere().currentCustomer().update(update));
-        updateAddress.displaySuccessMessage(getAddressBook());
+        updateAddress.displaySuccessMessage();
         return ok(showPage());
     }
 
@@ -81,7 +81,7 @@ public class Addresses extends ShopController {
         RemoveAddress removeAddress = form.get();
         CustomerUpdate update = new CustomerUpdate().removeAddress(removeAddress.addressId);
         setCurrentCustomer(sphere().currentCustomer().update(update));
-        removeAddress.displaySuccessMessage(getAddressBook());
+        removeAddress.displaySuccessMessage();
         return ok(showPage());
     }
 

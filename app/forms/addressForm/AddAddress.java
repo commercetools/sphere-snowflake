@@ -10,6 +10,7 @@ import play.libs.Json;
 import java.util.Collections;
 import java.util.List;
 
+import static utils.ControllerHelper.getAddressBook;
 import static utils.ControllerHelper.saveFlash;
 import static utils.ControllerHelper.saveJson;
 
@@ -93,17 +94,13 @@ public class AddAddress extends ListAddress {
         return CountryCode.getByCode(this.country);
     }
 
-    public void displaySuccessMessage(Address address) {
-        displaySuccessMessage(Collections.singletonList(address));
-    }
-
-    public void displaySuccessMessage(List<Address> addresses) {
+    public void displaySuccessMessage() {
         String message = "Address added!";
         saveFlash("success", message);
 
         ObjectNode json = Json.newObject();
         json.put("success", message);
-        json.putAll(getJson(addresses));
+        json.putAll(getJson(getAddressBook()));
 
         saveJson(json);
     }
