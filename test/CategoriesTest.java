@@ -62,8 +62,6 @@ public class CategoriesTest {
         running(fakeApplication(), new Runnable() {
             public void run() {
                 assertUrlNotNull(GET, "/cat1");
-                assertUrlNotNull(GET, "/cat1-cat2");
-                assertUrlNotNull(GET, "/cat1-cat2-cat3");
             }
         });
     }
@@ -73,8 +71,6 @@ public class CategoriesTest {
         running(fakeApplication(), new Runnable() {
             public void run() {
                 assertUrlNotNull(GET, "/cat1", "?page=1");
-                assertUrlNotNull(GET, "/cat1-cat2", "?page=1");
-                assertUrlNotNull(GET, "/cat1-cat2-cat3", "?page=1");
             }
         });
     }
@@ -84,8 +80,6 @@ public class CategoriesTest {
         running(fakeApplication(), new Runnable() {
             public void run() {
                 assertUrlNotNull(GET, "/cat1", "?price=10_20");
-                assertUrlNotNull(GET, "/cat1-cat2", "?price=10_20");
-                assertUrlNotNull(GET, "/cat1-cat2-cat3", "?price=10_20");
             }
         });
     }
@@ -95,8 +89,6 @@ public class CategoriesTest {
         running(fakeApplication(), new Runnable() {
             public void run() {
                 assertUrlNotNull(GET, "/cat1", "?color=black");
-                assertUrlNotNull(GET, "/cat1-cat2", "?color=black");
-                assertUrlNotNull(GET, "/cat1-cat2-cat3", "?color=black");
             }
         });
     }
