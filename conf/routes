@@ -22,11 +22,15 @@ POST    /cart/remove                                        controllers.Carts.re
 GET     /checkout                                           controllers.Checkouts.show()
 POST    /checkout                                           controllers.Checkouts.submit()
 
-GET     /checkout/shipping/address                          controllers.Checkouts.showShippingAddress()
-GET     /checkout/shipping/address/get                      controllers.Checkouts.getShippingAddress()
-POST    /checkout/shipping/address                          controllers.Checkouts.setShippingAddress()
+GET     /checkout/address/get                               controllers.Checkouts.getShippingAddress()
+GET     /checkout/address                                   controllers.Checkouts.showShippingAddress()
+POST    /checkout/address                                   controllers.Checkouts.setShippingAddress()
 
-GET     /checkout/payment/method                            controllers.Checkouts.showPaymentMethod()
+GET     /checkout/shipping/get                              controllers.Checkouts.getShippingMethod()
+GET     /checkout/shipping/                                 controllers.Checkouts.showShippingMethod()
+POST    /checkout/shipping/                                 controllers.Checkouts.setShippingMethod()
+
+GET     /checkout/payment                                   controllers.Checkouts.showPaymentMethod()
 
 # Login
 GET     /user/login                                         controllers.Login.show()

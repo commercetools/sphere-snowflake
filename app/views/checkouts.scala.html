@@ -1,4 +1,4 @@
-@(cart: Cart, addressBook: List[Address], setAddressForm: Form[addressForm.SetAddress], section: Int = 1)
+@(cart: Cart, addressBook: List[Address], setAddressForm: Form[addressForm.SetAddress], setShippingForm: Form[checkoutForm.SetShippingMethod], section: Int = 1)
 
 @scripts = {
     <script type="text/javascript">var PAYMILL_PUBLIC_KEY = '17371111561e758000fc6b195c6d5d53';</script>
@@ -9,6 +9,19 @@
 
     <script id="shipping-address-template" type="text/x-handlebars-template">
         @form.setAddress()
+    </script>
+
+    <script id="shipping-method-template" type="text/x-handlebars-template">
+        {{#each method}}
+        <label class="radio">
+            <input type="radio" name="method" value="{{id}}" id="shipping-method-{{id}}" required
+                   data-price="{{price}} {{currency}}" data-name="{{name}}" data-description="{{description}}"
+                    {{#if select}}checked{{/if}} >
+            <span class="price">{{price}} {{currency}}</span>
+            <span class="name">{{name}}</span>
+            <span class="description">{{description}}</span>
+        </label>
+        {{/each}}
     </script>
 }
 
@@ -84,10 +97,10 @@
         </div>
 
         <form id="form-shipping-address" action="@routes.Checkouts.setShippingAddress" method="post">
-            <div id="checkout-shipping" class="step disabled clearfix">
+            <div id="checkout-address" class="step disabled clearfix">
                 <div class="step-header">
                     <span class="step-number">2</span>
-                    <h3>Shipping</h3>
+                    <h3>Address</h3>
                     <button type="button" class="btn btn-edit hide">
                         Change <i class="icon-edit"></i>
                     </button>
@@ -199,10 +212,47 @@
             </div>
         </form>
 
+        <form id="form-shipping-method" action="@routes.Checkouts.setShippingMethod" method="post">
+            <div id="checkout-shipping" class="step disabled clearfix">
+                <div class="step-header">
+                    <span class="step-number">3</span>
+                    <h3>Shipping</h3>
+                    <button type="button" class="btn btn-edit hide">
+                        Change <i class="icon-edit"></i>
+                    </button>
+                </div>
+
+                <div class="step-body">
+                    <div id="shipping-method-form" data-url="@routes.Checkouts.getShippingMethod" class="show">
+                        @* Load with shipping method template *@
+                    </div>
+
+                    <div class="hide">
+                        <ul id="shipping-method-summary" class="form-summary">
+                            <li>
+                                <span data-form="name">@setShippingForm.field("name").value</span>
+                                (<span data-form="price">@setShippingForm.field("price").value</span>)
+                            </li>
+                            <li>
+                                <span data-form="description"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-footer">
+                    <div class="messages"></div>
+                    <button type="submit" class="btn btn-success btn-next" data-loading-text="Saving...">
+                        Next <i class="icon-chevron-right icon-white"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
         <form id="form-billing-method" action="#" autocomplete="off">
             <div id="checkout-billing" class="step disabled clearfix">
                 <div class="step-header">
-                    <span class="step-number">3</span>
+                    <span class="step-number">4</span>
                     <h3>Payment</h3>
                     <button type="button" class="btn btn-edit hide">
                         Change <i class="icon-edit"></i>
@@ -305,6 +355,7 @@
         </form>
 
         <form id="form-checkout" action="@routes.Checkouts.submit" method="post">
+            <input type="hidden" name="cartSnapshot" value=""/>
             <div id="checkout-footer" class="footer">
                 <div class="left">
                     <a href="@getReturnUrl" class="btn">

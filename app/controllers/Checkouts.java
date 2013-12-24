@@ -8,31 +8,39 @@ import de.paymill.net.ApiException;
 import de.paymill.service.PaymentService;
 import forms.addressForm.ListAddress;
 import forms.addressForm.SetAddress;
-import forms.paymentForm.DoCheckout;
-import io.sphere.client.shop.model.Cart;
-import io.sphere.client.shop.model.Customer;
-import io.sphere.client.shop.model.Order;
-import io.sphere.client.shop.model.PaymentState;
+import forms.checkoutForm.DoCheckout;
+import forms.checkoutForm.SetShippingMethod;
+import io.sphere.client.shop.model.*;
 import play.Play;
 import play.api.templates.Html;
 import play.data.Form;
+import play.mvc.Content;
 import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
 import views.html.checkouts;
+import views.html.form.setAddress;
 import views.html.orders;
 
 import static play.data.Form.form;
-import static utils.ControllerHelper.displayErrors;
-import static utils.ControllerHelper.getAddressBook;
+import static utils.ControllerHelper.*;
 
 public class Checkouts extends ShopController {
 
     final static String paymillKey = Play.application().configuration().getString("paymill.apiKey");
 
     final static Form<SetAddress> setAddressForm = form(SetAddress.class);
+    final static Form<SetShippingMethod> setShippingForm = form(SetShippingMethod.class);
     final static Form<DoCheckout> doCheckoutForm = form(DoCheckout.class);
 
+
+    public static Result getShippingAddress() {
+        return ok(ListAddress.getJson(getCurrentCart().getShippingAddress()));
+    }
+
+    public static Result getShippingMethod() {
+        return ok(SetShippingMethod.getJson(getShippingMethods()));
+    }
 
     @With(CartNotEmpty.class)
     public static Result show() {
@@ -45,46 +53,59 @@ public class Checkouts extends ShopController {
     }
 
     @With(CartNotEmpty.class)
-    public static Result showPaymentMethod() {
+    public static Result showShippingMethod() {
         return ok(showPage(3));
     }
 
-    public static Result getShippingAddress() {
-        Cart cart = sphere().currentCart().fetch();
-        return ok(ListAddress.getJson(cart.getShippingAddress()));
+    @With(CartNotEmpty.class)
+    public static Result showPaymentMethod() {
+        return ok(showPage(4));
     }
 
     @With(FormHandler.class)
     public static Result setShippingAddress() {
-        Cart cart;
-        Form<SetAddress> form = setAddressForm.bindFromRequest();
         // Case missing or invalid form data
+        Form<SetAddress> form = setAddressForm.bindFromRequest();
         if (form.hasErrors()) {
             displayErrors("set-address", form);
-            cart = sphere().currentCart().fetch();
-            return badRequest(checkouts.render(cart, getAddressBook(), form, 2));
+            return badRequest(showPage(2, form, null));
         }
         // Case valid shipping address
         SetAddress setAddress = form.get();
         if (setAddress.email != null) {
-            sphere().currentCart().setCustomerEmail(setAddress.email);
+            setCurrentCart(sphere().currentCart().setCustomerEmail(setAddress.email));
         }
-        cart = sphere().currentCart().setShippingAddress(setAddress.getAddress());
-        setAddress.displaySuccessMessage(cart, sphere().currentCart().createCartSnapshotId());
-        return ok(checkouts.render(cart, getAddressBook(), form, 2));
+        setCurrentCart(sphere().currentCart().setShippingAddress(setAddress.getAddress()));
+        setAddress.displaySuccessMessage();
+        return ok(showPage(3));
+    }
+
+    @With(FormHandler.class)
+    public static Result setShippingMethod() {
+        // Case missing or invalid form data
+        Form<SetShippingMethod> form = setShippingForm.bindFromRequest();
+        if (form.hasErrors()) {
+            displayErrors("set-shipping", form);
+            return badRequest(showPage(3, null, form));
+        }
+        // Case valid shipping method
+        SetShippingMethod setShipping = form.get();
+        setCurrentCart(sphere().currentCart().setShippingMethod(setShipping.getShippingMethod()));
+        setShipping.displaySuccessMessage();
+        return ok(showPage(4));
     }
 
     public static Result submit() {
-        Form<DoCheckout> form = doCheckoutForm.bindFromRequest();
         // Case missing or invalid form data
+        Form<DoCheckout> form = doCheckoutForm.bindFromRequest();
         if (form.hasErrors()) {
             displayErrors("", form);
-            return badRequest(showPage(3));
+            return badRequest(showPage(4));
         }
         // Case cart changed
         DoCheckout doCheckout = form.get();
         if (!sphere().currentCart().isSafeToCreateOrder(doCheckout.cartSnapshot)) {
-            flash("info", "Your cart items have changed, please review everything is correct");
+            doCheckout.displayCartChangedError();
             redirect(routes.Checkouts.show());
         }
         // Case payment failure
@@ -97,28 +118,36 @@ public class Checkouts extends ShopController {
         } catch (ApiException ae) {
             if (ae.getCode().equals("token_not_found")) {
                 flash("error", "Invalid payment token");
-                return badRequest(showPage(3));
+                return badRequest(showPage(4));
             }
             flash("error", "Payment failed unexpectedly, please try again");
-            return internalServerError(showPage(3));
+            return internalServerError(showPage(4));
         }
-        play.Logger.debug("Payment executed with code " + payment.getCode());
         // Case success purchase
+        play.Logger.debug("Payment executed with code " + payment.getCode());
         Order order = sphere().currentCart().createOrder(doCheckout.cartSnapshot, PaymentState.Paid);
         play.Logger.debug("Order created");
         flash("success", "Congratulations, you finished your order!");
         return ok(orders.render(order));
     }
 
-    protected static Html showPage(int page) {
-        Cart cart = sphere().currentCart().fetch();
-        Form<SetAddress> addressForm;
-        if (sphere().isLoggedIn()) {
-            Customer customer = sphere().currentCustomer().fetch();
-            addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress(), customer));
-        } else {
+    protected static Content showPage(int page) {
+        return showPage(page, null, null);
+    }
+
+    protected static Content showPage(int page, Form<SetAddress> addressForm, Form<SetShippingMethod> shippingForm) {
+        Cart cart = getCurrentCart();
+        if (addressForm == null) {
             addressForm = setAddressForm.fill(new SetAddress(cart.getShippingAddress()));
         }
-        return checkouts.render(cart, getAddressBook(), addressForm, page);
+        if (shippingForm == null) {
+            shippingForm = setShippingForm.fill(new SetShippingMethod(cart.getShippingInfo()));
+        }
+        // Pre-select a shipping method
+        if (cart.getShippingAddress() != null && cart.getShippingInfo() == null) {
+            String shippingMethodId = getDefaultShippingMethod(getShippingMethods()).getId();
+            setCurrentCart(sphere().currentCart().setShippingMethod(ShippingMethod.reference(shippingMethodId)));
+        }
+        return checkouts.render(getCurrentCart(), getAddressBook(), addressForm, shippingForm, page);
     }
 }

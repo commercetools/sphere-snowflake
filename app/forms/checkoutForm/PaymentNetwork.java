@@ -1,6 +1,5 @@
-package forms.paymentForm;
+package forms.checkoutForm;
 
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.jsoup.Jsoup;

@@ -1,24 +1,25 @@
 $ ->
-    Handlebars.registerHelper('ifEq', (v1, v2, options) ->
-        if v1 is v2 then options.fn(this) else options.inverse(this)
-    )
     template = {
         address: Handlebars.compile $.trim($("#shipping-address-template").html())
+        shipping: Handlebars.compile $.trim($("#shipping-method-template").html())
     }
 
     marginTop = 78
     checkout = $('#form-checkout')
     checkoutCart = $('#checkout-cart.step')
+    checkoutAddress = $('#checkout-address.step')
     checkoutShipping = $('#checkout-shipping.step')
     checkoutBilling = $('#checkout-billing.step')
     sections = $('#checkout .step')
     shippingAddressForm = $("#shipping-address-form")
+    shippingMethodForm = $("#shipping-method-form")
 
     shippingAddress = new Form $('#form-shipping-address')
+    shippingMethod = new Form $('#form-shipping-method')
     billingMethod = new Form $('#form-billing-method')
     paymill = new Paymill billingMethod, $('#form-checkout')
 
-    # Toggle payment form
+    # Toggle payment form between credit card and direct debit
     billingMethod.inputs.filter('.paymenttype').click ->
         $(this).addClass('btn-primary disabled')
         if $(this).val() is 'ELV'
@@ -32,24 +33,41 @@ $ ->
 
 
     # Method to be called each time a change has been triggered
-    updateCheckout = ->
-        orderSummary.load()
+    updateCheckout = (res) ->
+        # Update price details
+        orderSummary.replace res.data.cart
+        # Update payment form
+        paymill.updatePrice res.data.cart.totalPrice, res.data.cart.currency
+        # Update cart snapshot
+        checkout.find("input[name=cartSnapshot]").val res.data.cartSnapshot
 
 
     # Load shipping address form
     loadShippingAddress = ->
         url = shippingAddressForm.data("url")
-        if url?
-            shippingAddressForm.find('.loading-ajax').show()
-            $.getJSON(url, (data) ->
-                replaceShippingAddress data
-                shippingAddressForm.find('.loading-ajax').hide()
-            )
+        return unless url?
+        shippingAddressForm.find('.loading-ajax').show()
+        $.getJSON url, (data) ->
+            replaceShippingAddress data
+            shippingAddressForm.find('.loading-ajax').hide()
+
+    # Load shipping method form
+    loadShippingMethod = ->
+        url = shippingMethodForm.data("url")
+        return unless url?
+        shippingMethodForm.find('.loading-ajax').show()
+        $.getJSON url, (data) ->
+            replaceShippingMethod data
+            shippingMethodForm.find('.loading-ajax').hide()
 
 
     # Load and replace shipping address form with new data
     replaceShippingAddress = (data) ->
         shippingAddressForm.empty().append(template.address data)
+
+    # Load and replace shipping method form with new data
+    replaceShippingMethod = (data) ->
+        shippingMethodForm.empty().append(template.shipping data)
 
 
     # Fill form summary with form data
@@ -86,7 +104,7 @@ $ ->
             $('#checkout-footer button[type=submit]').not(':visible').fadeIn()
 
 
-    # Bind 'change' button click event to allow editing a section form
+    # "Edit step data" functionality bound to click event
     $('#checkout .btn-edit').click ->
         selected = $(this).parentsUntil('.step').parent()
         focused = sections.not('.disabled').not('.visited')
@@ -104,20 +122,18 @@ $ ->
         $('html, body').animate scrollTop: selected.offset().top - marginTop, 'slow'
 
 
-    # Bind cart 'next step' click event to 'next step' functionality
+    # "Go to next step" functionality bound to click event
     checkoutCart.find('.btn-next').click ->
-        updateCheckout()
         nextStep(checkoutCart)
 
 
-    # Bind shipping address submit event to 'set address' and 'next step' functionality
+    # "Set shipping address" functionality handler bound to submit event
     shippingAddress.form.submit ->
+        shippingAddress.reload()
         # Remove alert messages
         shippingAddress.removeAllMessages()
-
         # Validate form client side
         return false unless shippingAddress.validateRequired()
-
         # Send new data to server
         shippingAddress.startSubmit()
         url = shippingAddress.form.attr("action")
@@ -125,33 +141,75 @@ $ ->
         data = shippingAddress.form.serialize()
         xhr = shippingAddress.submit(url, method, data)
         xhr.done (res) ->
-            shippingAddress.doneSubmit(res)
-            updateCheckout()
-            paymill.updatePrice res.data.cart.totalPrice, res.data.cart.currency
-            # Append cart snapshot to checkout form
-            checkout.append "<input type='hidden' name='cartSnapshot' value='#{res.data.cartSnapshot}'/>"
+            # Update checkout content
+            replaceShippingMethod res.data.shippingMethod
+            updateCheckout res
             # Fill summary form data
             fillSummary $('#shipping-address-form'), $('#shipping-address-summary')
             # Go to next section
-            nextStep(checkoutShipping)
-        xhr.fail (res) -> shippingAddress.failSubmit(res)
+            nextStep(checkoutAddress)
+        xhr.fail (res) -> shippingAddress.failSubmit res
         xhr.always -> shippingAddress.stopSubmit()
-
         return shippingAddress.allowSubmit
 
+    # "Set shipping method" functionality handler bound to submit event
+    shippingMethod.form.submit ->
+        shippingMethod.reload()
+        # Remove alert messages
+        shippingMethod.removeAllMessages()
+        # Validate form client side
+        return false unless shippingMethod.validateRequired()
+        # Send new data to server
+        shippingMethod.startSubmit()
+        url = shippingMethod.form.attr("action")
+        method = shippingMethod.form.attr("method")
+        data = shippingMethod.form.serialize()
+        xhr = shippingMethod.submit(url, method, data)
+        xhr.done (res) ->
+            # Update checkout content
+            updateCheckout res
+            # Fill summary form data
+            summary = $('#shipping-method-summary')
+            method = shippingMethod.inputs.filter("[name=method]:checked")
+            summary.find("[data-form=name]").text method.data("name")
+            summary.find("[data-form=price]").text method.data("price")
+            summary.find("[data-form=description]").text method.data("description")
+            # Go to next section
+            nextStep(checkoutShipping)
+        xhr.fail (res) -> shippingMethod.failSubmit res
+        xhr.always -> shippingMethod.stopSubmit()
+        return shippingMethod.allowSubmit
 
-    # Bind billing 'next step' click event to 'validate form' and 'next step' functionality
+    # "Set shipping method" functionality handler bound to change event
+    shippingMethodForm.on "change", ":input", ->
+        shippingMethod.reload()
+        # Remove alert messages
+        shippingMethod.removeAllMessages()
+        # Validate form client side
+        return false unless shippingMethod.validateRequired()
+        # Send new data to server
+        shippingMethod.startSubmit()
+        url = shippingMethod.form.attr("action")
+        method = shippingMethod.form.attr("method")
+        data = shippingMethod.form.serialize()
+        xhr = shippingMethod.submit(url, method, data)
+        xhr.done (res) ->
+            # Update checkout content
+            updateCheckout res
+        xhr.fail (res) -> shippingMethod.failSubmit res
+        xhr.always -> shippingMethod.stopSubmit()
+
+
+    # "Set payment data" functionality handler bound to submit event
     billingMethod.form.submit ->
         # Remove alert messages
         billingMethod.removeAllMessages()
         billingMethod.reload()
-
         # Validate form client side
         return false unless paymill.validate()
-
         # Submit payment data to Paymill
         billingMethod.startSubmit()
-        paymill.submit( (error, result) ->
+        paymill.submit (error, result) ->
             billingMethod.stopSubmit()
             return billingMethod.displayErrorMessage(error.apierror) if error
             # Append token to checkout form
@@ -160,19 +218,18 @@ $ ->
             fillSummary($('#billing-method-form'), $('#billing-method-summary'))
             # Go to next section
             nextStep(checkoutBilling)
-        )
-
         return billingMethod.allowSubmit
 
 
+    # Replace shipping address with address from address book
     $("#shipping-address-list .address-item").click ->
         url = $(this).data("url")
-        if url?
-            $(this).find('.loading-ajax').show()
-            $.getJSON(url, (data) ->
-                replaceShippingAddress data
-                $(this).find('.loading-ajax').hide()
-            )
+        return unless url?
+        $(this).find('.loading-ajax').show()
+        $.getJSON url, (data) ->
+            replaceShippingAddress data
+            $(this).find('.loading-ajax').hide()
 
 
     loadShippingAddress()
+    loadShippingMethod()
