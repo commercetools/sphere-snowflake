@@ -309,14 +309,7 @@ public class SphereTestable {
     }
 
     private Price mockPrice(double amount) {
-        Price price = mock(Price.class);
-		/*
-		 * // Mock value/string Money money = mockMoney(amount); // TODO For some reason it is failing
-		 * //when(price.getValue()).thenReturn(money); when(price.toString()).thenReturn(String.valueOf(amount)); //
-		 * Mock country when(price.getCountry()).thenReturn(country);
-		 * when(price.getCountryString()).thenReturn(country.getName());
-		 */
-        return price;
+        return new Price(mockMoney(amount), country, null);
     }
 
     private Category mockCategoryNode(String name, List<Category> ancestors) {
