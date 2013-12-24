@@ -2,11 +2,13 @@ package utils;
 
 import static play.mvc.Controller.flash;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
 import io.sphere.client.SphereClientException;
+import io.sphere.client.model.Money;
 import io.sphere.client.shop.model.*;
 import org.codehaus.jackson.JsonNode;
 import play.Logger;
@@ -105,6 +107,20 @@ public class ControllerHelper {
         Http.Context.current().args.put("json", json);
     }
 
+    /* Returns net price */
+    public static Money getNetPrice(Money price, TaxRate taxRate) {
+        if (taxRate == null) return price;
+        if (!taxRate.isIncludedInPrice()) return price;
+        return price.multiply(1 / (1 + taxRate.getAmount()));
+    }
+
+    /* Returns gross price */
+    public static Money getGrossPrice(Money price, TaxRate taxRate) {
+        if (taxRate == null) return price;
+        if (taxRate.isIncludedInPrice()) return price;
+        return price.plus(price.multiply(taxRate.getAmount()));
+    }
+
     /* Returns the default category of a product. */
     public static Category getDefaultCategory(Product product) {
         if (product.getCategories().isEmpty()) return null;
@@ -117,5 +133,24 @@ public class ControllerHelper {
             return getCurrentCustomer().getAddresses();
         }
         return Collections.emptyList();
+    }
+
+    public static List<ShippingMethod> getShippingMethods() {
+        List<ShippingMethod> shippingMethods = new ArrayList<ShippingMethod>();
+        if (getCurrentCart().getShippingAddress() != null) {
+            shippingMethods = Sphere.getInstance().shippingMethods().query().fetch().getResults();
+        }
+        return shippingMethods;
+    }
+
+    public static ShippingMethod getDefaultShippingMethod(List<ShippingMethod> shippingMethods) {
+        // Case no shipping methods - return null
+        if (shippingMethods.isEmpty()) return null;
+        // Case default shipping method - return default
+        for (ShippingMethod shippingMethod : shippingMethods) {
+            if (shippingMethod.isDefault()) return shippingMethod;
+        }
+        // Case no default shipping method - return first
+        return shippingMethods.get(0);
     }
 }

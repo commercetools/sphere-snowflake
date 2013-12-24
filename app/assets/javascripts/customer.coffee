@@ -1,7 +1,4 @@
 $ ->
-    Handlebars.registerHelper('ifEq', (v1, v2, options) ->
-        if v1 is v2 then options.fn(this) else options.inverse(this)
-    )
     template = {
         update: Handlebars.compile $.trim($("#update-address-template").html())
         add: Handlebars.compile $.trim($("#add-address-template").html())

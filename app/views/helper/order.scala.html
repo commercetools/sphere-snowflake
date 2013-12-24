@@ -5,55 +5,28 @@
     <div class="order-line-items">
         <h4>Line items</h4>
         <ul>
-        @for(item <- order.getLineItems) {
+            @for(item <- order.getLineItems) {
             <li>
                 <span class="item-quantity">@item.getQuantity</span>
                 <span class="item-name">@item.getProductName</span>
-                <span class="item-price">@item.getTotalPrice</span>
+                <span class="item-price">@printPrice(getPrice(item))</span>
                 <ul class="item-attributes">
-                @for(attribute <- item.getVariant.getAttributes) {
+                    @for(attribute <- item.getVariant.getAttributes) {
                     <li>@attribute.getName: @attribute.getString</li>
-                }
+                    }
                 </ul>
             </li>
-        }
+            }
         </ul>
     </div>
 
     <div class="order-address">
-    @if(isSet(order.getBillingAddress)) {
-        <h4>Billing address</h4>
-        @defining(order.getBillingAddress) { billingAddress =>
-        <ul class="address billing-address">
-            <li>
-                <span class="first-name">@billingAddress.getFirstName</span>
-                <span class="last-name">@billingAddress.getLastName</span>
-                <span class="company">@billingAddress.getCompany</span>
-            </li>
-            <li>
-                <span class="street">@billingAddress.getStreetName</span>
-            </li>
-            <li>
-                <span class="street">@billingAddress.getStreetNumber</span>
-            </li>
-            <li>
-                <span class="postal-code">@billingAddress.getPostalCode</span>
-                <span class="city">@billingAddress.getCity</span>
-                <span class="country">@billingAddress.getCountry.getName</span>
-            </li>
-            <li>
-                <span class="phone">@billingAddress.getPhone</span>
-            </li>
-            <li>
-                <span class="mobile">@billingAddress.getMobile</span>
-            </li>
-            <li>
-                <span class="email">@billingAddress.getEmail</span>
-            </li>
-        </ul>
+        @if(isSet(order.getShippingInfo)) {
+        <h4>Shipping method</h4>
+        @order.getShippingInfo.getShippingMethodName (@printPrice(getPrice(order.getShippingInfo)))
         }
-    }
-    @if(isSet(order.getShippingAddress)) {
+
+        @if(isSet(order.getShippingAddress)) {
         <h4>Shipping address</h4>
         @defining(order.getShippingAddress) { shippingAddress =>
         <ul class="address shipping-address">
@@ -84,36 +57,80 @@
             </li>
         </ul>
         }
-    }
+        }
+
+        @if(isSet(order.getBillingAddress)) {
+        <h4>Billing address</h4>
+        @defining(order.getBillingAddress) { billingAddress =>
+        <ul class="address billing-address">
+            <li>
+                <span class="first-name">@billingAddress.getFirstName</span>
+                <span class="last-name">@billingAddress.getLastName</span>
+                <span class="company">@billingAddress.getCompany</span>
+            </li>
+            <li>
+                <span class="street">@billingAddress.getStreetName</span>
+            </li>
+            <li>
+                <span class="street">@billingAddress.getStreetNumber</span>
+            </li>
+            <li>
+                <span class="postal-code">@billingAddress.getPostalCode</span>
+                <span class="city">@billingAddress.getCity</span>
+                <span class="country">@billingAddress.getCountry.getName</span>
+            </li>
+            <li>
+                <span class="phone">@billingAddress.getPhone</span>
+            </li>
+            <li>
+                <span class="mobile">@billingAddress.getMobile</span>
+            </li>
+            <li>
+                <span class="email">@billingAddress.getEmail</span>
+            </li>
+        </ul>
+        }
+        }
+
+        <h4>Payment</h4>
+        @order.getPaymentState.name
     </div>
 
     <div class="order-price-summary">
         <h4>Price detail</h4>
         <div class="order-summary">
-            @if(order.getTaxedPrice != null) {
             <ul>
-                <li>
-                    Item total
-                    <span>@order.getTaxedPrice.getTotalNet</span>
+                <li class="subtotal">
+                    Total line items price
+                    <span>@printPrice(getLineItemsTotalPrice(order))</span>
                 </li>
-                <li>
-                    Shipping
-                    <span>Not implemented yet</span>
-                </li>
-                @for(taxPortion <- order.getTaxedPrice.getTaxPortions) {
-                <li>
-                    Tax @getPercentage(taxPortion.getRate) %
-                    <span>@taxPortion.getAmount</span>
+
+                @for(item <- order.getCustomLineItems) {
+                <li class="customLineItems">
+                    @item.getName.get
+                    <span>@printPrice(getPrice(item))</span>
                 </li>
                 }
+
+                @if(isSet(order.getShippingInfo)){
+                <li>
+                    Shipping cost
+                    <span>@printPrice(getPrice(order.getShippingInfo))</span>
+                </li>
+                }
+
                 <li class="total">
-                    Total
-                    <span>@order.getTaxedPrice.getTotalGross</span>
+                    Total price
+                    <span>@printPrice(getPrice(order))</span>
+                </li>
+
+                <li class="taxes">
+                    @for(taxPortion <- order.getTaxedPrice.getTaxPortions) {
+                    incl. @getPercentage(taxPortion.getRate)% VAT
+                    <span>@printPrice(taxPortion.getAmount)</span>
+                    }
                 </li>
             </ul>
-            } else {
-                For some reason, this order doesn't have taxed price!
-            }
         </div>
     </div>
 </div>

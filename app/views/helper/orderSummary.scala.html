@@ -2,30 +2,47 @@
 
 <script id="order-summary-template" type="text/x-handlebars-template">
     <ul>
-        {{#if totalNetPrice}}
-        <li>
-            Item total
-            <span>{{totalNetPrice}} {{currency}}</span>
+        {{#if totalItemPrice}}
+        <li class="subtotal">
+            Total line items price
+            <span>{{totalItemPrice}} {{currency}}</span>
         </li>
         {{/if}}
+
+        {{#if customLineItems}}
+        {{#each customLineItems}}
+        <li class="customLineItems">
+            {{name}}
+            <span>{{money}} {{currency}}</span>
+        </li>
+        {{/each}}
+        {{/if}}
+
         {{#if shippingPrice}}
-        <li>
-            Shipping
+        <li>{{#ifGr shippingPrice 0 }}
+            Shipping cost
+            {{else}}
+            Free shipping
+            {{/ifGr}}
             <span>{{shippingPrice}} {{currency}}</span>
         </li>
         {{/if}}
+
+        {{#if totalPrice}}
+        <li class="total">
+            Total price
+            <span>{{totalPrice}} {{currency}}</span>
+        </li>
+        {{/if}}
+
         {{#if taxPortion}}
-        <li>
+        <li class="taxes">
             {{#each taxPortion}}
-            Tax {{rate}} %
+            {{#if included}} incl. {{else}} excl. {{/if}} {{rate}}% VAT
             <span>{{amount}} {{currency}}</span>
             {{/each}}
         </li>
         {{/if}}
-        <li class="total">
-            Total
-            <span>{{totalPrice}} {{currency}}</span>
-        </li>
     </ul>
 </script>
 

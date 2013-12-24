@@ -1,11 +1,14 @@
 package forms.cartForm;
 
+import io.sphere.client.model.Money;
 import io.sphere.client.shop.model.*;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import play.libs.Json;
 
 import java.math.BigDecimal;
+
+import static utils.ViewHelper.*;
 
 public class ListCart {
 
@@ -22,26 +25,41 @@ public class ListCart {
     public static ObjectNode getJson(Cart cart) {
         ObjectNode json = Json.newObject();
         if (cart.getTotalQuantity() < 1) return json;
-        json.put("currency", cart.getCurrency().getCurrencyCode());
+        // Total price
+        json.put("totalPrice", printPriceAmount(getPrice(cart)));
+        json.put("currency", printPriceCurrency(cart.getCurrency().getCurrencyCode()));
         if (cart.getShippingAddress() != null) {
-            json.put("totalPrice", cart.getTaxedPrice().getTotalGross().format(2));
-            json.put("totalNetPrice", cart.getTaxedPrice().getTotalNet().format(2));
-            // TODO Use SDK shipping logic
-            json.put("shippingPrice", "0.00");
+            // Shipping price
+            if (cart.getShippingInfo() != null) {
+                ShippingInfo shipping = cart.getShippingInfo();
+                json.put("shippingPrice", printPriceAmount(getPrice(shipping)));
+            }
+            // Tax portions
             ArrayNode taxPortions = json.putArray("taxPortion");
             for (TaxPortion tax: cart.getTaxedPrice().getTaxPortions()) {
                 ObjectNode taxPortion = Json.newObject();
-                taxPortion.put("rate", String.valueOf(BigDecimal.valueOf(tax.getRate() * 100).stripTrailingZeros()));
-                taxPortion.put("amount", tax.getAmount().format(2));
-                taxPortion.put("currency", tax.getAmount().getCurrencyCode());
+                taxPortion.put("included", true);
+                taxPortion.put("rate", String.valueOf(getPercentage(tax.getRate())));
+                taxPortion.put("amount", printPriceAmount(tax.getAmount()));
+                taxPortion.put("currency", printPriceCurrency(tax.getAmount().getCurrencyCode()));
                 taxPortions.add(taxPortion);
             }
-        } else {
-            json.put("totalPrice", cart.getTotalPrice().format(2));
         }
+        // Total items price
         ArrayNode list = json.putArray("item");
+        Money totalItemPrice = new Money(BigDecimal.ZERO, cart.getCurrency().getCurrencyCode());
         for (LineItem item : cart.getLineItems()) {
             list.add(getJson(item));
+            totalItemPrice = totalItemPrice.plus(getPrice(item));
+        }
+        // Total
+        json.put("totalItemPrice", printPriceAmount(totalItemPrice));
+        // Custom line items
+        if(cart.getCustomLineItems().size() > 0) {
+            ArrayNode customLineItemList = json.putArray("customLineItems");
+            for (CustomLineItem item : cart.getCustomLineItems()) {
+                customLineItemList.add(getJson(item));
+            }
         }
         return json;
     }
@@ -52,10 +70,10 @@ public class ListCart {
         json.put("productId", item.getProductId());
         json.put("productName", item.getProductName());
         json.put("quantity", item.getQuantity());
-        json.put("currency", item.getTotalPrice().getCurrencyCode());
-        json.put("price", item.getPrice().getValue().format(2));
-        json.put("totalPrice", item.getTotalPrice().format(2));
-
+        json.put("currency", printPriceCurrency(item.getTotalPrice().getCurrencyCode()));
+        json.put("price", printPriceAmount(getPrice(item.getPrice().getValue(), item.getTaxRate())));
+        json.put("totalPrice", printPriceAmount(getPrice(item)));
+        // Attributes
         ArrayNode attributes = json.putArray("attribute");
         for (Attribute attr : item.getVariant().getAttributes()) {
             ObjectNode attribute = Json.newObject();
@@ -63,7 +81,7 @@ public class ListCart {
             attribute.put("value", attr.getValue().toString());
             attributes.add(attribute);
         }
-
+        // Images
         ObjectNode images = Json.newObject();
         images.put("thumbnail", item.getVariant().getFeaturedImage().getSize(ImageSize.THUMBNAIL).getUrl());
         images.put("small", item.getVariant().getFeaturedImage().getSize(ImageSize.SMALL).getUrl());
@@ -71,8 +89,18 @@ public class ListCart {
         images.put("large", item.getVariant().getFeaturedImage().getSize(ImageSize.LARGE).getUrl());
         images.put("original", item.getVariant().getFeaturedImage().getSize(ImageSize.ORIGINAL).getUrl());
         json.put("image", images);
-
         return json;
     }
 
+    public static ObjectNode getJson(CustomLineItem item) {
+        ObjectNode json = Json.newObject();
+        json.put("itemId", item.getId());
+        json.put("name", item.getName().get());
+        json.put("money", printPriceAmount(getPrice(item)));
+        json.put("currency", printPriceCurrency(item.getMoney().getCurrencyCode()));
+        json.put("slug", item.getSlug());
+        json.put("quantity", item.getQuantity());
+        json.put("taxCategory", item.getTaxCategory().getTypeId());
+        return json;
+    }
 }

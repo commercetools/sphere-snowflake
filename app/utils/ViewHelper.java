@@ -1,6 +1,7 @@
 package utils;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.*;
 
 import com.neovisionaries.i18n.CountryCode;
@@ -16,6 +17,8 @@ import play.data.Form;
 import play.mvc.Call;
 import play.mvc.Http;
 import sphere.Sphere;
+
+import static utils.ControllerHelper.getGrossPrice;
 
 public class ViewHelper {
 
@@ -133,6 +136,64 @@ public class ViewHelper {
     public static Money getShippingCost() {
         // TODO Implement correct shipping cost
         return new Money(BigDecimal.valueOf(10), "EUR");
+    }
+
+    /* Methods for printing prices */
+    public static String printPrice(Money money) {
+        if (money == null) return "";
+        return printPriceAmount(money) + " " + printPriceCurrency(money.getCurrencyCode());
+    }
+
+    public static String printPriceAmount(Money money) {
+        if (money == null) return "";
+        NumberFormat format = NumberFormat.getInstance(Locale.GERMANY);
+        format.setMinimumFractionDigits(2);
+        return format.format(money.getAmount());
+    }
+
+    public static String printPriceCurrency(String currencyCode) {
+        return Currency.getInstance(currencyCode).getSymbol(Locale.GERMANY);
+    }
+
+    /* Calculate total price for all line items */
+    public static Money getLineItemsTotalPrice(Order order) {
+        Money itemsTotalPrice = new Money(BigDecimal.ZERO, order.getCurrency().getCurrencyCode());
+        for (LineItem item : order.getLineItems()) {
+            itemsTotalPrice = itemsTotalPrice.plus(getPrice(item));
+        }
+        return itemsTotalPrice;
+    }
+
+    /* Set of methods to get correct price */
+    public static Money getPrice(Cart cart) {
+        if (cart == null) return null;
+        if (cart.getTaxedPrice() == null) return cart.getTotalPrice();
+        return cart.getTaxedPrice().getTotalGross();
+    }
+
+    public static Money getPrice(Order order) {
+        if (order == null) return null;
+        if (order.getTaxedPrice() == null) return order.getTotalPrice();
+        return order.getTaxedPrice().getTotalGross();
+    }
+
+    public static Money getPrice(ShippingInfo shippingInfo) {
+        if (shippingInfo == null) return null;
+        return getPrice(shippingInfo.getPrice(), shippingInfo.getTaxRate());
+    }
+
+    public static Money getPrice(LineItem item) {
+        if (item == null) return null;
+        return getPrice(item.getTotalPrice(), item.getTaxRate());
+    }
+
+    public static Money getPrice(CustomLineItem item) {
+        if (item == null) return null;
+        return getPrice(item.getMoney().multiply(item.getQuantity()), item.getTaxRate());
+    }
+
+    public static Money getPrice(Money price, TaxRate rate) {
+        return getGrossPrice(price, rate);
     }
 
     /**
