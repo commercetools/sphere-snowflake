@@ -40,6 +40,11 @@ class window.Form
 
         # Check incorrect fields
         invalid = required.filter -> return not $(this).val()
+        radio = required.filter(":checkbox, :radio")
+        invalid = invalid.add( radio.filter ->
+            name = $(this).attr("name")
+            return not radio.filter("[name='#{name}']:checked").length > 0
+        )
         return true unless invalid.length > 0
 
         # Mark incorrect fields as invalid
@@ -65,6 +70,23 @@ class window.Form
         # Display error message in its label container
         place = @labels.filter('[for=' + fields.first().attr("id") + ']')
         @displayErrorMessage("These fields must contain the same value", place)
+        return false
+
+    # Validate password strength
+    validatePasswordStrength: (field) ->
+        # Start with the field marked as valid
+        @markValid field
+
+        # Check incorrect field
+        return true if field.val().match((/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[0-9a-zA-Z!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/))
+
+        # Mark incorrect field as invalid
+        return false unless print
+        @markInvalid field
+
+        # Display error message in its label container
+        place = @labels.filter('[for=' + field.attr("id") + ']')
+        @displayErrorMessage("The password must contain 8 characters with at least 1 uppercase and lowercase letters, a number and a special character", place)
         return false
 
     # Create success message
