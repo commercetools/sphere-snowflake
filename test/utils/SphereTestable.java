@@ -1,41 +1,66 @@
 package utils;
 
-import com.google.common.base.Optional;
-import com.neovisionaries.i18n.CountryCode;
-import io.sphere.client.model.VersionedId;
-import org.joda.time.DateTime;
-import sphere.*;
+import static io.sphere.internal.filters.DynamicFilterHelpers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyVararg;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import io.sphere.client.ProductSort;
 import io.sphere.client.facets.expressions.FacetExpression;
 import io.sphere.client.filters.expressions.FilterExpression;
 import io.sphere.client.model.Money;
 import io.sphere.client.model.SearchResult;
+import io.sphere.client.model.VersionedId;
 import io.sphere.client.model.facets.FacetResult;
+import io.sphere.client.model.facets.RangeFacetItem;
+import io.sphere.client.model.facets.RangeFacetResultRaw;
 import io.sphere.client.shop.CategoryTree;
-import io.sphere.client.shop.model.*;
+import io.sphere.client.shop.model.Attribute;
+import io.sphere.client.shop.model.Cart;
+import io.sphere.client.shop.model.CartUpdate;
+import io.sphere.client.shop.model.Category;
+import io.sphere.client.shop.model.Dimensions;
+import io.sphere.client.shop.model.Image;
+import io.sphere.client.shop.model.LineItem;
+import io.sphere.client.shop.model.Price;
+import io.sphere.client.shop.model.Product;
+import io.sphere.client.shop.model.Variant;
+import io.sphere.client.shop.model.VariantList;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.mockito.Matchers.anyVararg;
-import static org.mockito.Mockito.*;
+import org.joda.time.DateTime;
+
+import sphere.CurrentCart;
+import sphere.FetchRequest;
+import sphere.ProductService;
+import sphere.SearchRequest;
+import sphere.Sphere;
+
+import com.google.common.base.Optional;
+import com.neovisionaries.i18n.CountryCode;
 
 public class SphereTestable {
 
-    private Sphere sphere;
+    private final Sphere sphere;
     public SearchRequest searchRequest;
+    public CategoryTree categoryTree;
+    public CurrentCart currentCart;
 
     public String currency = "EUR";
     public CountryCode country = CountryCode.DE;
-
+    public Locale locale = Locale.ENGLISH;
 
     public SphereTestable() {
         sphere = mock(Sphere.class);
 
-        mockCategoryTree(Collections.<Category>emptyList());
-        mockProductService(Collections.<Product>emptyList(), 0, 100);
-        mockCurrentCart(Collections.<LineItem>emptyList());
+        mockCategoryTree(Collections.<Category> emptyList());
+        mockProductService(Collections.<Product> emptyList(), 0, 100);
+        mockCurrentCart(Collections.<LineItem> emptyList());
 
         setSphereInstance(sphere);
     }
@@ -55,6 +80,7 @@ public class SphereTestable {
         when(currentCart.removeLineItem(anyString())).thenReturn(cart);
         // Mock update cart
         when(currentCart.update(any(CartUpdate.class))).thenReturn(cart);
+        this.currentCart = currentCart;
 
         when(sphere.currentCart()).thenReturn(currentCart);
         setSphereInstance(sphere);
@@ -70,10 +96,12 @@ public class SphereTestable {
         for (Category c : categories) {
             when(categoryTree.getBySlug(c.getSlug())).thenReturn(c);
             when(categoryTree.getById(c.getId())).thenReturn(c);
-            if (c.isRoot()) roots.add(c);
+            if (c.isRoot())
+                roots.add(c);
         }
         // Mock get roots
         when(categoryTree.getRoots()).thenReturn(roots);
+        this.categoryTree = categoryTree;
 
         when(sphere.categories()).thenReturn(categoryTree);
         setSphereInstance(sphere);
@@ -90,8 +118,8 @@ public class SphereTestable {
         when(productService.filter(any(FilterExpression.class))).thenReturn(searchRequest);
         when(productService.filter(any(Iterable.class))).thenReturn(searchRequest);
         // Mock get by id/slug
-        //when(productService.byId(anyString())).thenReturn(mockFetchRequest(null));
-        //when(productService.bySlug(anyString())).thenReturn(mockFetchRequest(null));
+        // when(productService.byId(anyString())).thenReturn(mockFetchRequest(null));
+        // when(productService.bySlug(anyString())).thenReturn(mockFetchRequest(null));
         for (Product p : products) {
             FetchRequest<Product> fetchRequest = mockFetchRequest(p);
             when(productService.byId(p.getId())).thenReturn(fetchRequest);
@@ -105,7 +133,7 @@ public class SphereTestable {
     public List<Category> mockCategory(String name, int level) {
         List<Category> categories = new ArrayList<Category>();
         List<Category> tree = new ArrayList<Category>();
-        for (int i = 0; i < level - 1; ++i) {
+        for (int i = 0; i < level; ++i) {
             Category category = mockCategoryNode(name, tree);
             categories.add(category);
             if (!tree.isEmpty()) {
@@ -113,7 +141,6 @@ public class SphereTestable {
             }
             tree.add(category);
         }
-        categories.add(mockCategoryNode(name, tree));
         return categories;
     }
 
@@ -121,9 +148,9 @@ public class SphereTestable {
         Product product = mock(Product.class);
 
         // Mock id/name/slug
-        when(product.getId()).thenReturn(name);
+        when(product.getId()).thenReturn(name+"Id");
         when(product.getIdAndVersion()).thenReturn(VersionedId.create(name, 1));
-        when(product.getSlug()).thenReturn(name);
+        when(product.getSlug()).thenReturn(name+"Slug");
         when(product.getName()).thenReturn(name);
         // Mock price
         when(product.getPrice()).thenReturn(mockPrice(10));
@@ -238,13 +265,23 @@ public class SphereTestable {
         int offset = page * pageSize;
         int count = Math.min(total - offset, pageSize);
         List<Product> result = new ArrayList<Product>();
-        if (count > 0) result = products.subList(0, count);
-        Map<String, FacetResult> facetResult = Collections.<String, FacetResult>emptyMap();
+        if (count > 0)
+            result = products.subList(0, count);
+        // Mock facet results
+        Map<String, FacetResult> facetResult = new HashMap<String, FacetResult>();
+        facetResult.put(PriceRangeFilterExpression.helperFacetAlias, mockFacetRangeResult(300, 9000));
         SearchResult<Product> searchResult = new SearchResult<Product>(offset, count, total, result, facetResult, pageSize);
         when(request.fetch()).thenReturn(searchResult);
 
-        searchRequest = request;
+        this.searchRequest = request;
         return request;
+    }
+
+    private FacetResult mockFacetRangeResult(double min, double max) {
+        RangeFacetItem rangeItem = mock(RangeFacetItem.class);
+        when(rangeItem.getMin()).thenReturn(min);
+        when(rangeItem.getMax()).thenReturn(max);
+        return new RangeFacetResultRaw(Collections.singletonList(rangeItem));
     }
 
     @SuppressWarnings("unchecked")
@@ -252,7 +289,7 @@ public class SphereTestable {
         FetchRequest<Product> request = mock(FetchRequest.class);
 
         // Mock request expand
-        when(request.expand((String)anyVararg())).thenReturn(request);
+        when(request.expand((String) anyVararg())).thenReturn(request);
         // Mock request fetch
         when(request.fetch()).thenReturn(Optional.of(product));
 
@@ -273,16 +310,12 @@ public class SphereTestable {
 
     private Price mockPrice(double amount) {
         Price price = mock(Price.class);
-        /*
-        // Mock value/string
-        Money money = mockMoney(amount);
-        // TODO For some reason it is failing
-        //when(price.getValue()).thenReturn(money);
-        when(price.toString()).thenReturn(String.valueOf(amount));
-        // Mock country
-        when(price.getCountry()).thenReturn(country);
-        when(price.getCountryString()).thenReturn(country.getName());
-         */
+		/*
+		 * // Mock value/string Money money = mockMoney(amount); // TODO For some reason it is failing
+		 * //when(price.getValue()).thenReturn(money); when(price.toString()).thenReturn(String.valueOf(amount)); //
+		 * Mock country when(price.getCountry()).thenReturn(country);
+		 * when(price.getCountryString()).thenReturn(country.getName());
+		 */
         return price;
     }
 

@@ -1,16 +1,41 @@
-@(category: Category)
+@(category: Category = null, product: Product = null)
 
 <ul class="breadcrumb">
-@for(ancestor <- category.getPathInTree) {
-    @if(ancestor.getId != category.getId) {
-        <li>
-            <a href="@getCategoryUrl(ancestor)">
-                @ancestor.getName
-            </a>
+@if(category == null && product == null) {
+    @** Case no category nor product selected - start page **@
+    <li class="active">Home</li>
+} else {
+    <li class="step">
+        <a href="@routes.Categories.home("", 1)">Home</a>
+        <span class="divider">/</span>
+    </li>
+}
+
+@if(category != null) {
+    @for(ancestor <- category.getPathInTree) {
+        @if(ancestor.getId != category.getId) {
+        @** Display category tree **@
+        <li class="step">
+            <a href="@getCategoryUrl(ancestor)">@ancestor.getName</a>
             <span class="divider">/</span>
         </li>
-    } else {
-        <li class="active">@category.getName</li>
+        } else {
+        @** Display category leaf **@
+            @if(product != null){
+            @** We are on a product page **@
+            <li class="step">
+                <a href="@getCategoryUrl(category)">@category.getName</a>
+                <span class="divider">/</span>
+            </li>
+            } else {
+            @** We are on a category page **@
+            <li class="active">@category.getName</li>
+            }
+        }
     }
+}
+
+@if(product != null){
+    <li class="active">@product.getName</li>
 }
 </ul>

@@ -44,21 +44,21 @@ public class UtilsTest {
 	public void UrlWithTwoCategories() {
         Category category = createCategory(2);
         String path = ViewHelper.getCategoryUrl(category).url();
-        assertThat(path).isEqualTo("/cat1/cat2");
+        assertThat(path).isEqualTo("/cat2");
 	}
 
     @Test
     public void UrlWithThreeCategories() {
         Category category = createCategory(3);
         String path = ViewHelper.getCategoryUrl(category).url();
-        assertThat(path).isEqualTo("/cat1-cat2/cat3");
+        assertThat(path).isEqualTo("/cat3");
     }
 
     @Test
     public void UrlWithMoreThanThreeCategories() {
         Category category = createCategory(4);
         String path = ViewHelper.getCategoryUrl(category).url();
-        assertThat(path).isEqualTo("/cat1-cat2/cat4");
+        assertThat(path).isEqualTo("/cat4");
     }
 
     @Test
@@ -66,7 +66,7 @@ public class UtilsTest {
         Category category = createCategory(1);
         Product product = createProduct();
         String path = ViewHelper.getProductUrl(product, product.getMasterVariant(), category).url();
-        assertThat(path).isEqualTo("/prod-0.html");
+        assertThat(path).isEqualTo("/prodSlug-0.html");
     }
 
 }
