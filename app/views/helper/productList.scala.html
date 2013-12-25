@@ -8,11 +8,11 @@
     <input type="hidden" id="num-total-page" name="totalPages" value="{{totalPages}}"/>
 
     <ul class="pager">
-        <li class="more {{#unless nextPageUrl}}disabled{{/unless}}">
-            <a href="#" id="load-more" {{#if nextPageUrl}} data-url="{{nextPageUrl}}" {{/if}} >
-            Load more
-            </a>
+        {{#if nextPageUrl}}
+        <li class="more">
+            <a href="#" id="load-more" data-url="{{nextPageUrl}}">Load more</a>
         </li>
+        {{/if}}
     </ul>
 </script>
 
