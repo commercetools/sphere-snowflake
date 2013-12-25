@@ -19,18 +19,21 @@ import java.util.*;
 import controllers.routes;
 import io.sphere.client.shop.model.Category;
 import io.sphere.client.shop.model.LineItem;
+import org.codehaus.jackson.JsonNode;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import org.jsoup.select.Elements;
 import play.i18n.Lang;
+import play.libs.Json;
 import play.mvc.Http;
 import play.api.mvc.RequestHeader;
 import play.mvc.Result;
 
 public class TestHelper {
 
-    public static final String CONTENT_TYPE = "text/html";
+    public static final String HTML_CONTENT = "text/html";
+    public static final String JSON_CONTENT = "application/json";
     public static final String CHARSET = "utf-8";
 
     public static Map<String, String> noAuthConfig() {
@@ -54,27 +57,31 @@ public class TestHelper {
     }
 
     public static Document contentAsDocument(Result result) {
-        return Jsoup.parse(contentAsString(result), "UTF-8");
+        return Jsoup.parse(contentAsString(result), CHARSET);
     }
 
-    public static void assertContentTypeAndCharset(Result result) {
-        assertThat(contentType(result)).isEqualToIgnoringCase(CONTENT_TYPE);
+    public static JsonNode contentAsJson(Result result) {
+        return Json.parse(contentAsString(result));
+    }
+
+    public static void assertContentTypeAndCharset(Result result, String contentType) {
+        assertThat(contentType(result)).isEqualToIgnoringCase(contentType);
         assertThat(charset(result)).isEqualToIgnoringCase(CHARSET);
     }
 
-    public static void assertOK(Result result) {
+    public static void assertOK(Result result, String contentType) {
         assertThat(status(result)).isEqualTo(OK);
-        assertContentTypeAndCharset(result);
+        assertContentTypeAndCharset(result, contentType);
     }
 
-    public static void assertBadRequest(Result result) {
+    public static void assertBadRequest(Result result, String contentType) {
         assertThat(status(result)).isEqualTo(BAD_REQUEST);
-        assertContentTypeAndCharset(result);
+        assertContentTypeAndCharset(result, contentType);
     }
 
-    public static void assertUnauthorized(Result result) {
+    public static void assertUnauthorized(Result result, String contentType) {
         assertThat(status(result)).isEqualTo(UNAUTHORIZED);
-        assertContentTypeAndCharset(result);
+        assertContentTypeAndCharset(result, contentType);
     }
 
     public static void assertNotFound(Result result) {

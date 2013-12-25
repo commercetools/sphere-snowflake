@@ -55,7 +55,7 @@ public class Categories extends ShopController {
             }
             FilterExpression categoryFilter =
                     new FilterExpressions.CategoriesOrSubcategories(Collections.singletonList(category));
-            searchRequest = sphere().products().filter(lang().toLocale(), categoryFilter);
+            searchRequest = sphere().products().filter(categoryFilter);
         }
         searchRequest = filterBy(searchRequest);
         searchRequest = sortBy(searchRequest, sort);

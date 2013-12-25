@@ -3,6 +3,7 @@ import io.sphere.client.filters.Filters;
 import io.sphere.client.filters.expressions.FilterExpression;
 import io.sphere.client.shop.model.Category;
 import io.sphere.client.shop.model.Product;
+import org.codehaus.jackson.JsonNode;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
@@ -99,10 +100,11 @@ public class CategoriesTest {
             public void run() {
                 mockCategoryRequest(5);
                 Result result = callAction(routes.ref.Categories.home("", 1));
-                assertOK(result);
+                assertOK(result, HTML_CONTENT);
                 Document body = contentAsDocument(result);
                 assertValidNavigationMenu(body, sphereTestable);
                 assertValidMiniCart(body, sphereTestable);
+                assertThat(body.select("#product-list .product-item").size()).isEqualTo(0);
             }
         });
     }
@@ -114,14 +116,14 @@ public class CategoriesTest {
                 mockCategoryRequest(2);
                 mockProductRequest(15, 0, 10);
                 Result result = callAction(routes.ref.Categories.select("cat1", "", 1));
-                assertOK(result);
+                assertOK(result, HTML_CONTENT);
                 Document body = contentAsDocument(result);
                 assertValidBreadcrumb(body, 1);
                 assertValidNavigationMenu(body, sphereTestable);
                 assertValidMiniCart(body, sphereTestable);
                 // Check subcategories of category are listed
                 // Check products from category are listed
-                assertThat(body.select("#product-list .product-item").size()).isEqualTo(10);
+                assertThat(body.select("#product-list .product-item").size()).isEqualTo(0);
             }
         });
     }
@@ -133,13 +135,13 @@ public class CategoriesTest {
                 mockCategoryRequest(2);
                 mockProductRequest(15, 0, 10);
                 Result result = callAction(routes.ref.Categories.select("cat2", "", 1));
-                assertOK(result);
+                assertOK(result, HTML_CONTENT);
                 Document body = contentAsDocument(result);
                 assertValidBreadcrumb(body, 2);
                 assertValidNavigationMenu(body, sphereTestable);
                 assertValidMiniCart(body, sphereTestable);
                 // Check products from category are listed
-                assertThat(body.select("#product-list .product-item").size()).isEqualTo(10);
+                assertThat(body.select("#product-list .product-item").size()).isEqualTo(0);
             }
         });
     }
@@ -160,14 +162,11 @@ public class CategoriesTest {
             public void run() {
                 mockCategoryRequest(3);
                 mockProductRequest(15, 1, 10);
-                Result result = callAction(routes.ref.Categories.select("cat3", "", 2));
-                assertOK(result);
-                Document body = contentAsDocument(result);
-                assertValidBreadcrumb(body, 3);
-                assertValidNavigationMenu(body, sphereTestable);
-                assertValidMiniCart(body, sphereTestable);
+                Result result = callAction(routes.ref.Categories.listProducts("cat3", "", 2));
+                assertOK(result, JSON_CONTENT);
+                JsonNode data = contentAsJson(result);
                 // Check products from page are listed
-                assertThat(body.select("#product-list .product-item").size()).isEqualTo(5);
+                assertThat(data.get("product").size()).isEqualTo(5);
                 // Check search is requesting correct page
                 verify(sphereTestable.searchRequest).page(1);
             }
@@ -180,16 +179,12 @@ public class CategoriesTest {
             public void run() {
                 mockCategoryRequest(3);
                 mockProductRequest(15, 99, 10);
-                Result result = callAction(routes.ref.Categories.select("cat3", "", 100));
-                assertOK(result);
-                Document body = contentAsDocument(result);
-                assertValidBreadcrumb(body, 3);
-                assertValidNavigationMenu(body, sphereTestable);
-                assertValidMiniCart(body, sphereTestable);
+                Result result = callAction(routes.ref.Categories.listProducts("cat3", "", 100));
+                assertOK(result, JSON_CONTENT);
+                JsonNode data = contentAsJson(result);
                 // Check products list is empty
-                assertThat(body.select("#product-list .product-item").size()).isEqualTo(0);
+                assertThat(data.get("product").size()).isEqualTo(0);
                 // Check informative message is displayed
-                assertThat(body.select("#messages .alert-info").hasText()).isTrue();
                 // Check search is requesting correct page
                 verify(sphereTestable.searchRequest).page(99);
             }
@@ -202,14 +197,11 @@ public class CategoriesTest {
             public void run() {
                 mockCategoryRequest(3);
                 mockProductRequest(15, -3, 10);
-                Result result = callAction(routes.ref.Categories.select("cat3", "", -2));
-                assertOK(result);
-                Document body = contentAsDocument(result);
-                assertValidBreadcrumb(body, 3);
-                assertValidNavigationMenu(body, sphereTestable);
-                assertValidMiniCart(body, sphereTestable);
+                Result result = callAction(routes.ref.Categories.listProducts("cat3", "", -2));
+                assertOK(result, JSON_CONTENT);
+                JsonNode data = contentAsJson(result);
                 // Check products from page are listed
-                assertThat(body.select("#product-list .product-item").size()).isEqualTo(10);
+                assertThat(data.get("product").size()).isEqualTo(10);
                 // Check search is requesting correct page
                 verify(sphereTestable.searchRequest).page(0);
             }
@@ -223,15 +215,12 @@ public class CategoriesTest {
                 String[] queryString = { "10_20" };
                 mockCategoryRequest(3);
                 mockProductRequest(15, 0, 10);
-                Result result = callAction(routes.ref.Categories.select("cat3", "", 1),
+                Result result = callAction(routes.ref.Categories.listProducts("cat3", "", 1),
                         fakeRequest("GET", "?price=" + queryString[0]));
-                assertOK(result);
-                Document body = contentAsDocument(result);
-                assertValidBreadcrumb(body, 3);
-                assertValidNavigationMenu(body, sphereTestable);
-                assertValidMiniCart(body, sphereTestable);
+                assertOK(result, JSON_CONTENT);
+                JsonNode data = contentAsJson(result);
                 // Check products from page are listed
-                assertThat(body.select("#product-list .product-item").size()).isEqualTo(10);
+                assertThat(data.get("product").size()).isEqualTo(10);
                 // TODO Check price range is correctly displayed
                 // TODO Implement equals methods in Filters to verify search request
                 //List<FilterExpression> filters = new ArrayList<FilterExpression>();
@@ -249,12 +238,12 @@ public class CategoriesTest {
                 String[] queryString = { "1" };
                 mockCategoryRequest(3);
                 mockProductRequest(15, 0, 10);
-                Result result = callAction(routes.ref.Categories.select("cat3", "", 1),
+                Result result = callAction(routes.ref.Categories.listProducts("cat3", "", 1),
                         fakeRequest("GET", "?codeFilterColor=" + queryString[0]));
-                assertOK(result);
-                Document body = contentAsDocument(result);
+                assertOK(result, JSON_CONTENT);
+                JsonNode data = contentAsJson(result);
                 // Check products from page are listed
-                assertThat(body.select("#product-list .product-item").size()).isEqualTo(10);
+                assertThat(data.get("product").size()).isEqualTo(10);
                 // TODO Check color filter is correctly displayed
                 //assertThat(body.select(".color-filter > .facet > .item a.selected")).isNotEmpty();
                 // TODO Implement equals methods in Filters to verify search request
