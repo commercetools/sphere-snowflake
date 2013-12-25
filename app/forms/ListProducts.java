@@ -59,7 +59,7 @@ public class ListProducts {
         json.put("id", product.getId());
         json.put("name", capitalizeInitials(product.getName()));
         json.put("description", product.getDescription());
-        json.put("isFeatured", position > 5 && Math.random() > 0);
+        json.put("isFeatured", position > 5 && Math.random() > 0.9);
         json.put("variant", getJson(product, masterVariant, category));
         json.put("hasMoreColors", hasMoreColors(product));
         json.put("hasMoreSizes", hasMoreSizes(product));
