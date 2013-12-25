@@ -7,6 +7,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.libs.Json;
 
+import static utils.ControllerHelper.getCurrentCustomer;
 import static utils.ControllerHelper.saveFlash;
 import static utils.ControllerHelper.saveJson;
 
@@ -37,10 +38,11 @@ public class UpdateCustomer {
         return new CustomerName(this.firstName, this.lastName);
     }
 
-    public void displaySuccessMessage(Customer customer) {
+    public void displaySuccessMessage() {
         String message = "Your information is updated!";
         saveFlash("update-customer-success", message);
 
+        Customer customer = getCurrentCustomer();
         ObjectNode json = Json.newObject();
         json.put("success", message);
         json.put("customer-firstName", customer.getName().getFirstName());
