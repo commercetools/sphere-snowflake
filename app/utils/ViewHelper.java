@@ -192,6 +192,11 @@ public class ViewHelper {
         return getPrice(item.getMoney().multiply(item.getQuantity()), item.getTaxRate());
     }
 
+    public static Money getPrice(Variant variant) {
+        if (variant == null || variant.getPrice() == null) return null;
+        return variant.getPrice().getValue();
+    }
+
     public static Money getPrice(Money price, TaxRate rate) {
         return getGrossPrice(price, rate);
     }
@@ -200,17 +205,21 @@ public class ViewHelper {
      * Returns
      *
      */
-    public static Call getListProductsUrl(SearchResult<Product> search, Category category, String sort) {
+    public static Call getProductListUrl(SearchResult<Product> search, String sort, Category category) {
         if (search.getCurrentPage() >= search.getTotalPages() - 1) {
             return null;
         }
         // Convert from 0..N-1 to 1..N
         int nextPage = search.getCurrentPage() + 2;
+        return getProductListUrl(nextPage, sort, category);
+    }
+
+    public static Call getProductListUrl(int page, String sort, Category category) {
         String categorySlug = "";
         if (category != null) {
             categorySlug = category.getSlug();
         }
-        return routes.Categories.listProducts(categorySlug, sort, nextPage);
+        return routes.Categories.listProducts(categorySlug, sort, page);
     }
 
     public static Call getCategoryUrl(Category category) {
@@ -229,6 +238,7 @@ public class ViewHelper {
         return routes.Products.select(product.getSlug(), variant.getId());
     }
 
+    /* Get possible variant sizes for a particular variant */
     public static List<String> getPossibleSizes(Product product, Variant variant) {
         List<Variant> variants = getPossibleVariants(product, variant, "size");
         List<String> sizes = new ArrayList<String>();
@@ -238,14 +248,18 @@ public class ViewHelper {
         return sizes;
     }
 
+    /* Get variants with matching attributes but with different selected attribute
+    * This method can be simplified if fixed and variable attributes are known beforehand */
     public static List<Variant> getPossibleVariants(Product product, Variant variant, String selectedAttribute) {
         List<Variant> matchingVariantList = new ArrayList<Variant>();
         List<Attribute> desiredAttributes = new ArrayList<Attribute>();
+        // Get all other attributes with more than one different value
         for (Attribute attribute : variant.getAttributes()) {
             if (!selectedAttribute.equals(attribute.getName()) && hasMoreAttributeValues(product, attribute.getName())) {
                 desiredAttributes.add(attribute);
             }
         }
+        // Get variants matching all these other attributes but different selected attribute
         VariantList variantList = product.getVariants().byAttributes(desiredAttributes);
         for (Attribute attr : product.getVariants().getAvailableAttributes(selectedAttribute)) {
             if (variantList.byAttributes(attr).size() < 1) {

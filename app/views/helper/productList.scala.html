@@ -1,25 +1,99 @@
-@(search: SearchResult[Product], category: Category)
+@(page: Int, sort: String, category: Category = null)
 
-<input type="hidden" id="num-offset-product" name="offsetProducts" value="@search.getOffset" />
-<input type="hidden" id="num-current-product" name="countProducts" value="@search.getCount" />
-<input type="hidden" id="num-total-product" name="totalProducts" value="@search.getTotal" />
+<script id="product-pager-template" type="text/x-handlebars-template">
+    <input type="hidden" id="num-offset-product" name="offsetProducts" value="{{offsetProducts}}"/>
+    <input type="hidden" id="num-current-product" name="countProducts" value="{{countProducts}}"/>
+    <input type="hidden" id="num-total-product" name="totalProducts" value="{{totalProducts}}"/>
+    <input type="hidden" id="num-current-page" name="currentPage" value="{{currentPage}}"/>
+    <input type="hidden" id="num-total-page" name="totalPages" value="{{totalPages}}"/>
 
-<input type="hidden" id="num-current-page" name="currentPage" value="@search.getCurrentPage" />
-<input type="hidden" id="num-total-page" name="totalPages" value="@search.getTotalPages" />
+    <ul class="pager">
+        <li class="more {{#unless nextPageUrl}}disabled{{/unless}}">
+            <a href="#" id="load-more" {{#if nextPageUrl}} data-url="{{nextPageUrl}}" {{/if}} >
+            Load more
+            </a>
+        </li>
+    </ul>
+</script>
 
-
-<div id="product-list">
-@for((product, i) <- search.getResults.zipWithIndex) {
-    @if(i % 11 == 2){
-    <div class="product-item featured">
-        @helper.productThumbnail(product, product.getMasterVariant, category, ImageSize.MEDIUM)
+<script id="product-item-template" type="text/x-handlebars-template">
+    {{#each product}}
+    <div class="product-item {{#if isFeatured}} featured {{/if}}">
+        <div class="product-image">
+            <a href="{{variant.url}}">
+                {{#image variant isFeatured}}
+                <img src="{{this.url}}" width="{{this.width}}" height="{{this.height}}" />
+                {{/image}}
+            </a>
+        </div>
+        <div class="product-info">
+            {{#if hasMoreColors}}
+            <div class="product-info-variants">
+                <div class="product-info-variants-color">
+                    <ul>
+                        {{#each matchVariant}}
+                        <li class="{{#if isActive}} active {{/if}}">
+                            <a href="{{url}}"
+                               data-image="{{#image this ../isFeatured}}{{this.url}}{{/image}}"
+                               data-price="{{price}}"
+                               data-variant="{{id}}">
+                                <img src="{{image.thumbnail.url}}" class="img-circle" title="{{attribute.color}}"
+                                     width="{{image.thumbnail.width}}" height="{{image.thumbnail.height}}"/>
+                            </a>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+            {{/if}}
+            <div class="product-info-name">
+                <a href="{{url}}">{{name}}</a>
+            </div>
+        </div>
+        {{#with variant}}
+        <div class="product-footer clearfix">
+            <div class="product-info-price">{{price}}</div>
+            <div class="product-info-buy">
+                <form class="form-add-to-cart" action="@routes.Carts.add" method="post">
+                    <input type="hidden" name="productId" value="{{../id}}" />
+                    <input type="hidden" name="variantId" value="{{id}}" />
+                    <input type="hidden" name="quantity" value="1" />
+                    <button type="submit" name="addToCart-product" data-loading-text="" class="btn btn-link btn-mini">
+                        <i class="icon-shopping-cart"></i>
+                    </button>
+                </form>
+                {{#if ../hasMoreSizes}}
+                <ul class="product-info-variants-size">
+                    {{#each size}}
+                    <li>
+                        <form class="form-add-to-cart" action="@routes.Carts.add" method="post">
+                            <input type="hidden" name="productId" value="{{../../../id}}" />
+                            <input type="hidden" name="variantId" value="{{../id}}" />
+                            <input type="hidden" name="size" value="{{this}}" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" name="addToCart-product" data-loading-text="{{this}}"
+                                    class="btn btn-link btn-mini">
+                                {{this}}
+                            </button>
+                        </form>
+                    </li>
+                    {{/each}}
+                </ul>
+                {{/if}}
+            </div>
+        </div>
+        {{/with}}
     </div>
-    } else {
-    <div class="product-item">
-        @helper.productThumbnail(product, product.getMasterVariant, category, ImageSize.SMALL)
-    </div>
-    }
-}
+    {{/each}}
+</script>
+
+<div id="product-list" data-url="@getProductListUrl(page, sort, category)" class="js-masonry"
+     data-masonry-options="{ 'itemSelector': '.product-item' }">
+    @* Load dynamically *@
+</div>
+
+<div id="product-pager">
+    @* Load dynamically *@
 </div>
 
 

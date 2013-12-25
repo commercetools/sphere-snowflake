@@ -1,7 +1,7 @@
-@(search: SearchResult[Product], category: Category)
+@(page: Int, sort: String, category: Category)
 
 @scripts = {
-    <script src="//cdnjs.cloudflare.com/ajax/libs/masonry/2.1.07/jquery.masonry.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/masonry/2.1.08/jquery.masonry.min.js"></script>
     <script src="@routes.Assets.at("javascripts/product-list.js")"></script>
     <script src="@routes.Assets.at("javascripts/product-thumbnail.js")"></script>
     <script src="@routes.Assets.at("javascripts/cart.js")"></script>
@@ -15,8 +15,8 @@
     @helper.breadcrumb(category)
 }{
     <div id="category-product-list" class="clearfix">
-        @ajax.listProducts(search, category)
+        @helper.productList(page, sort, category)
     </div>
 }{
-
+    @helper.jumpToTop()
 }

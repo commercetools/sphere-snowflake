@@ -1,6 +1,7 @@
 package controllers;
 
 import controllers.actions.SaveContext;
+import forms.ListProducts;
 import io.sphere.client.ProductSort;
 import io.sphere.client.facets.Facet;
 import io.sphere.client.facets.Facets;
@@ -25,16 +26,11 @@ import java.util.List;
 
 public class Categories extends ShopController {
 
-    public static int PAGE_SIZE = 50;
+    public static int PAGE_SIZE = 20;
 
     @With(SaveContext.class)
     public static Result home(String sort, int page) {
-        SearchRequest<Product> searchRequest = sphere().products().all();
-        searchRequest = filterBy(searchRequest);
-        searchRequest = sortBy(searchRequest, sort);
-        searchRequest = paging(searchRequest, page);
-        SearchResult<Product> searchResult = searchRequest.fetch();
-        return ok(home.render(searchResult));
+        return ok(home.render(page, sort));
     }
 
     @With(SaveContext.class)
@@ -44,17 +40,7 @@ public class Categories extends ShopController {
             flash("error", "Category not found");
             return notFound();
         }
-        FilterExpression categoryFilter =
-                new FilterExpressions.CategoriesOrSubcategories(Collections.singletonList(category));
-        SearchRequest <Product> searchRequest = sphere().products().filter(categoryFilter);
-        searchRequest = filterBy(searchRequest);
-        searchRequest = sortBy(searchRequest, sort);
-        searchRequest = paging(searchRequest, page);
-        SearchResult<Product> searchResult = searchRequest.fetch();
-        if (searchResult.getCount() < 1) {
-            flash("info", "No products found");
-        }
-        return ok(categories.render(searchResult, category));
+        return ok(categories.render(page, sort, category));
     }
 
     public static Result listProducts(String categorySlug, String sort, int page) {
@@ -75,7 +61,7 @@ public class Categories extends ShopController {
         searchRequest = sortBy(searchRequest, sort);
         searchRequest = paging(searchRequest, page);
         SearchResult<Product> searchResult = searchRequest.fetch();
-        return ok(views.html.ajax.listProducts.render(searchResult, category, sort));
+        return ok(ListProducts.getJson(searchResult, category, sort));
     }
 
     protected static SearchRequest<Product> filterBy(SearchRequest<Product> searchRequest) {
