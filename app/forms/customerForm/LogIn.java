@@ -4,6 +4,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.libs.Json;
 
+import static utils.ControllerHelper.getCurrentCustomer;
 import static utils.ControllerHelper.saveFlash;
 import static utils.ControllerHelper.saveJson;
 
@@ -20,8 +21,8 @@ public class LogIn {
 
     }
 
-    public void displaySuccessMessage(String name) {
-        String message = "Welcome back "+ name +"!";
+    public void displaySuccessMessage() {
+        String message = "Welcome back "+ getCurrentCustomer().getName().getFirstName() +"!";
         saveFlash("success", message);
 
         ObjectNode json = Json.newObject();

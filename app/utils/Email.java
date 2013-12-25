@@ -12,49 +12,34 @@ import javax.mail.internet.MimeMultipart;
 
 public class Email {
 
-    String APIKey = "your Mailjet API Key";
-    String SecretKey = "your Mailjet Secret Key";
-    public String from;
-    public String to;
-    public String subject;
-    public String body;
+    static String key = Play.application().configuration().getString("mail.auth.key");
+    static String secret = Play.application().configuration().getString("mail.auth.secret");
 
-    public Email(String to, String from, String subject, String body) {
-        this.from = from;
-        this.to = to;
-        this.subject = subject;
-        this.body = body;
-    }
-
-    public Email(String to, String subject, String body) {
-        this.from = Play.application().configuration().getString("mail.smtp.from");
-        this.to = to;
-        this.subject = subject;
-        this.body = body;
-    }
-
-    public void send() {
+    public static void send(String to, String subject, String body) {
+        String from = Play.application().configuration().getString("mail.smtp.from");
         String host = Play.application().configuration().getString("mail.smtp.host");
         int port = Play.application().configuration().getInt("mail.smtp.port");
         boolean auth = Play.application().configuration().getBoolean("mail.smtp.auth");
-        send(host, port, auth);
+        send(to, subject, body, from, host, port, auth);
     }
 
-    public void send(String host, int port, boolean auth) {
+    public static void send(String to, String subject, String body, String from, String host, int port, boolean auth) {
         Properties properties = new Properties();
         properties.put("mail.smtp.host", host);
         properties.put("mail.smtp.port", port);
         properties.put("mail.smtp.auth", auth);
+        properties.put("mail.smtp.socketFactory.port", port);
+        properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
         Authenticator authenticator = null;
         if (auth) {
             authenticator = new javax.mail.Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(APIKey, SecretKey);
+                    return new PasswordAuthentication(key, secret);
                 }
             };
         }
-        Session session = Session.getDefaultInstance(properties, authenticator);
+        Session session = Session.getInstance(properties, authenticator);
 
         try {
             Message message = new MimeMessage(session);
