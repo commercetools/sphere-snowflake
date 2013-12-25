@@ -6,11 +6,11 @@ $ ->
     # Load cart contents on page loaded
     loadCart = ->
         url = cartContent.data("url")
-        if url?
-            cartContent.find('.loading-ajax').show()
-            $.getJSON url, (data) ->
-                replaceCart data
-                cartContent.find('.loading-ajax').hide()
+        return unless url?
+        cartContent.find('.loading-ajax').show()
+        $.getJSON url, (data) ->
+            replaceCart data
+            cartContent.find('.loading-ajax').hide()
 
     # Replace the whole cart
     replaceCart = (cart) ->
