@@ -9,6 +9,8 @@ $ ->
         pager: Handlebars.compile $.trim($("#product-pager-template").html())
     }
 
+    masonry = new Masonry(productList.get(0), {itemSelector: ".product-item"})
+
     # Load products from a URL
     loadProducts = (url) ->
         return if calling or not url
@@ -20,7 +22,6 @@ $ ->
         xhr.always ->
             productList.find('.loading-ajax').hide()
             calling = false
-            debugger
 
     # Append products to the product list
     appendProducts = (data) ->
@@ -29,25 +30,27 @@ $ ->
         pagerHtml = template.pager data
         productPager.empty().append(pagerHtml).fadeTo(0, 0)
         # Append products
-        listHtml = $(template.list data).fadeTo(0, 0)
-        itemsPrev = productList.find(".product-item").length
-        productList.append(listHtml).imagesLoaded ->
-            if itemsPrev > 0
-                productList.masonry("appended", listHtml, true)
+        page = $(template.list data).fadeTo(0, 0)
+        empty = !$.trim(productList.html())
+        productList.append page
+        imagesLoaded productList, ->
+            page.fadeTo(0, 1)
+            if empty
+                masonry.reloadItems()
+                masonry.layout()
             else
-                productList.masonry({itemSelector: '.product-item'})
-            listHtml.fadeTo("slow", 1)
+                masonry.appended(page.get())
             productPager.fadeTo("slow", 1)
 
     # Load and append first list of products to the product list
     loadFirst = ->
         url = productList.data("url")
-        page = loadProducts url
+        loadProducts url
 
     # Load and append more products to the product list
     loadMore = ->
         url = productPager.find("#load-more").data('url')
-        page = loadProducts url
+        loadProducts url
 
     # Bind click on 'Jump to top' tag to top scrolling
     $("a[href='#top']").click (e) ->
