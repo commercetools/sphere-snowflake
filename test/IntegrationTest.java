@@ -1,9 +1,8 @@
 import io.sphere.client.shop.model.Category;
 import io.sphere.client.shop.model.Product;
-import org.jsoup.nodes.Document;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import play.libs.F;
 import play.test.TestBrowser;
 import utils.SphereTestable;
@@ -13,7 +12,6 @@ import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.*;
-import static utils.TestHelper.contentAsDocument;
 
 public class IntegrationTest {
 
@@ -47,6 +45,8 @@ public class IntegrationTest {
     public void showHome() {
         running(testServer(3333, fakeApplication()), HTMLUNIT, new F.Callback<TestBrowser>() {
             public void invoke(TestBrowser browser) {
+                // TODO Find out why htmlunit has trouble loading masonry and why it only fails on home page
+                browser = testBrowser(new HtmlUnitDriver(false));
                 goToHome(browser);
                 assertThat(browser.$("body.home").isEmpty()).isFalse();
             }
@@ -57,6 +57,7 @@ public class IntegrationTest {
     public void showCategory() {
         running(testServer(3333, fakeApplication()), HTMLUNIT, new F.Callback<TestBrowser>() {
             public void invoke(TestBrowser browser) {
+                browser = testBrowser(new HtmlUnitDriver(false));
                 goToCategory(browser);
                 assertThat(browser.$("body.category").isEmpty()).isFalse();
                 assertThat(browser.title()).isEqualTo("cat1");
@@ -68,6 +69,7 @@ public class IntegrationTest {
     public void showSubcategory() {
         running(testServer(3333, fakeApplication()), HTMLUNIT, new F.Callback<TestBrowser>() {
             public void invoke(TestBrowser browser) {
+                browser = testBrowser(new HtmlUnitDriver(false));
                 goToSubcategory(browser);
                 assertThat(browser.$("body.category").isEmpty()).isFalse();
                 assertThat(browser.title()).isEqualTo("cat2");
