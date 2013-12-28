@@ -37,7 +37,7 @@ $ ->
         # Update price details
         orderSummary.replace res.data.cart
         # Update payment form
-        paymill.updatePrice res.data.cart.totalPrice, res.data.cart.currency
+        paymill.updatePrice res.data.cart.totalPrice, res.data.cart.currencyCode
         # Update cart snapshot
         checkout.find("input[name=cartSnapshot]").val res.data.cartSnapshot
 

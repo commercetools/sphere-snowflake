@@ -17,7 +17,7 @@ class window.Paymill
 
     # Method to update amount and currency for 3DS credit card
     updatePrice: (amount, currency) ->
-        @cardAmount.val amount
+        @cardAmount.val parseFloat(amount) * 100
         @cardCurrency.val currency
 
     # General method to validate payment data

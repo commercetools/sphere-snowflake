@@ -28,6 +28,7 @@ public class ListCart {
         // Total price
         json.put("totalPrice", printPriceAmount(getPrice(cart)));
         json.put("currency", printPriceCurrency(cart.getCurrency().getCurrencyCode()));
+        json.put("currencyCode", cart.getCurrency().getCurrencyCode());
         if (cart.getShippingAddress() != null) {
             // Shipping price
             if (cart.getShippingInfo() != null) {
