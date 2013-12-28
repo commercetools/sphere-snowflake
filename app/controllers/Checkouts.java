@@ -1,29 +1,34 @@
 package controllers;
 
+import com.google.common.primitives.Ints;
 import controllers.actions.FormHandler;
 import controllers.actions.CartNotEmpty;
 import de.paymill.Paymill;
+import de.paymill.PaymillException;
 import de.paymill.model.Payment;
+import de.paymill.model.Transaction;
 import de.paymill.net.ApiException;
 import de.paymill.service.PaymentService;
+import de.paymill.service.TransactionService;
 import forms.addressForm.ListAddress;
 import forms.addressForm.SetAddress;
 import forms.checkoutForm.DoCheckout;
 import forms.checkoutForm.SetShippingMethod;
+import io.sphere.client.model.Money;
 import io.sphere.client.shop.model.*;
 import play.Play;
-import play.api.templates.Html;
 import play.data.Form;
 import play.mvc.Content;
 import play.mvc.Result;
 import play.mvc.With;
 import sphere.ShopController;
 import views.html.checkouts;
-import views.html.form.setAddress;
 import views.html.orders;
 
 import static play.data.Form.form;
 import static utils.ControllerHelper.*;
+import static utils.ViewHelper.getCurrentCart;
+import static utils.ViewHelper.getPrice;
 
 public class Checkouts extends ShopController {
 
@@ -111,22 +116,38 @@ public class Checkouts extends ShopController {
         // Case payment failure
         Payment payment;
         try {
+            // Get payment object from token
             Paymill.setApiKey(paymillKey);
-            PaymentService paymentService = Paymill.getService(PaymentService.class);
-            play.Logger.debug("Payment token received: " + doCheckout.paymillToken);
-            payment = paymentService.create(doCheckout.paymillToken);
+            PaymentService paymentSrv = Paymill.getService(PaymentService.class);
+            payment = paymentSrv.create(doCheckout.paymillToken);
+            // Set transaction details
+            TransactionService transactionSrv = Paymill.getService(TransactionService.class);
+            Transaction transaction = new Transaction();
+            Money money = getPrice(getCurrentCart());
+            transaction.setPayment(payment);
+            transaction.setAmount(Ints.checkedCast(money.getCentAmount()));
+            transaction.setCurrency(money.getCurrencyCode());
+            play.Logger.debug("Executing payment " + payment.getId() + " of " + transaction.getAmount()
+                    + " " + transaction.getCurrency() + " with token " + doCheckout.paymillToken);
+            // Execute charge transaction
+            transactionSrv.create(transaction);
         } catch (ApiException ae) {
+            play.Logger.error(ae.getMessage());
             if (ae.getCode().equals("token_not_found")) {
                 flash("error", "Invalid payment token");
                 return badRequest(showPage(4));
             }
             flash("error", "Payment failed unexpectedly, please try again");
             return internalServerError(showPage(4));
+        } catch (PaymillException pe) {
+            play.Logger.error(pe.getMessage());
+            flash("error", "Payment failed unexpectedly, please try again");
+            return internalServerError(showPage(4));
         }
+
         // Case success purchase
-        play.Logger.debug("Payment executed with code " + payment.getCode());
         Order order = sphere().currentCart().createOrder(doCheckout.cartSnapshot, PaymentState.Paid);
-        play.Logger.debug("Order created");
+        play.Logger.debug("Order created with payment " + payment.getId());
         flash("success", "Congratulations, you finished your order!");
         return ok(orders.render(order));
     }
