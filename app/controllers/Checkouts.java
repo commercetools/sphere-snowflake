@@ -114,12 +114,11 @@ public class Checkouts extends ShopController {
             redirect(routes.Checkouts.show());
         }
         // Case payment failure
-        Payment payment;
         try {
             // Get payment object from token
             Paymill.setApiKey(paymillKey);
             PaymentService paymentSrv = Paymill.getService(PaymentService.class);
-            payment = paymentSrv.create(doCheckout.paymillToken);
+            Payment payment = paymentSrv.create(doCheckout.paymillToken);
             // Set transaction details
             TransactionService transactionSrv = Paymill.getService(TransactionService.class);
             Transaction transaction = new Transaction();
@@ -127,29 +126,22 @@ public class Checkouts extends ShopController {
             transaction.setPayment(payment);
             transaction.setAmount(Ints.checkedCast(money.getCentAmount()));
             transaction.setCurrency(money.getCurrencyCode());
-            play.Logger.debug("Executing payment " + payment.getId() + " of " + transaction.getAmount()
-                    + " " + transaction.getCurrency() + " with token " + doCheckout.paymillToken);
             // Execute charge transaction
+            play.Logger.debug("Cart " + doCheckout.cartSnapshot + " - Executing payment " + payment.getId()
+                    + " of " + transaction.getAmount() + " (cents) " + transaction.getCurrency()
+                    + " with token " + doCheckout.paymillToken);
             transactionSrv.create(transaction);
-        } catch (ApiException ae) {
-            play.Logger.error(ae.getMessage());
-            if (ae.getCode().equals("token_not_found")) {
-                flash("error", "Invalid payment token");
-                return badRequest(showPage(4));
-            }
-            flash("error", "Payment failed unexpectedly, please try again");
-            return internalServerError(showPage(4));
         } catch (PaymillException pe) {
             play.Logger.error(pe.getMessage());
             flash("error", "Payment failed unexpectedly, please try again");
             return internalServerError(showPage(4));
         }
-
         // Case success purchase
         Order order = sphere().currentCart().createOrder(doCheckout.cartSnapshot, PaymentState.Paid);
-        play.Logger.debug("Order created with payment " + payment.getId());
+        play.Logger.debug("Cart " + doCheckout.cartSnapshot + " - Order created");
         flash("success", "Congratulations, you finished your order!");
         return ok(orders.render(order));
+
     }
 
     protected static Content showPage(int page) {
