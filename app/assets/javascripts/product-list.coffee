@@ -1,8 +1,10 @@
 $ ->
     calling = false
+    distance = 1000
 
     productList = $("#product-list")
     productPager = $("#product-pager")
+    jumpToTop = $('#jump-to-top')
 
     template = {
         list: Handlebars.compile $.trim($("#product-item-template").html())
@@ -62,15 +64,14 @@ $ ->
         loadMore()
         return false
 
-    # Check scroll position to fire 'jump to top' and 'load products' functionality
+    # Check scroll position to fire 'jump to top' and 'load products' functionalities
     setInterval ( ->
         # Show the jump to top tag if it is not in the page top
         isNearTop = $(window).scrollTop() < 100
-        $('#jump-to-top').fadeOut() if isNearTop and $('#jump-to-top:visible')
-        $('#jump-to-top').fadeIn() if not isNearTop and $('#jump-to-top:hidden')
+        jumpToTop.fadeOut() if isNearTop and jumpToTop.is(":visible")
+        jumpToTop.fadeIn() if not isNearTop and jumpToTop.is(":hidden")
 
         # Load more products if it is near the page bottom
-        distance = 1000
         limit = $(document).height() - $(window).height() - distance
         isNearBottom = $(window).scrollTop() >= limit
         loadMore() if isNearBottom
