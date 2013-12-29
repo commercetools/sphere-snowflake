@@ -20,7 +20,7 @@ public class ProductFilters {
     public static final Filters.Price.DynamicRange filterPrice =
             new Filters.Price.DynamicRange().setQueryParam("price");
 
-    // A special collection for filters that does parameter name conflict checking
+    // A special collection for filters that checks parameter name conflict
     public static final List<Filter> filters = Arrays.<Filter>asList(
             filterPrice,
             fulltextSearch

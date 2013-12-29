@@ -61,11 +61,11 @@ public class Categories extends ShopController {
 
     protected static SearchRequest<Product> filterBy(SearchRequest<Product> searchRequest, List<Category> categories) {
         // Filter by category
-        FilterExpression categoryFilter = new FilterExpressions.CategoriesOrSubcategories(categories);
-        searchRequest = searchRequest.filter(categoryFilter);
-        // Filters by request parameters
+        searchRequest = searchRequest.filter(
+                new FilterExpressions.CategoriesOrSubcategories(categories));
+        // Filter by request parameters
         searchRequest = searchRequest.filter(bindFiltersFromRequest(ProductFilters.filters));
-        // Facets by request parameters
+        // Facet by request parameters
         searchRequest = searchRequest.facet(bindFacetsFromRequest(ProductFilters.facets));
         return searchRequest;
     }
