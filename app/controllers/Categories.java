@@ -44,6 +44,12 @@ public class Categories extends ShopController {
         return ok(categories.render(page, sort, category));
     }
 
+    @With(SaveContext.class)
+    public static Result search(String sort, int page) {
+        // TODO Finish
+        return ok(home.render(page, sort));
+    }
+
     public static Result listProducts(String categorySlug, String sort, int page) {
         Category category = null;
         List<Category> categories = new ArrayList<Category>();

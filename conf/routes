@@ -8,6 +8,7 @@ GET     /*path/                                             controllers.Applicat
 # Home
 GET     /                                                   controllers.Categories.home(sort: String ?= "", page: Int ?= 1)
 
+GET     /search                                             controllers.Categories.search(sort: String ?= "", page: Int ?= 1)
 GET     /product/list                                       controllers.Categories.listProducts(category: String ?= "", sort: String ?= "", page: Int ?= 1)
 
 # Cart

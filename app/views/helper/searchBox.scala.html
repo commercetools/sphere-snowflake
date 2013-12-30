@@ -1,0 +1,12 @@
+@()
+
+@import utils.ProductFilters
+
+<div class="searchBox">
+    <form id="searchForm" method="GET" action="@routes.Categories.search("", 1)">
+        <input name="@ProductFilters.fulltextSearch.getQueryParamName"
+               type="text" placeholder="Product name, attributes..."
+               value="@ProductFilters.fulltextSearch.parseValue(request.queryString)"/>
+        <button type="submit">Search</button>
+    </form>
+</div>
