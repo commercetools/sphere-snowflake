@@ -36,6 +36,7 @@
                             <a href="{{url}}"
                                data-image="{{#image this ../isFeatured}}{{this.url}}{{/image}}"
                                data-price="{{price}}"
+                               data-sizes="{{#sizes this}}{{/sizes}}"
                                data-variant="{{id}}">
                                 <img src="{{image.thumbnail.url}}" class="img-circle" title="{{attribute.color}}"
                                      width="{{image.thumbnail.width}}" height="{{image.thumbnail.height}}"/>
@@ -94,5 +95,3 @@
 <div id="product-pager">
     @* Load dynamically *@
 </div>
-
-
