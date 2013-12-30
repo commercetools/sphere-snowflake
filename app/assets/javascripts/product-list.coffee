@@ -64,8 +64,8 @@ $ ->
         loadMore()
         return false
 
-    # Check scroll position to fire 'jump to top' and 'load products' functionalities
-    setInterval ( ->
+    # Check scroll position to fire 'jump to top' and 'load products' actions
+    checkScrollingPosition = ->
         # Show the jump to top tag if it is not in the page top
         isNearTop = $(window).scrollTop() < 100
         jumpToTop.fadeOut() if isNearTop and jumpToTop.is(":visible")
@@ -75,6 +75,6 @@ $ ->
         limit = $(document).height() - $(window).height() - distance
         isNearBottom = $(window).scrollTop() >= limit
         loadMore() if isNearBottom
-    ), 300
 
+    setInterval checkScrollingPosition, 400
     loadFirst()
