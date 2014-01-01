@@ -12,6 +12,8 @@ import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.*;
+import static utils.SphereTestable.mockCategory;
+import static utils.SphereTestable.mockProduct;
 
 public class IntegrationTest {
 
@@ -29,14 +31,14 @@ public class IntegrationTest {
     }
 
     private void mockCategoryRequest(int level) {
-        List<Category> categories = sphereTestable.mockCategory("cat", level);
+        List<Category> categories = mockCategory("cat", level);
         sphereTestable.mockCategoryTree(categories);
     }
 
     private void mockProductRequest(int numProducts, int page, int pageSize) {
         List<Product> products = new ArrayList<Product>();
         for (int i = 0 ; i < numProducts; i++) {
-            products.add(sphereTestable.mockProduct("prod" + i+1, 1, 1, 1));
+            products.add(mockProduct("prod" + i + 1, 1, 1, 1));
         }
         sphereTestable.mockProductService(products, page, pageSize);
     }
@@ -60,7 +62,7 @@ public class IntegrationTest {
                 browser = testBrowser(new HtmlUnitDriver(false));
                 goToCategory(browser);
                 assertThat(browser.$("body.category").isEmpty()).isFalse();
-                assertThat(browser.title()).isEqualTo("cat1");
+                assertThat(browser.title()).isEqualTo("cat1Name");
             }
         });
     }
@@ -72,7 +74,7 @@ public class IntegrationTest {
                 browser = testBrowser(new HtmlUnitDriver(false));
                 goToSubcategory(browser);
                 assertThat(browser.$("body.category").isEmpty()).isFalse();
-                assertThat(browser.title()).isEqualTo("cat2");
+                assertThat(browser.title()).isEqualTo("cat2Name");
             }
         });
     }
@@ -83,12 +85,12 @@ public class IntegrationTest {
 
     public void goToCategory(TestBrowser browser) {
         goToHome(browser);
-        browser.$("#link-category-cat1").click();
+        browser.$("#link-category-cat1Slug").click();
     }
 
     public void goToSubcategory(TestBrowser browser) {
         goToCategory(browser);
-        browser.$("#link-category-cat2").click();
+        browser.$("#link-category-cat2Slug").click();
     }
 
 }

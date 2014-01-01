@@ -1,26 +1,29 @@
 import controllers.routes;
-import io.sphere.client.filters.Filters;
 import io.sphere.client.filters.expressions.FilterExpression;
+import io.sphere.client.filters.expressions.FilterExpressions;
 import io.sphere.client.shop.model.Category;
 import io.sphere.client.shop.model.Product;
 import org.codehaus.jackson.JsonNode;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
 
-import org.mockito.verification.VerificationMode;
+import play.mvc.Content;
 import play.mvc.Result;
 import utils.SphereTestable;
+import views.html.categories;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static play.test.Helpers.*;
+import static play.test.Helpers.contentType;
+import static utils.SphereTestable.mockCategory;
+import static utils.SphereTestable.mockProduct;
 import static utils.TestHelper.*;
+import static utils.TestHelper.contentAsDocument;
 
 
 public class CategoriesTest {
@@ -37,14 +40,14 @@ public class CategoriesTest {
     }
 
     private void mockCategoryRequest(int level) {
-        List<Category> categories = sphereTestable.mockCategory("cat", level);
+        List<Category> categories = mockCategory("cat", level);
         sphereTestable.mockCategoryTree(categories);
     }
 
     private void mockProductRequest(int numProducts, int page, int pageSize) {
         List<Product> products = new ArrayList<Product>();
         for (int i = 0 ; i < numProducts; i++) {
-            products.add(sphereTestable.mockProduct("prod" + i+1, 1, 1, 1));
+            products.add(mockProduct("prod" + i + 1, 1, 1, 1));
         }
         sphereTestable.mockProductService(products, page, pageSize);
     }
@@ -62,7 +65,7 @@ public class CategoriesTest {
     public void checkSelectCategoryUrl() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                assertUrlNotNull(GET, "/cat1");
+                assertUrlNotNull(GET, "/cat1Slug");
             }
         });
     }
@@ -71,7 +74,7 @@ public class CategoriesTest {
     public void checkProductPagingUrl() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                assertUrlNotNull(GET, "/cat1", "?page=1");
+                assertUrlNotNull(GET, "/cat1Slug", "?page=1");
             }
         });
     }
@@ -80,7 +83,7 @@ public class CategoriesTest {
     public void checkProductFilterByPriceUrl() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                assertUrlNotNull(GET, "/cat1", "?price=10_20");
+                assertUrlNotNull(GET, "/cat1Slug", "?price=10_20");
             }
         });
     }
@@ -89,7 +92,7 @@ public class CategoriesTest {
     public void checkProductFilterByColorUrl() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                assertUrlNotNull(GET, "/cat1", "?color=black");
+                assertUrlNotNull(GET, "/cat1Slug", "?color=black");
             }
         });
     }
@@ -114,15 +117,12 @@ public class CategoriesTest {
         running(fakeApplication(), new Runnable() {
             public void run() {
                 mockCategoryRequest(2);
-                mockProductRequest(15, 0, 10);
-                Result result = callAction(routes.ref.Categories.select("cat1", "", 1));
+                Result result = callAction(routes.ref.Categories.select("cat1Slug", "", 1));
                 assertOK(result, HTML_CONTENT);
                 Document body = contentAsDocument(result);
                 assertValidBreadcrumb(body, 1);
                 assertValidNavigationMenu(body, sphereTestable);
                 assertValidMiniCart(body, sphereTestable);
-                // Check subcategories of category are listed
-                // Check products from category are listed
                 assertThat(body.select("#product-list .product-item").size()).isEqualTo(0);
             }
         });
@@ -130,11 +130,10 @@ public class CategoriesTest {
 
     @Test
     public void showSubcategory() {
-        running(fakeApplication(noAuthConfig()), new Runnable() {
+        running(fakeApplication(), new Runnable() {
             public void run() {
                 mockCategoryRequest(2);
-                mockProductRequest(15, 0, 10);
-                Result result = callAction(routes.ref.Categories.select("cat2", "", 1));
+                Result result = callAction(routes.ref.Categories.select("cat2Slug", "", 1));
                 assertOK(result, HTML_CONTENT);
                 Document body = contentAsDocument(result);
                 assertValidBreadcrumb(body, 2);
@@ -148,7 +147,7 @@ public class CategoriesTest {
 
     @Test
     public void showInvalidCategory() {
-        running(fakeApplication(noAuthConfig()), new Runnable() {
+        running(fakeApplication(), new Runnable() {
             public void run() {
                 Result result = callAction(routes.ref.Categories.select("non-existing-category", "", 1));
                 assertNotFound(result);
@@ -158,16 +157,19 @@ public class CategoriesTest {
 
     @Test
     public void pagingProducts() {
-        running(fakeApplication(noAuthConfig()), new Runnable() {
+        running(fakeApplication(), new Runnable() {
             public void run() {
-                mockCategoryRequest(3);
+                List<Category> categories = mockCategory("cat", 1);
+                Category cat = categories.get(0);
                 mockProductRequest(15, 1, 10);
-                Result result = callAction(routes.ref.Categories.listProducts("cat3", "", 2));
+                Result result = callAction(
+                        routes.ref.Categories.listProducts(cat.getSlug(), "", 2));
                 assertOK(result, JSON_CONTENT);
                 JsonNode data = contentAsJson(result);
-                // Check products from page are listed
                 assertThat(data.get("product").size()).isEqualTo(5);
-                // Check search is requesting correct page
+                FilterExpression expression = new FilterExpressions
+                        .CategoriesOrSubcategories(categories);
+                //verify(sphereTestable.searchRequest).filter(expression);
                 verify(sphereTestable.searchRequest).page(1);
             }
         });
@@ -175,11 +177,10 @@ public class CategoriesTest {
 
     @Test
     public void pagingProductsAboveRange() {
-        running(fakeApplication(noAuthConfig()), new Runnable() {
+        running(fakeApplication(), new Runnable() {
             public void run() {
-                mockCategoryRequest(3);
                 mockProductRequest(15, 99, 10);
-                Result result = callAction(routes.ref.Categories.listProducts("cat3", "", 100));
+                Result result = callAction(routes.ref.Categories.listProducts("catSlug", "", 100));
                 assertOK(result, JSON_CONTENT);
                 JsonNode data = contentAsJson(result);
                 // Check products list is empty
@@ -193,11 +194,10 @@ public class CategoriesTest {
 
     @Test
     public void pagingProductsInvalid() {
-        running(fakeApplication(noAuthConfig()), new Runnable() {
+        running(fakeApplication(), new Runnable() {
             public void run() {
-                mockCategoryRequest(3);
                 mockProductRequest(15, -3, 10);
-                Result result = callAction(routes.ref.Categories.listProducts("cat3", "", -2));
+                Result result = callAction(routes.ref.Categories.listProducts("catSlug", "", -2));
                 assertOK(result, JSON_CONTENT);
                 JsonNode data = contentAsJson(result);
                 // Check products from page are listed
@@ -210,12 +210,11 @@ public class CategoriesTest {
 
     @Test
     public void filterProductsByPrice() {
-        running(fakeApplication(noAuthConfig()), new Runnable() {
+        running(fakeApplication(), new Runnable() {
             public void run() {
                 String[] queryString = { "10_20" };
-                mockCategoryRequest(3);
                 mockProductRequest(15, 0, 10);
-                Result result = callAction(routes.ref.Categories.listProducts("cat3", "", 1),
+                Result result = callAction(routes.ref.Categories.listProducts("catSlug", "", 1),
                         fakeRequest("GET", "?price=" + queryString[0]));
                 assertOK(result, JSON_CONTENT);
                 JsonNode data = contentAsJson(result);
@@ -233,12 +232,11 @@ public class CategoriesTest {
 
     @Test
     public void filterProductsByColor() {
-        running(fakeApplication(noAuthConfig()), new Runnable() {
+        running(fakeApplication(), new Runnable() {
             public void run() {
                 String[] queryString = { "1" };
-                mockCategoryRequest(3);
                 mockProductRequest(15, 0, 10);
-                Result result = callAction(routes.ref.Categories.listProducts("cat3", "", 1),
+                Result result = callAction(routes.ref.Categories.listProducts("catSlug", "", 1),
                         fakeRequest("GET", "?codeFilterColor=" + queryString[0]));
                 assertOK(result, JSON_CONTENT);
                 JsonNode data = contentAsJson(result);

@@ -26,6 +26,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import play.i18n.Lang;
 import play.libs.Json;
+import play.mvc.Content;
 import play.mvc.Http;
 import play.api.mvc.RequestHeader;
 import play.mvc.Result;
@@ -35,12 +36,6 @@ public class TestHelper {
     public static final String HTML_CONTENT = "text/html";
     public static final String JSON_CONTENT = "application/json";
     public static final String CHARSET = "utf-8";
-
-    public static Map<String, String> noAuthConfig() {
-        Map<String, String> additionalConfiguration = new HashMap<String, String>();
-        additionalConfiguration.put("basic.auth", null);
-        return additionalConfiguration;
-    }
 
     public static void setContext() {
         Http.Request request = mock(Http.Request.class);
@@ -54,6 +49,10 @@ public class TestHelper {
                 new HashMap<String, String>(),
                 new HashMap<String, Object>()
         ));
+    }
+
+    public static Document contentAsDocument(Content content) {
+        return Jsoup.parse(contentAsString(content), CHARSET);
     }
 
     public static Document contentAsDocument(Result result) {

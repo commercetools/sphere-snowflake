@@ -51,9 +51,9 @@ public class SphereTestable {
     public CategoryTree categoryTree;
     public CurrentCart currentCart;
 
-    public String currency = "EUR";
-    public CountryCode country = CountryCode.DE;
-    public Locale locale = Locale.ENGLISH;
+    public static String currency = "EUR";
+    public static CountryCode country = CountryCode.DE;
+    public static Locale locale = Locale.ENGLISH;
 
     public SphereTestable() {
         sphere = mock(Sphere.class);
@@ -130,7 +130,7 @@ public class SphereTestable {
         setSphereInstance(sphere);
     }
 
-    public List<Category> mockCategory(String name, int level) {
+    public static List<Category> mockCategory(String name, int level) {
         List<Category> categories = new ArrayList<Category>();
         List<Category> tree = new ArrayList<Category>();
         for (int i = 0; i < level; ++i) {
@@ -144,7 +144,7 @@ public class SphereTestable {
         return categories;
     }
 
-    public Product mockProduct(String name, int numVariants, int numAttributes, int numImages) {
+    public static Product mockProduct(String name, int numVariants, int numAttributes, int numImages) {
         Product product = mock(Product.class);
 
         // Mock id/name/slug
@@ -179,7 +179,7 @@ public class SphereTestable {
         return product;
     }
 
-    public Variant mockVariant(int id) {
+    public static Variant mockVariant(int id) {
         Variant variant = mock(Variant.class);
 
         // Mock get id
@@ -296,32 +296,30 @@ public class SphereTestable {
         return request;
     }
 
-    private Image mockImage() {
+    private static Image mockImage() {
         return new Image("image.png", "imageLabel", new Dimensions(1000, 1000));
     }
 
-    private Attribute mockAttribute(String name, String value) {
+    private static Attribute mockAttribute(String name, String value) {
         return new Attribute(name, value);
     }
 
-    private Money mockMoney(double amount) {
+    private static Money mockMoney(double amount) {
         return new Money(BigDecimal.valueOf(amount), currency);
     }
 
-    private Price mockPrice(double amount) {
+    private static Price mockPrice(double amount) {
         return new Price(mockMoney(amount), country, null);
     }
 
-    private Category mockCategoryNode(String name, List<Category> ancestors) {
+    private static Category mockCategoryNode(String prefix, List<Category> ancestors) {
         Category category = mock(Category.class);
 
         int level = ancestors.size() + 1;
-        // Mock id/name/slug
-        when(category.getId()).thenReturn(name + level);
-        when(category.getName()).thenReturn(name + level);
-        when(category.getSlug()).thenReturn(name + level);
-        // Mock description
-        when(category.getDescription()).thenReturn("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+        when(category.getId()).thenReturn(prefix+level+"Id");
+        when(category.getName()).thenReturn(prefix+level+"Name");
+        when(category.getSlug()).thenReturn(prefix+level+"Slug");
+        when(category.getDescription()).thenReturn(prefix+level+"Description");
         // Mock root
         when(category.isRoot()).thenReturn(level < 2);
         // Mock parent
