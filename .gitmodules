@@ -1,0 +1,3 @@
+[submodule "webtests/cucumber-selenium"]
+	path = webtests/cucumber-selenium
+	url = https://github.com/hajoeichler/cucumber-selenium.git
