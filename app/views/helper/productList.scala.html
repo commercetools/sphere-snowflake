@@ -17,8 +17,7 @@
 </script>
 
 <script id="product-item-template" type="text/x-handlebars-template">
-    {{#each product}}
-    <div class="product-item {{#if isFeatured}} featured {{/if}}">
+    {{#each product}}<div class="product-item {{#if isFeatured}} featured {{/if}}">
         <div class="product-image">
             <a href="{{variant.url}}">
                 {{#image variant isFeatured}}
@@ -84,8 +83,7 @@
             </div>
         </div>
         {{/with}}
-    </div>
-    {{/each}}
+    </div>{{/each}}
 </script>
 
 <div id="product-list" data-url="@getProductListUrl(page, sort, category)">
