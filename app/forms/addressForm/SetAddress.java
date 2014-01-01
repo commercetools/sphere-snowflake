@@ -1,14 +1,10 @@
 package forms.addressForm;
 
-import forms.cartForm.ListCart;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import forms.checkoutForm.DoCheckout;
 import io.sphere.client.shop.model.Address;
-import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Customer;
-import io.sphere.client.shop.model.ShippingMethod;
-import org.codehaus.jackson.node.ObjectNode;
 import play.libs.Json;
-import sphere.Sphere;
 
 import static utils.ControllerHelper.*;
 

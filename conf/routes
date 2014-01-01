@@ -3,7 +3,7 @@
 # ~~~~
 
 # Redirect without trailing slash
-GET     /*path/                                             controllers.Application.redirect(path: String)
+GET     /*path/                                             controllers.Application.move(path: String)
 
 # Home
 GET     /                                                   controllers.Categories.home(sort: String ?= "", page: Int ?= 1)

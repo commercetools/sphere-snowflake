@@ -110,7 +110,6 @@ public class SphereTestable {
     @SuppressWarnings("unchecked")
     public void mockProductService(List<Product> products, int page, int pageSize) {
         ProductService productService = mock(ProductService.class);
-
         // Mock get all
         SearchRequest<Product> searchRequest = mockSearchRequest(products, page, pageSize);
         when(productService.all()).thenReturn(searchRequest);
@@ -125,7 +124,6 @@ public class SphereTestable {
             when(productService.byId(p.getId())).thenReturn(fetchRequest);
             when(productService.bySlug(p.getSlug())).thenReturn(fetchRequest);
         }
-
         when(sphere.products()).thenReturn(productService);
         setSphereInstance(sphere);
     }

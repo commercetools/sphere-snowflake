@@ -1,6 +1,8 @@
 package utils;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static play.mvc.Http.Status.BAD_REQUEST;
 import static play.mvc.Http.Status.NOT_FOUND;
 import static play.mvc.Http.Status.OK;
@@ -8,18 +10,15 @@ import static play.mvc.Http.Status.SEE_OTHER;
 import static play.mvc.Http.Status.UNAUTHORIZED;
 import static play.test.Helpers.*;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static utils.ViewHelper.printPrice;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import controllers.routes;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.sphere.client.shop.model.Category;
 import io.sphere.client.shop.model.LineItem;
-import org.codehaus.jackson.JsonNode;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 

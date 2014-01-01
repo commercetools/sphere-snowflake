@@ -1,9 +1,9 @@
 package forms;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.sphere.client.model.SearchResult;
 import io.sphere.client.shop.model.*;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import play.libs.Json;
 import play.mvc.Call;
 import play.mvc.Http;

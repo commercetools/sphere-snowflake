@@ -1,10 +1,10 @@
 package forms.checkoutForm;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.sphere.client.model.Money;
 import io.sphere.client.model.ReferenceId;
 import io.sphere.client.shop.model.*;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.libs.Json;
 

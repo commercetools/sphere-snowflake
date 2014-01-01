@@ -1,17 +1,15 @@
+import com.fasterxml.jackson.databind.JsonNode;
 import controllers.routes;
 import io.sphere.client.filters.expressions.FilterExpression;
 import io.sphere.client.filters.expressions.FilterExpressions;
 import io.sphere.client.shop.model.Category;
 import io.sphere.client.shop.model.Product;
-import org.codehaus.jackson.JsonNode;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
 
-import play.mvc.Content;
 import play.mvc.Result;
 import utils.SphereTestable;
-import views.html.categories;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,6 @@ import java.util.List;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static play.test.Helpers.*;
-import static play.test.Helpers.contentType;
 import static utils.SphereTestable.mockCategory;
 import static utils.SphereTestable.mockProduct;
 import static utils.TestHelper.*;

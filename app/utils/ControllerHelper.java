@@ -7,10 +7,10 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.sphere.client.SphereClientException;
 import io.sphere.client.model.Money;
 import io.sphere.client.shop.model.*;
-import org.codehaus.jackson.JsonNode;
 import play.Logger;
 import play.Play;
 import play.data.Form;
