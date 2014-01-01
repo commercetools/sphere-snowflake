@@ -5,7 +5,7 @@ import sphere.ShopController;
 
 public class Application extends ShopController {
 
-    public static Result redirect(String path) {
+    public static Result move(String path) {
         return movedPermanently("/" + path);
     }
 
