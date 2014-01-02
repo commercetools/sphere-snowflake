@@ -9,4 +9,8 @@ public class Application extends ShopController {
         return movedPermanently("/" + path);
     }
 
+    public static Result blitz() {
+        return ok("42");
+    }
+
 }
