@@ -16,3 +16,5 @@ dist
 /RUNNING_PID
 .target
 .sphere/credentials
+
+webtests/Gemfile.lock
