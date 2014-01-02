@@ -58,6 +58,7 @@ public class ListProducts {
         ObjectNode json = Json.newObject();
         json.put("id", product.getId());
         json.put("name", capitalizeInitials(product.getName()));
+        json.put("slug", product.getSlug());
         json.put("description", product.getDescription());
         json.put("isFeatured", position > 5 && Math.random() > 0.9);
         json.put("variant", getJson(product, masterVariant, category));

@@ -7,7 +7,7 @@ $ ->
     jumpToTop = $('#jump-to-top')
 
     template = {
-        list: Handlebars.compile $.trim($("#product-item-template").html())
+        item: Handlebars.compile $.trim($("#product-item-template").html())
         pager: Handlebars.compile $.trim($("#product-pager-template").html())
     }
 
@@ -27,22 +27,23 @@ $ ->
 
     # Append products to the product list
     appendProducts = (data) ->
-        return unless template.list? and template.pager? and data?
+        return unless template.item? and template.pager? and data.product?
         # Replace previous pager
         pagerHtml = template.pager data
         productPager.empty().append(pagerHtml).fadeTo(0, 0)
         # Append products
-        page = $(template.list data).fadeTo(0, 0)
+        page = ($(template.item product).fadeTo(0, 0) for product in data.product)
         empty = !$.trim(productList.html())
         productList.append page
         imagesLoaded productList, ->
-            page.fadeTo(0, 1)
             if empty
                 masonry.reloadItems()
                 masonry.layout()
             else
-                masonry.appended(page.get())
+                masonry.appended product.get() for product in page
             productPager.fadeTo("slow", 1)
+            # Avoid so many loops somehow!
+            product.fadeTo(0, 1) for product in page
 
     # Load and append first list of products to the product list
     loadFirst = ->

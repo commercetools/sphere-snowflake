@@ -70,6 +70,7 @@ public class ListCart {
         json.put("itemId", item.getId());
         json.put("productId", item.getProductId());
         json.put("productName", item.getProductName());
+        json.put("variantId", item.getVariant().getId());
         json.put("quantity", item.getQuantity());
         json.put("currency", printPriceCurrency(item.getTotalPrice().getCurrencyCode()));
         json.put("price", printPriceAmount(getPrice(item.getPrice().getValue(), item.getTaxRate())));
