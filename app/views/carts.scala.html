@@ -31,7 +31,7 @@
                             <h5>{{productName}}</h5>
                         </div>
                     </div>
-                    <div class="item-detail">
+                    <div id="item-line-product-{{productId}}-{{variantId}}" class="item-detail">
                         <div class="item-remove">
                             <form class="form-remove-from-cart" action="@routes.Carts.remove" method="post">
                                 <input type="hidden" name="lineItemId" value="{{itemId}}"/>

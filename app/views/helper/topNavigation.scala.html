@@ -8,30 +8,30 @@
             </button>
             <ul class="nav" role="navigation">
                 <li class="nav-link">
-                    <a class="brand" href="/">Sphere</a>
+                    <a id="link-home" class="brand" href="/">Sphere</a>
                 </li>
             </ul>
             <div class="nav-collapse collapse">
                 <ul class="nav pull-right">
                 @if(isLoggedIn) {
                     <li class="nav-link">
-                        <a href="@routes.Customers.show">
+                        <a id="link-show-customer" href="@routes.Customers.show">
                             Hi <span data-form-update="customer-firstName">@getCurrentCustomer.getName.getFirstName</span>
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="@routes.Login.logOut">Sign out</a>
+                        <a id="link-log-out" href="@routes.Login.logOut">Sign out</a>
                     </li>
                 } else {
                     <li class="nav-link">
-                        <a href="@routes.Login.showSignUp">Register</a>
+                        <a id="link-sign-up" href="@routes.Login.showSignUp">Register</a>
                     </li>
                     <li class="nav-link">
-                        <a href="@routes.Login.show">Login</a>
+                        <a id="link-log-in" href="@routes.Login.show">Login</a>
                     </li>
                 }
                     <li class="nav-link hidden-desktop">
-                        <a href="@routes.Carts.show">Cart</a>
+                        <a id="link-show-cart" href="@routes.Carts.show">Cart</a>
                     </li>
                     <li id="mini-cart" class="visible-desktop">
                         @helper.miniCart(getCurrentCart)

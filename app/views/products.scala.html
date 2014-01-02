@@ -33,10 +33,11 @@
                 @if(hasMoreColors(product)) {
                 <div class="product-info-variants-color">
                     <ul>
-                        @for(matchedVariant <- getPossibleVariants(product, variant, "color")) {
-                        <li class="@if(matchedVariant.getId == variant.getId){active}">
-                            <a href="@getProductUrl(product, matchedVariant, category)">
-                                <img src="@matchedVariant.getFeaturedImage.getSize(ImageSize.THUMBNAIL).getUrl" class="img-circle" title="@matchedVariant.getString("color")" />
+                        @for(variantColor <- getPossibleVariants(product, variant, "color")) {
+                        <li class="@if(variantColor.getId == variant.getId){active}">
+                            <a id="link-product-@product.getSlug-@variantColor.getId" href="@getProductUrl(product, variantColor, category)">
+                                <img src="@variantColor.getFeaturedImage.getSize(ImageSize.THUMBNAIL).getUrl"
+                                     class="img-circle" title="@variantColor.getString("color")" />
                             </a>
                         </li>
                         }
@@ -48,10 +49,11 @@
                 <div class="product-info-variant product-info-variant-size">
                     <label>Size</label>
                     <ul>
-                        @for(matchedVariant <- getPossibleVariants(product, variant, "size")) {
-                        <li class="@if(matchedVariant.getId == variant.getId){active}">
-                            <a href="@getProductUrl(product, matchedVariant, category)" data-variant="@matchedVariant.getId">
-                                @matchedVariant.getString("size")
+                        @for(variantSize <- getPossibleVariants(product, variant, "size")) {
+                        <li class="@if(variantSize.getId == variant.getId){active}">
+                            <a id="link-product-@product.getSlug-@variantSize.getId"
+                               href="@getProductUrl(product, variantSize, category)" data-variant="@variantSize.getId">
+                                @variantSize.getString("size")
                             </a>
                         </li>
                         }
@@ -67,7 +69,8 @@
                     <ul>
                         @for(matchedVariant <- getPossibleVariants(product, variant, attribute.getName)) {
                         <li class="@if(matchedVariant.getId == variant.getId){active}">
-                            <a href="@getProductUrl(product, matchedVariant, category)">
+                            <a id="link-product-@product.getSlug-@matchedVariant.getId"
+                               href="@getProductUrl(product, matchedVariant, category)">
                                 @matchedVariant.getString(attribute.getName)
                             </a>
                         </li>
