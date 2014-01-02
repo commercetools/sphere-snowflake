@@ -18,8 +18,8 @@ public class Products extends ShopController {
         // Case invalid product
         Product product = sphere().products().bySlug(productSlug).fetch().orNull();
         if (product == null) {
-            flash("error", "Product not found");
-            return notFound();
+            //flash("error", "Product not found");
+            return notFound("Product not found " + productSlug);
         }
         // Case valid select product
         Variant variant = product.getVariants().byId(variantId).or(product.getMasterVariant());

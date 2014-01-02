@@ -38,8 +38,8 @@ public class Categories extends ShopController {
     public static Result select(String categorySlug, String sort, int page) {
         Category category = sphere().categories().getBySlug(categorySlug);
         if (category == null) {
-            flash("error", "Category not found");
-            return notFound();
+            //flash("error", "Category not found");
+            return notFound("Category not found " + categorySlug);
         }
         return ok(categories.render(page, sort, category));
     }
