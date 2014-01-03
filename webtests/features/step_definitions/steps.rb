@@ -3,7 +3,7 @@
 
 Given /^I visit the web shop$/ do
     browser.manage.window.resize_to(1024, 786)
-    browser.navigate.to "http://localhost:9000/"
+    browser.navigate.to "http://snowflake.sphere.io/"
 end
 
 When /^I try to sign up with valid data$/ do
