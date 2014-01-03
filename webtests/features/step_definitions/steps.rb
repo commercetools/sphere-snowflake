@@ -38,8 +38,8 @@ end
 
 Then /^I have only the chosen item$/ do
     items = find("//ul[@id='cart-content']/li[#{hasClass("item-line")}]", "Can't find chosen item.")
-    return false unless items.size == 1
-    find("//div[@id='item-line-product-272abd1c-467b-46c7-b8cd-be17a19261a7-11']", "Can't find chosen item name.")
+    #return false unless items.size == 1
+    find("//div[@id='item-line-product-272abd1c-467b-46c7-b8cd-be17a19261a7-14']", "Can't find chosen item name.")
 end
 
 Then /^The total price is correctly calculated$/ do

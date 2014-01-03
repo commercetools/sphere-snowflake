@@ -1,0 +1,3 @@
+---
+firefox:
+  addon_dir: ...../ops-packages/firefox-addons/work/usr/share/firefox-addons/
