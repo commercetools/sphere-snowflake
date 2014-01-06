@@ -4,7 +4,7 @@
 
 # Redirect without trailing slash
 GET     /*path/                                             controllers.Application.move(path: String)
-GET     /mu-1234-cafe-5678-babe                             controllers.Application.blitz()
+GET     /mu-0cfddd07-d18f67e6-3f846e91-65f37a14             controllers.Application.blitz()
 
 # Home
 GET     /                                                   controllers.Categories.home(sort: String ?= "", page: Int ?= 1)
