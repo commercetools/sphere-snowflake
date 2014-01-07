@@ -1,4 +1,7 @@
 $ ->
+    # Prevent browsers from caching ajax data, especially IE.
+    $.ajaxSetup { cache: false }
+
     Handlebars.registerHelper 'ifNot', (v1, options) ->
         if not v1 then options.fn(this) else options.inverse(this)
 
