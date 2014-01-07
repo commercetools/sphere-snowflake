@@ -13,10 +13,10 @@ $ ->
             cartContent.find('.loading-ajax').hide()
 
     # Replace the whole cart
-    replaceCart = (cart) ->
-        return unless template? and cart? and cart.item? and cart.item.length?
+    replaceCart = (cartData) ->
+        return unless template? and cartData? and cartData.item? and cartData.item.length?
         cartContent.empty()
-        cartContent.append(template item) for item in cart.item
+        cartContent.append(template item) for item in cartData.item
 
     # Bind 'add to cart' button in product detail with 'add to cart' functionality
     $('#product-detail #form-add-to-cart').submit( ->
