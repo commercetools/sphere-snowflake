@@ -21,4 +21,4 @@ notifications:
 deploy:
   provider: heroku
   api_key:
-    secure: J+COjnPZhnFDPhMDNQRc1+gt5NYSXzQOMLhWuevVyN8v4xHM8xdjtBaN0Hfs9kMsoKBhDs04nrJLygqQDcRm0j+cu0vdTON4cvr7WMKJDFv04ivLUJAns8T4Ai6+eTPK2pb6RKvlFP62E1umh70eWaYt7YBqIzjpAdIFUDWd5Us=
+    secure: MPf11M7lbR32/EcmWqT577weGO4sWvOI5cAD5t7Sx+Bvzf2PFwuK7KXU/ab2N91tRi70JYDXokIoTSp2WUjzMiZNsLcfuJHEc+2of8wLIAzxnQKR6VgOlVhMm4oxv6bZcL/Xh4axIDyIQ5o/k7ROkaYFiaopJ9lYLDTCwsCpUjw=
