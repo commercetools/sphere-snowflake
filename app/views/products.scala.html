@@ -1,8 +1,8 @@
 @(product: Product, variant: Variant, category: Category)
 
 @scripts = {
-    <script src="@routes.Assets.at("javascripts/product.js")"></script>
-    <script src="@routes.Assets.at("javascripts/cart.js")"></script>
+    <script src="@routes.Assets.at("javascripts/product.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/cart.min.js")"></script>
 }
 
 @main(product.getName, "product", scripts){
