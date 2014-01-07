@@ -14,7 +14,7 @@ $ ->
 
     # Replace the whole cart
     replaceCart = (cartData) ->
-        return unless template? and cartData? and cartData.item? and cartData.item.length?
+        return unless template? and cartData?
         cartContent.empty()
         cartContent.append(template item) for item in cartData.item
 
