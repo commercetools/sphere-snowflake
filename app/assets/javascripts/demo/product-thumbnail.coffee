@@ -1,4 +1,4 @@
-$ ->
+define ["jquery"], ($) ->
     # Add class 'active' to hovered product item
     $('#product-list').on('mouseenter', '.product-item', ->
         $(this).addClass("active")

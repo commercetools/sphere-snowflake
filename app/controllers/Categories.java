@@ -3,12 +3,6 @@ package controllers;
 import controllers.actions.SaveContext;
 import forms.ListProducts;
 import io.sphere.client.ProductSort;
-import io.sphere.client.facets.Facet;
-import io.sphere.client.facets.Facets;
-import io.sphere.client.facets.expressions.FacetExpression;
-import io.sphere.client.filters.Filter;
-import io.sphere.client.filters.Filters;
-import io.sphere.client.filters.expressions.FilterExpression;
 import io.sphere.client.filters.expressions.FilterExpressions;
 import io.sphere.client.model.SearchResult;
 import io.sphere.client.shop.model.Category;
@@ -22,7 +16,6 @@ import views.html.categories;
 import views.html.home;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Categories extends ShopController {

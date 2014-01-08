@@ -1,4 +1,4 @@
-$ ->
+define ["jquery"], ($) ->
     # Bind click on 'size variant' to 'select size' functionality
     $('.product-info-variant-size a').click( ->
 

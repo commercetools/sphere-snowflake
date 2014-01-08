@@ -1,7 +1,8 @@
 @(customer: Customer, orders: List[Order], updateCustomerForm: Form[customerForm.UpdateCustomer], updatePasswordForm: Form[passwordForm.UpdatePassword])
 
 @scripts = {
-    <script src="@routes.Assets.at("javascripts/customer.min.js")"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.9/require.min.js"
+            data-main="@routes.Assets.at("javascripts/customer-page.js")" ></script>
 
     <script id="update-address-template" type="text/x-handlebars-template">
         <li class="address-item" id="address-{{addressId}}">

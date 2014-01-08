@@ -1,4 +1,4 @@
-$ ->
+define ["jquery", "handlebars", "demo/lib-form.min", "demo/paymill.min"], ($) ->
     template = {
         address: Handlebars.compile $.trim($("#shipping-address-template").html())
         shipping: Handlebars.compile $.trim($("#shipping-method-template").html())
@@ -213,7 +213,7 @@ $ ->
             billingMethod.stopSubmit()
             return billingMethod.displayErrorMessage(error.apierror) if error
             # Append token to checkout form
-            checkout.append "<input type='hidden' name='paymillToken' value='#{result.token}'/>"
+            checkout.find("input[name=paymillToken]").val result.token
             # Fill form summary data
             fillSummary($('#billing-method-form'), $('#billing-method-summary'))
             # Go to next section

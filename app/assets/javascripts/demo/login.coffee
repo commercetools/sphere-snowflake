@@ -1,4 +1,4 @@
-$ ->
+define ["jquery", "demo/lib-form.min"], ($) ->
     logIn = new Form $('#form-log-in')
     signUp = new Form $('#form-sign-up')
     recoverPassword = new Form $('#form-recover-password')

@@ -1,4 +1,4 @@
-$ ->
+define ["jquery", "handlebars", "demo/lib-form.min"], ($) ->
     cartContent = $('#cart-content')
     html = $("#cart-item-template").html()
     template = Handlebars.compile $.trim(html) if html?

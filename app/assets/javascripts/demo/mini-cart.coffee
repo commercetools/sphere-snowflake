@@ -1,4 +1,4 @@
-$ ->
+define ["jquery", "handlebars"], ($) ->
     class @MiniCart
         constructor: (@buttonCart, @popoverCart, @content) ->
             html = $("#mini-cart-template").html()

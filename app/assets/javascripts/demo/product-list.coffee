@@ -1,4 +1,4 @@
-$ ->
+define ["jquery", "handlebars"], ($) ->
     calling = false
     distance = 1000
 

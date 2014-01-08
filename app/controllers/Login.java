@@ -52,7 +52,7 @@ public class Login extends ShopController {
         // Case already signed up
         SignUp signUp = form.get();
         if (sphere().login(signUp.email, signUp.password)) {
-            return redirect(routes.Customers.show());
+            return redirect(controllers.routes.Customers.show());
         }
         // Case already registered email
         try {
@@ -70,7 +70,7 @@ public class Login extends ShopController {
         //email.send();
         signUp.displaySuccessMessage();
         //return redirect(url);
-        return redirect(routes.Customers.show());
+        return redirect(controllers.routes.Customers.show());
     }
 
     public static Result verify(String token) {
@@ -93,7 +93,7 @@ public class Login extends ShopController {
         LogIn logIn = form.get();
         if (sphere().isLoggedIn()) {
             logIn.displaySuccessMessage();
-            return redirect(routes.Customers.show());
+            return redirect(controllers.routes.Customers.show());
         }
         // Case invalid credentials
         if (!sphere().login(logIn.email, logIn.password)) {
@@ -102,7 +102,7 @@ public class Login extends ShopController {
         }
         // Case valid log in
         logIn.displaySuccessMessage();
-        return redirect(routes.Customers.show());
+        return redirect(controllers.routes.Customers.show());
     }
 
     public static Result logOut() {
@@ -128,7 +128,7 @@ public class Login extends ShopController {
             return badRequest(showPageRecover(form));
         }
         // Case valid recover password
-        String url = routes.Login.showResetPassword(token.getValue()).absoluteURL(request());
+        String url = controllers.routes.Login.showResetPassword(token.getValue()).absoluteURL(request());
         Email.send(recoverPassword.email, "Password recovery", forgetPassword.render(url).body());
         recoverPassword.displaySuccessMessage();
         return ok();
