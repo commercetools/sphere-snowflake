@@ -1,4 +1,4 @@
-define ["jquery", "handlebars", "demo/lib-form.min", "demo/paymill.min"], ($) ->
+define ["jquery", "demo/lib-form.min", "demo/paymill.min"], ($) ->
     template = {
         address: Handlebars.compile $.trim($("#shipping-address-template").html())
         shipping: Handlebars.compile $.trim($("#shipping-method-template").html())

@@ -1,4 +1,4 @@
-define ["jquery", "handlebars"], ($) ->
+define ["jquery"], ($) ->
     # Prevent browsers from caching ajax data, especially IE.
     $.ajaxSetup { cache: false }
 

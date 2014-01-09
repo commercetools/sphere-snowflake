@@ -13,6 +13,7 @@ require.config
         "bootstrap"         : ["jquery"]
 
 require [
+    "handlebars"
     "demo/main.min"
     "demo/mini-cart.min"
     "demo/order-summary.min"
