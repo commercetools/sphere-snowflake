@@ -1,4 +1,4 @@
-define ["jquery"], ($) ->
+define ["jquery", "masonry.pkgd.min", "imagesloaded.pkgd.min"], ($, Masonry, imagesLoaded) ->
     calling = false
     distance = 1000
 

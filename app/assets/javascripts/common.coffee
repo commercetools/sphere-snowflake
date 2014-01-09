@@ -9,6 +9,7 @@ require.config
         "bootstrap"         : [CDNJS + "twitter-bootstrap/2.3.2/js/bootstrap.min"]
         # The query param is needed in order to prevent requireJs to append the extension '.js'
         "paymill-bridge"    : ["https://bridge.paymill.com/?noext"]
+        # Dependencies of masonry and images loaded
     shim :
         "bootstrap"         : ["jquery"]
 
