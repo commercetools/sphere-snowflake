@@ -1,4 +1,4 @@
-define ["jquery"], ($) ->
+define ["jquery", "handlebars"], ($) ->
     class @OrderSummary
         constructor: (@content) ->
             html = $("#order-summary-template").html()
