@@ -1,5 +1,6 @@
 package utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -87,29 +88,33 @@ public class ViewHelper {
      *  TEMPLATE UTIL METHODS
      */
 
+    public static Handlebars initializeHandlebars() throws IOException{
+        File directory = Play.current().getFile("app/views/templates");
+        if (!directory.exists()) throw new IOException("Not found template directory");
+        TemplateLoader loader = new FileTemplateLoader(directory);
+        return new Handlebars(loader);
+    }
+
     public static Template getTemplate(String templateName) {
-        TemplateLoader loader = new FileTemplateLoader(Play.current().path().getAbsolutePath() +"/app/views/templates");
-        Handlebars handlebars = new Handlebars(loader);
         try {
-            return handlebars.compile(templateName);
+            return initializeHandlebars().compile(templateName);
         } catch (IOException ioe) {
-            play.Logger.error("Not found template "+ loader.resolve(templateName));
+            play.Logger.error(ioe.getMessage());
         }
         return null;
     }
 
     public static String getJavaScriptTemplate(String templateName) {
-        TemplateLoader loader = new FileTemplateLoader(Play.current().path().getAbsolutePath() +"/app/views/templates");
-        Handlebars handlebars = new Handlebars(loader);
         try {
-            return handlebars.compileInline("{{precompile \""+ templateName +"\"}}").apply("");
+            return initializeHandlebars().compileInline("{{precompile \"" + templateName + "\"}}").apply("");
         } catch (IOException ioe) {
-            play.Logger.error("Not found template "+ loader.resolve(templateName));
+            play.Logger.error(ioe.getMessage());
         }
-        return null;
+        return "";
     }
 
     public static String renderTemplate(Template template, JsonNode model) {
+        if (template == null) return "";
         try {
             String html = template.apply(Context.newBuilder(model).resolver(JsonNodeValueResolver.INSTANCE).build());
             // TODO Remove when Handlebars java fixes this bug that adds quotes to arrays

@@ -9,9 +9,7 @@ object ApplicationBuild extends Build {
     val appDependencies = Seq(javaCore, javaJdbc)
 
     // Only compile .less files directly in the stylesheets directory
-    def customLessEntryPoints(base: File): PathFinder = (
-        (base / "app" / "assets" / "stylesheets" * "*.less")
-    )
+    def customLessEntryPoints(base: File): PathFinder = base / "app" / "assets" / "stylesheets" * "*.less"
 
     lazy val main = play.Project(appName, appVersion, appDependencies).settings(
         Seq(
