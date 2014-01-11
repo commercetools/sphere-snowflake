@@ -90,8 +90,7 @@ public class ViewHelper {
      */
 
     public static Handlebars initializeHandlebars() throws IOException{
-        URL url = Play.current().resource("public/templates").get();
-        TemplateLoader loader = new FileTemplateLoader(url.getPath());
+        TemplateLoader loader = new ClassPathTemplateLoader("/public/templates");
         return new Handlebars(loader);
     }
 
