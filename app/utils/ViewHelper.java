@@ -3,6 +3,7 @@ package utils;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -89,9 +90,9 @@ public class ViewHelper {
      */
 
     public static Handlebars initializeHandlebars() throws IOException{
-        File directory = Play.current().getFile("app/views/templates");
-        if (!directory.exists()) throw new IOException("Not found template directory");
-        TemplateLoader loader = new FileTemplateLoader(directory);
+        URL url = Play.current().resource("public/templates").get();
+        System.out.println(url.getPath());
+        TemplateLoader loader = new FileTemplateLoader(url.getPath());
         return new Handlebars(loader);
     }
 
