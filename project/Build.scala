@@ -16,6 +16,7 @@ object ApplicationBuild extends Build {
     lazy val main = play.Project(appName, appVersion, appDependencies).settings(
         Seq(
             lessEntryPoints <<= baseDirectory(customLessEntryPoints),
+            libraryDependencies += filters,
             libraryDependencies ++= Libs.appDependencies,
             libraryDependencies ++= Libs.testDependencies,
             templatesImport ++= Seq(
