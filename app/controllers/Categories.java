@@ -16,6 +16,7 @@ import views.html.categories;
 import views.html.home;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Categories extends ShopController {
@@ -24,38 +25,64 @@ public class Categories extends ShopController {
 
     @With(SaveContext.class)
     public static Result home(String sort, int page) {
-        return ok(home.render(page, sort));
+        SearchRequest<Product> searchRequest = sphere().products().all();
+        searchRequest = filterBy(searchRequest);
+        searchRequest = sortBy(searchRequest, sort);
+        searchRequest = paging(searchRequest, page);
+        SearchResult<Product> searchResult = searchRequest.fetch();
+        return ok(home.render(searchResult, page, sort));
     }
 
     @With(SaveContext.class)
     public static Result select(String categorySlug, String sort, int page) {
+        // Case category not found
         Category category = sphere().categories().getBySlug(categorySlug);
         if (category == null) {
             //flash("error", "Category not found");
             return notFound("Category not found " + categorySlug);
         }
-        return ok(categories.render(page, sort, category));
+        SearchRequest<Product> searchRequest = sphere().products().all();
+        searchRequest = filterBy(searchRequest, category);
+        searchRequest = sortBy(searchRequest, sort);
+        searchRequest = paging(searchRequest, page);
+        SearchResult<Product> searchResult = searchRequest.fetch();
+        return ok(categories.render(searchResult, page, sort, category));
     }
 
     @With(SaveContext.class)
     public static Result search(String sort, int page) {
+        SearchRequest<Product> searchRequest = sphere().products().all();
+        searchRequest = filterBy(searchRequest);
+        searchRequest = sortBy(searchRequest, sort);
+        searchRequest = paging(searchRequest, page);
+        SearchResult<Product> searchResult = searchRequest.fetch();
         // TODO Finish
-        return ok(home.render(page, sort));
+        return ok(home.render(searchResult, page, sort));
     }
 
     public static Result listProducts(String categorySlug, String sort, int page) {
         Category category = null;
-        List<Category> categories = new ArrayList<Category>();
         SearchRequest<Product> searchRequest = sphere().products().all();
         if (!categorySlug.isEmpty()) {
             category = sphere().categories().getBySlug(categorySlug);
-            categories.add(category);
         }
-        searchRequest = filterBy(searchRequest, categories);
+        searchRequest = filterBy(searchRequest, category);
         searchRequest = sortBy(searchRequest, sort);
         searchRequest = paging(searchRequest, page);
         SearchResult<Product> searchResult = searchRequest.fetch();
         return ok(ListProducts.getJson(searchResult, category, sort));
+    }
+
+    protected static SearchRequest<Product> filterBy(SearchRequest<Product> searchRequest) {
+        return filterBy(searchRequest, Collections.<Category>emptyList());
+    }
+
+    protected static SearchRequest<Product> filterBy(SearchRequest<Product> searchRequest, Category category) {
+        if (category != null) {
+            return filterBy(searchRequest, Collections.<Category>singletonList(category));
+        } else {
+            return filterBy(searchRequest);
+        }
     }
 
     protected static SearchRequest<Product> filterBy(SearchRequest<Product> searchRequest, List<Category> categories) {

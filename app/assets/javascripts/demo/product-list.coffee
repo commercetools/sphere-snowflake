@@ -45,11 +45,6 @@ define ["jquery", "masonry.pkgd.min", "imagesloaded.pkgd.min"], ($, Masonry, ima
             # Avoid so many loops somehow!
             product.fadeTo(0, 1) for product in page
 
-    # Load and append first list of products to the product list
-    loadFirst = ->
-        url = productList.data("url")
-        loadProducts url
-
     # Load and append more products to the product list
     loadMore = ->
         url = productPager.find("#load-more").data('url')
@@ -78,4 +73,3 @@ define ["jquery", "masonry.pkgd.min", "imagesloaded.pkgd.min"], ($, Masonry, ima
         loadMore() if isNearBottom
 
     setInterval checkScrollingPosition, 400
-    loadFirst()

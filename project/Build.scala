@@ -30,17 +30,19 @@ object ApplicationBuild extends Build {
 
     object Libs {
         val appDependencies = Seq(
-            "io.sphere"             %%  "sphere-play-sdk"   %   "0.51.0" exclude("org.scala-stm", "scala-stm_2.10.0"),
-            "javax.mail"            %   "mail"              %   "1.4.7",
-            "org.jsoup"             %   "jsoup"             %   "1.7.1",
-            "commons-codec"         %   "commons-codec"     %   "1.8",
-            "com.google.code.gson"  %   "gson"              %   "2.2.4",
-            "de.paymill"            %   "paymill-java"      %   "2.6"
+            "io.sphere"             %%  "sphere-play-sdk"     %   "0.51.0" exclude("org.scala-stm", "scala-stm_2.10.0"),
+            "com.github.jknack"     %   "handlebars"          %   "1.2.1",
+            "com.github.jknack"     %   "handlebars-jackson2" %   "1.2.1",
+            "javax.mail"            %   "mail"                %   "1.4.7",
+            "org.jsoup"             %   "jsoup"               %   "1.7.1",
+            "commons-codec"         %   "commons-codec"       %   "1.8",
+            "com.google.code.gson"  %   "gson"                %   "2.2.4",
+            "de.paymill"            %   "paymill-java"        %   "2.6"
         )
         val testDependencies = Seq(
-            "org.mockito"           %   "mockito-all"       %   "1.9.5"     %   "test",
-            "com.typesafe.play"     %%  "play-test"         %   "2.2.1"     %   "test" exclude("com.novocode", "junit-interface"),
-            "com.novocode"          %   "junit-interface"   %   "0.9"       %   "test"
+            "org.mockito"           %   "mockito-all"         %   "1.9.5"     %   "test",
+            "com.typesafe.play"     %%  "play-test"           %   "2.2.1"     %   "test" exclude("com.novocode", "junit-interface"),
+            "com.novocode"          %   "junit-interface"     %   "0.9"       %   "test"
         )
     }
 }

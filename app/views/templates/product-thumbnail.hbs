@@ -1,0 +1,69 @@
+<div class="product-item {{#if isFeatured}}featured{{/if}}">
+    <div class="product-image">
+        <a id="link-product-{{slug}}" href="{{variant.url}}">
+            {{#if isFeatured}}
+                <img src="{{variant.image.medium.url}}" width="{{variant.image.medium.width}}" height="{{variant.image.medium.height}}" />
+            {{else}}
+                <img src="{{variant.image.small.url}}" width="{{variant.image.small.width}}" height="{{variant.image.small.height}}" />
+            {{/if}}
+        </a>
+    </div>
+    <div class="product-info">
+        {{#if hasMoreColors}}
+            <div class="product-info-variants">
+                <div class="product-info-variants-color">
+                    <ul>
+                        {{#each matchVariant}}
+                            <li class="{{#if isActive}} active {{/if}}">
+                                <a href="{{url}}"
+                                    data-image="{{#if isFeatured}}{{image.medium.url}}{{else}}{{image.small.url}}{{/if}}"
+                                    data-price="{{price}}"
+                                    data-sizes="{{#if size}}{{#each size}}{{name}},{{/each}}{{/if}}"
+                                    data-variant="{{id}}">
+                                    <img src="{{image.thumbnail.url}}" class="img-circle" title="{{attribute.color}}"
+                                         width="{{image.thumbnail.width}}" height="{{image.thumbnail.height}}"/>
+                                </a>
+                            </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+        {{/if}}
+        <div class="product-info-name">
+            <a href="{{url}}">{{name}}</a>
+        </div>
+    </div>
+    {{#with variant}}
+        <div class="product-footer clearfix">
+            <div class="product-info-price">{{price}}</div>
+            <div class="product-info-buy">
+                <form class="form-add-to-cart" action="@routes.Carts.add" method="post">
+                    <input type="hidden" name="productId" value="{{../id}}" />
+                    <input type="hidden" name="variantId" value="{{id}}" />
+                    <input type="hidden" name="quantity" value="1" />
+                    <button type="submit" name="addToCart-product" data-loading-text="Adding..." class="btn btn-link btn-mini">
+                        <i class="icon-shopping-cart"></i>
+                    </button>
+                </form>
+                {{#if ../hasMoreSizes}}
+                    <ul class="product-info-variants-size">
+                        {{#each size}}
+                            <li>
+                                <form class="form-add-to-cart" action="@routes.Carts.add" method="post">
+                                    <input type="hidden" name="productId" value="{{../../../id}}" />
+                                    <input type="hidden" name="variantId" value="{{../id}}" />
+                                    <input type="hidden" name="size" value={{this.name}} />
+                                    <input type="hidden" name="quantity" value="1" />
+                                    <button type="submit" name="addToCart-product" data-loading-text="{{this.name}}"
+                                            class="btn btn-link btn-mini">
+                                        {{this}}
+                                    </button>
+                                </form>
+                            </li>
+                        {{/each}}
+                    </ul>
+                {{/if}}
+            </div>
+        </div>
+    {{/with}}
+</div>

@@ -1,0 +1,13 @@
+<input type="hidden" id="num-offset-product" name="offsetProducts" value="{{offsetProducts}}"/>
+<input type="hidden" id="num-current-product" name="countProducts" value="{{countProducts}}"/>
+<input type="hidden" id="num-total-product" name="totalProducts" value="{{totalProducts}}"/>
+<input type="hidden" id="num-current-page" name="currentPage" value="{{currentPage}}"/>
+<input type="hidden" id="num-total-page" name="totalPages" value="{{totalPages}}"/>
+
+<ul class="pager">
+    {{#if nextPageUrl}}
+        <li class="more">
+            <a href="#" id="load-more" data-url="{{nextPageUrl}}">Load more</a>
+        </li>
+    {{/if}}
+</ul>

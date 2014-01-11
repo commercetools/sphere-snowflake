@@ -1,4 +1,4 @@
-@(page: Int, sort: String)
+@(search: SearchResult[Product], page: Int, sort: String)
 
 @scripts = {
     <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.9/require.min.js"
@@ -12,7 +12,7 @@
     </div>
 }{
     <div id="featured-product-list" class="clearfix">
-        @helper.productList(page, sort)
+        @helper.productList(search, page, sort)
     </div>
 }{
     @helper.jumpToTop()

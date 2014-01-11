@@ -1,19 +1,21 @@
 package utils;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.jknack.handlebars.*;
+import com.github.jknack.handlebars.io.*;
 import com.neovisionaries.i18n.CountryCode;
 import controllers.routes;
-import forms.cartForm.AddToCart;
-import forms.customerForm.UpdateCustomer;
 import io.sphere.client.model.Money;
 import io.sphere.client.model.SearchResult;
 import io.sphere.client.shop.model.*;
 import org.apache.commons.lang3.text.WordUtils;
-import play.Play;
-import play.data.Form;
+import play.api.Play;
 import play.mvc.Call;
 import play.mvc.Http;
 import sphere.Sphere;
@@ -48,25 +50,6 @@ public class ViewHelper {
         return Sphere.getInstance().categories().getRoots();
 	}
 
-    public static String getCategoryPath(Category category) {
-        String path = "";
-        int level = category.getPathInTree().size();
-        if (level > 1) {
-            // Add first 2 oldest ancestors separated by '-'
-            List<Category> ancestors = category.getPathInTree().subList(0, level - 1);
-            String ancestorsPath = ancestors.get(0).getSlug();
-            if (ancestors.size() > 1) {
-                ancestorsPath += "-" + ancestors.get(1).getSlug();
-            }
-            path += ancestorsPath + "/";
-        }
-        return path;
-    }
-
-    public static String getReturnUrl() {
-        return Http.Context.current().session().get("returnUrl");
-    }
-
     public static String capitalizeInitials(String text) {
         return WordUtils.capitalizeFully(text);
     }
@@ -81,9 +64,6 @@ public class ViewHelper {
 
 	/**
 	 * Compares the categories and returns the 'active' class if are the same.
-	 * 
-	 * @param category
-     * @param currentCategory
 	 * @return 'active' if categories are the same, otherwise an empty string.
 	 */
 	public static String getActiveClass(Category category, Category currentCategory) {
@@ -102,36 +82,58 @@ public class ViewHelper {
         return object != null;
     }
 
-    /**
-	 * Check whether the given product has more than one attribute value
-	 * 
-	 * @param product
-     * @param attributeName
-	 * @return true if the product has more than one attribute value, false otherwise
-	 */
-	public static boolean hasMoreAttributeValues(Product product, String attributeName) {
-        return product.getVariants().getAvailableAttributes(attributeName).size() > 1;
-    }
 
     /**
-     * Check whether the given Product has more than one 'color' attribute
-     *
-     * @param product
-     * @return true if the product has more than one color, false otherwise
+     *  TEMPLATE UTIL METHODS
      */
-    public static boolean hasMoreColors(Product product) {
-        return hasMoreAttributeValues(product, "color");
+
+    public static Template getTemplate(String templateName) {
+        TemplateLoader loader = new FileTemplateLoader(Play.current().path().getAbsolutePath() +"/app/views/templates");
+        Handlebars handlebars = new Handlebars(loader);
+        try {
+            return handlebars.compile(templateName);
+        } catch (IOException ioe) {
+            play.Logger.error("Not found template "+ loader.resolve(templateName));
+        }
+        return null;
     }
 
-    /**
-     * Check whether the given Product has more than one 'size' attribute
-     *
-     * @param product
-     * @return true if the product has more than one size, false otherwise
-     */
-    public static boolean hasMoreSizes(Product product) {
-        return hasMoreAttributeValues(product, "size");
+    public static String getJavaScriptTemplate(String templateName) {
+        TemplateLoader loader = new FileTemplateLoader(Play.current().path().getAbsolutePath() +"/app/views/templates");
+        Handlebars handlebars = new Handlebars(loader);
+        try {
+            return handlebars.compileInline("{{precompile \""+ templateName +"\"}}").apply("");
+        } catch (IOException ioe) {
+            play.Logger.error("Not found template "+ loader.resolve(templateName));
+        }
+        return null;
     }
+
+    public static String renderTemplate(Template template, JsonNode model) {
+        try {
+            String html = template.apply(Context.newBuilder(model).resolver(JsonNodeValueResolver.INSTANCE).build());
+            // TODO Remove when Handlebars java fixes this bug that adds quotes to arrays
+            // https://github.com/jknack/handlebars.java/issues/260
+            return html.replace("&quot;", "");
+        } catch(IOException ioe) {
+            play.Logger.error("Could not render item with template");
+        }
+        return "";
+    }
+
+    public static String renderTemplateProductList(Template template, ObjectNode json) {
+        String html = "";
+        for (JsonNode model : json.path("product")) {
+            html += renderTemplate(template, model);
+        }
+        return html;
+    }
+
+
+
+    /**
+     *  PRICE UTIL METHODS
+     */
 
     public static Money getShippingCost() {
         // TODO Implement correct shipping cost
@@ -201,9 +203,10 @@ public class ViewHelper {
         return getGrossPrice(price, rate);
     }
 
+
+
     /**
-     * Returns
-     *
+     * URLS UTIL METHODS
      */
     public static Call getProductListUrl(SearchResult<Product> search, String sort, Category category) {
         if (search.getCurrentPage() >= search.getTotalPages() - 1) {
@@ -236,6 +239,40 @@ public class ViewHelper {
 
     public static Call getProductUrl(Product product, Variant variant, Category category) {
         return routes.Products.select(product.getSlug(), variant.getId());
+    }
+
+    public static String getReturnUrl() {
+        return Http.Context.current().session().get("returnUrl");
+    }
+
+
+
+    /**
+     *  PRODUCTS UTIL METHODS
+     */
+
+    /**
+     * Check whether the given product has more than one attribute value
+     * @return true if the product has more than one attribute value, false otherwise
+     */
+    public static boolean hasMoreAttributeValues(Product product, String attributeName) {
+        return product.getVariants().getAvailableAttributes(attributeName).size() > 1;
+    }
+
+    /**
+     * Check whether the given Product has more than one 'color' attribute
+     * @return true if the product has more than one color, false otherwise
+     */
+    public static boolean hasMoreColors(Product product) {
+        return hasMoreAttributeValues(product, "color");
+    }
+
+    /**
+     * Check whether the given Product has more than one 'size' attribute
+     * @return true if the product has more than one size, false otherwise
+     */
+    public static boolean hasMoreSizes(Product product) {
+        return hasMoreAttributeValues(product, "size");
     }
 
     /* Get possible variant sizes for a particular variant */
