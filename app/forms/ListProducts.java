@@ -64,6 +64,7 @@ public class ListProducts {
         json.put("variant", getJson(product, masterVariant, category));
         json.put("hasMoreColors", hasMoreColors(product));
         json.put("hasMoreSizes", hasMoreSizes(product));
+        json.put("addCartUrl", controllers.routes.Carts.add().absoluteURL(Http.Context.current().request()));
         // Matching variants
         if (product.getVariants().size() > 1) {
             ArrayNode matchVariants = json.putArray("matchVariant");

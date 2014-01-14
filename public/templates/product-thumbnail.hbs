@@ -30,14 +30,14 @@
             </div>
         {{/if}}
         <div class="product-info-name">
-            <a href="{{url}}">{{name}}</a>
+            <a href="{{variant.url}}">{{name}}</a>
         </div>
     </div>
     {{#with variant}}
         <div class="product-footer clearfix">
             <div class="product-info-price">{{price}}</div>
             <div class="product-info-buy">
-                <form class="form-add-to-cart" action="@routes.Carts.add" method="post">
+                <form class="form-add-to-cart" action="{{../addCartUrl}}" method="post">
                     <input type="hidden" name="productId" value="{{../id}}" />
                     <input type="hidden" name="variantId" value="{{id}}" />
                     <input type="hidden" name="quantity" value="1" />
@@ -49,12 +49,12 @@
                     <ul class="product-info-variants-size">
                         {{#each size}}
                             <li>
-                                <form class="form-add-to-cart" action="@routes.Carts.add" method="post">
-                                    <input type="hidden" name="productId" value="{{../../../id}}" />
+                                <form class="form-add-to-cart" action="{{../../addCartUrl}}" method="post">
+                                    <input type="hidden" name="productId" value="{{../../id}}" />
                                     <input type="hidden" name="variantId" value="{{../id}}" />
-                                    <input type="hidden" name="size" value={{this.name}} />
+                                    <input type="hidden" name="size" value={{this}} />
                                     <input type="hidden" name="quantity" value="1" />
-                                    <button type="submit" name="addToCart-product" data-loading-text="{{this.name}}"
+                                    <button type="submit" name="addToCart-product" data-loading-text="{{this}}"
                                             class="btn btn-link btn-mini">
                                         {{this}}
                                     </button>
