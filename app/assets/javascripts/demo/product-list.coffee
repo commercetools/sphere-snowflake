@@ -1,5 +1,5 @@
 define ["jquery", "masonry.pkgd.min", "imagesloaded.pkgd.min"], ($, Masonry, imagesLoaded) ->
-    calling = false
+    calling = true
     distance = 1000
 
     productList = $("#product-list")
@@ -12,6 +12,9 @@ define ["jquery", "masonry.pkgd.min", "imagesloaded.pkgd.min"], ($, Masonry, ima
     }
 
     masonry = new Masonry(productList.get(0), {itemSelector: ".product-item"})
+    imagesLoaded productList, ->
+        productList.fadeTo("fast", 1)
+        calling = false
 
     # Load products from a URL
     loadProducts = (url) ->
@@ -28,19 +31,14 @@ define ["jquery", "masonry.pkgd.min", "imagesloaded.pkgd.min"], ($, Masonry, ima
     # Append products to the product list
     appendProducts = (data) ->
         return unless template.item? and template.pager? and data.product?
+        # Append products
+        page = ($(template.item product).fadeTo(0, 0) for product in data.product)
+        productList.append page
         # Replace previous pager
         pagerHtml = template.pager data
         productPager.empty().append(pagerHtml).fadeTo(0, 0)
-        # Append products
-        page = ($(template.item product).fadeTo(0, 0) for product in data.product)
-        empty = !$.trim(productList.html())
-        productList.append page
         imagesLoaded productList, ->
-            if empty
-                masonry.reloadItems()
-                masonry.layout()
-            else
-                masonry.appended product.get() for product in page
+            masonry.appended product.get() for product in page
             productPager.fadeTo("slow", 1)
             # Avoid so many loops somehow!
             product.fadeTo(0, 1) for product in page
