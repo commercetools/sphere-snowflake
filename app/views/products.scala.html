@@ -26,8 +26,19 @@
         <aside class="action">
 
             <h5>@product.getName</h5>
-
             <h4>@variant.getPrice.getValue</h4>
+
+
+            <div class="product-availability">
+                @getStockInformation(variant)
+            </div>
+
+
+            @if(!variant.getSKU.isEmpty){
+            <div class="product-sku">
+                SKU: @variant.getSKU
+            </div>
+            }
 
             <div class="product-info-variants">
                 @if(hasMoreColors(product)) {

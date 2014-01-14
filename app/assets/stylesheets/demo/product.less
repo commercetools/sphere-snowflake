@@ -9,11 +9,15 @@
 
         .info {
             font-size: 15px;
-            text-align: center;
+            text-align: justify;
             padding: 20px 10px;
 
             .product-name {
                 margin-top: 10px;
+            }
+            &>p {
+                &:first-letter { text-transform: uppercase; }
+                &:after { content: "."; }
             }
         }
     }

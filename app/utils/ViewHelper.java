@@ -76,6 +76,11 @@ public class ViewHelper {
 		return active;
 	}
 
+    public static String getStockInformation(Variant variant) {
+        if (variant.getAvailability() == null) return "";
+        return variant.getAvailability().isOnStock()? "In stock" : "Not available";
+    }
+
     public static BigDecimal getPercentage(double amount) {
         return BigDecimal.valueOf(amount * 100).stripTrailingZeros();
     }
