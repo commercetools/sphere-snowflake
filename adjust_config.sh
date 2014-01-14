@@ -1,9 +1,6 @@
 #!/bin/bash
 
 PLAY_CONF_FILE="conf/application.conf"
-sed -i "s;^sphere.project *=.*;sphere.project=\""${SPHERE_PROJECT}"\";g" "${PLAY_CONF_FILE}"
-sed -i "s;^sphere.clientId *=.*;sphere.clientId=\""${SPHERE_CLIENT_ID}"\";g" "${PLAY_CONF_FILE}"
-sed -i "s;^sphere.clientSecret *=.*;sphere.clientSecret=\""${SPHERE_CLIENT_SECRET}"\";g" "${PLAY_CONF_FILE}"
 sed -i "s;^paymill.apiKey *=.*;paymill.apiKey=\""${PAYMILL_API_KEY}"\";g" "${PLAY_CONF_FILE}"
 sed -i "s;^mail.auth.key *=.*;mail.auth.key=\""${MAIL_AUTH_KEY}"\";g" "${PLAY_CONF_FILE}"
 sed -i "s;^mail.auth.secret *=.*;mail.auth.secret=\""${MAIL_AUTH_SECRET}"\";g" "${PLAY_CONF_FILE}"
