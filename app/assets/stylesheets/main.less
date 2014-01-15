@@ -13,10 +13,15 @@ body {
     font-weight: 400;
     background: @background;
     color: @gray-text;
-    padding-top: 180px;
+    padding-top: 65px;
+}
 
-    &.cart, &.checkout, &.login, &.customer {
-        padding-top: 80px;
+body.category, body.home {
+    #header-img {
+        background-image: url('/assets/images/burton_header.jpg');
+        background-repeat: repeat-x;
+        background-position: left 0px;
+        height: 350px;
     }
 }
 
