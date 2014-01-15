@@ -11,7 +11,7 @@
             <a id="link-home" class="brand" href="/">SNOWFLAKE</a>
             <ul id="menu-navigation" class="nav" role="navigation">
                 @for(category <- getRootCategories) {
-                <li class="dropdown @getActiveClass(category, currentCategory)" id="header-menu-@category.getSlug">
+                <li class="dropdown @getActiveClass(category, currentCategory) category-menu" id="header-menu-@category.getSlug">
                     <a id="link-category-@category.getSlug" href="@getCategoryUrl(category)" class="dropdown-toggle"
                         role="button" @if(!category.getChildren.isEmpty) {data-toggle="dropdown"} data-target="#">
                         @category.getName @if(!category.getChildren.isEmpty) {<b class="caret"></b>}
@@ -19,7 +19,7 @@
                     @if(!category.getChildren.isEmpty) {
                     <ul class="dropdown-menu" role="menu" aria-labelledby="link-category-@category.getSlug">
                         @for(subcategory <- category.getChildren) {
-                        <li id="header-submenu-@subcategory.getSlug" class="@getActiveClass(subcategory, currentCategory)">
+                        <li id="header-submenu-@subcategory.getSlug" class="@getActiveClass(subcategory, currentCategory) subcategory-menu">
                             <a href="@getCategoryUrl(subcategory)" id="link-category-@subcategory.getSlug">
                                 @subcategory.getName
                             </a>

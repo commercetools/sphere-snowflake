@@ -148,7 +148,7 @@ public class TestHelper {
     }
 
     public static void assertValidNavigationMenu(Document body, SphereTestable sphere) {
-        Elements header = body.select("#main-navigation .parent-menu");
+        Elements header = body.select("#menu-navigation");
         // Check each menu categories listed manually are there
         assertThat(header).isNotEmpty();
         // Check categories are correctly displayed in menu 1
