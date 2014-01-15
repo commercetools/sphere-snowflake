@@ -12,7 +12,8 @@
             <ul id="menu-navigation" class="nav" role="navigation">
                 @for(category <- getRootCategories) {
                 <li class="dropdown @getActiveClass(category, currentCategory)" id="header-menu-@category.getSlug">
-                    <a class="dropdown-toggle" role="button" id="link-category-@category.getSlug" href="#" @*data-target="#" href="@getCategoryUrl(category)"*@>
+                    <a id="link-category-@category.getSlug" href="@getCategoryUrl(category)" class="dropdown-toggle"
+                        role="button" @if(!category.getChildren.isEmpty) {data-toggle="dropdown"} data-target="#">
                         @category.getName @if(!category.getChildren.isEmpty) {<b class="caret"></b>}
                     </a>
                     @if(!category.getChildren.isEmpty) {
