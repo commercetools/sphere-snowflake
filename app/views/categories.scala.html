@@ -7,11 +7,10 @@
 
 @main(category.getName, "category", scripts){
     <div class="navigation">
-        @helper.topNavigation()
-        @helper.mainNavigation(category)
+        @helper.topNavigation(category)
     </div>
-    @helper.breadcrumb(category)
 }{
+    @helper.breadcrumb(category)
     <div id="category-product-list" class="clearfix">
         @helper.productList(search, page, sort, category)
     </div>

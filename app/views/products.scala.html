@@ -7,11 +7,11 @@
 
 @main(product.getName, "product", scripts){
     <div class="navigation">
-        @helper.topNavigation()
-        @helper.mainNavigation(category)
+        @helper.topNavigation(category)
     </div>
-    @helper.breadcrumb(category, product)
 }{
+    @helper.breadcrumb(category, product)
+
     <div id="product-detail" class="product-detail clearfix">
         <div class="detail">
             <div class="info">

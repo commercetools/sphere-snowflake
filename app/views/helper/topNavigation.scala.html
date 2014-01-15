@@ -1,43 +1,59 @@
-<div id="top-navigation" class="navbar navbar-static-top">
+@(currentCategory: Category = null)
+
+<div id="top-navigation" class="navbar navbar-fixed-top">
     <div class="navbar-inner">
-        <div class="container container-fluid">
+        <div class="container">
             <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <ul class="nav" role="navigation">
+            <a id="link-home" class="brand" href="/">SNOWFLAKE</a>
+            <ul id="menu-navigation" class="nav" role="navigation">
+                @for(category <- getRootCategories) {
+                <li class="dropdown @getActiveClass(category, currentCategory)" id="header-menu-@category.getSlug">
+                    <a class="dropdown-toggle" role="button" id="link-category-@category.getSlug" href="#" @*data-target="#" href="@getCategoryUrl(category)"*@>
+                        @category.getName @if(!category.getChildren.isEmpty) {<b class="caret"></b>}
+                    </a>
+                    @if(!category.getChildren.isEmpty) {
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="link-category-@category.getSlug">
+                        @for(subcategory <- category.getChildren) {
+                        <li id="header-submenu-@subcategory.getSlug" class="@getActiveClass(subcategory, currentCategory)">
+                            <a href="@getCategoryUrl(subcategory)" id="link-category-@subcategory.getSlug">
+                                @subcategory.getName
+                            </a>
+                        </li>
+                        }
+                    </ul>
+                    }
+                </li>
+                }
+            </ul>
+            <ul class="nav nav-collapse collapse pull-right">
+            @if(isLoggedIn) {
                 <li class="nav-link">
-                    <a id="link-home" class="brand" href="/">Sphere</a>
+                    <a id="link-show-customer" href="@routes.Customers.show">
+                        Hi <span data-form-update="customer-firstName">@getCurrentCustomer.getName.getFirstName</span>
+                    </a>
+                </li>
+                <li class="nav-link">
+                    <a id="link-log-out" href="@routes.Login.logOut">Sign out</a>
+                </li>
+            } else {
+                <li class="nav-link">
+                    <a id="link-sign-up" href="@routes.Login.showSignUp">Register</a>
+                </li>
+                <li class="nav-link">
+                    <a id="link-log-in" href="@routes.Login.show">Login</a>
+                </li>
+            }
+                <li class="nav-link hidden-desktop">
+                    <a id="link-show-cart" href="@routes.Carts.show">Cart</a>
+                </li>
+                <li class="nav-link visible-desktop" id="mini-cart">
+                    @helper.miniCart(getCurrentCart)
                 </li>
             </ul>
-            <div class="nav-collapse collapse">
-                <ul class="nav pull-right">
-                @if(isLoggedIn) {
-                    <li class="nav-link">
-                        <a id="link-show-customer" href="@routes.Customers.show">
-                            Hi <span data-form-update="customer-firstName">@getCurrentCustomer.getName.getFirstName</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a id="link-log-out" href="@routes.Login.logOut">Sign out</a>
-                    </li>
-                } else {
-                    <li class="nav-link">
-                        <a id="link-sign-up" href="@routes.Login.showSignUp">Register</a>
-                    </li>
-                    <li class="nav-link">
-                        <a id="link-log-in" href="@routes.Login.show">Login</a>
-                    </li>
-                }
-                    <li class="nav-link hidden-desktop">
-                        <a id="link-show-cart" href="@routes.Carts.show">Cart</a>
-                    </li>
-                    <li id="mini-cart" class="visible-desktop">
-                        @helper.miniCart(getCurrentCart)
-                    </li>
-                </ul>
-            </div>
         </div>
     </div>
 </div>
