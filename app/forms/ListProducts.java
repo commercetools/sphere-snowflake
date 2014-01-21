@@ -44,7 +44,7 @@ public class ListProducts {
         }
         // Product list
         ArrayNode products = json.putArray("product");
-        int i = 0;
+        int i = search.getOffset();
         for (Product product : search.getResults()) {
             products.add(getJson(product, category, i));
             i++;
@@ -60,7 +60,7 @@ public class ListProducts {
         json.put("name", capitalizeInitials(product.getName()));
         json.put("slug", product.getSlug());
         json.put("description", product.getDescription());
-        json.put("isFeatured", position > 5 && Math.random() > 0.9);
+        json.put("isFeatured", position > 1 && Math.random() > 0.9);
         json.put("variant", getJson(product, masterVariant, category));
         json.put("hasMoreColors", hasMoreColors(product));
         json.put("hasMoreSizes", hasMoreSizes(product));
