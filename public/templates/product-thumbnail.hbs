@@ -37,8 +37,8 @@
         <div class="product-footer clearfix">
             <div class="product-info-price">{{price}}</div>
             <div class="product-info-buy">
-                <form class="form-add-to-cart" action="{{../addCartUrl}}" method="post">
-                    <input type="hidden" name="productId" value="{{../id}}" />
+                <form class="form-add-to-cart" action="{{addCartUrl}}" method="post">
+                    <input type="hidden" name="productId" value="{{productId}}" />
                     <input type="hidden" name="variantId" value="{{id}}" />
                     <input type="hidden" name="quantity" value="1" />
                     <button type="submit" name="addToCart-product" data-loading-text="Adding..." class="btn btn-link btn-mini">
@@ -49,8 +49,8 @@
                     <ul class="product-info-variants-size">
                         {{#each size}}
                             <li>
-                                <form class="form-add-to-cart" action="{{../../addCartUrl}}" method="post">
-                                    <input type="hidden" name="productId" value="{{../../id}}" />
+                                <form class="form-add-to-cart" action="{{../addCartUrl}}" method="post">
+                                    <input type="hidden" name="productId" value="{{../productId}}" />
                                     <input type="hidden" name="variantId" value="{{../id}}" />
                                     <input type="hidden" name="size" value={{this}} />
                                     <input type="hidden" name="quantity" value="1" />

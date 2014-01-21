@@ -64,7 +64,6 @@ public class ListProducts {
         json.put("variant", getJson(product, masterVariant, category));
         json.put("hasMoreColors", hasMoreColors(product));
         json.put("hasMoreSizes", hasMoreSizes(product));
-        json.put("addCartUrl", controllers.routes.Carts.add().absoluteURL(Http.Context.current().request()));
         // Matching variants
         if (product.getVariants().size() > 1) {
             ArrayNode matchVariants = json.putArray("matchVariant");
@@ -82,8 +81,10 @@ public class ListProducts {
         if (variant.getPrice() == null) return null;
         ObjectNode json = Json.newObject();
         json.put("id", variant.getId());
+        json.put("productId", product.getId());
         json.put("price", printPrice(getPrice(variant)));
         json.put("url", getProductUrl(product, variant, category).absoluteURL(Http.Context.current().request()));
+        json.put("addCartUrl", controllers.routes.Carts.add().absoluteURL(Http.Context.current().request()));
         // Images
         ObjectNode images = Json.newObject();
         images.put("thumbnail", getJson(variant.getFeaturedImage(), ImageSize.THUMBNAIL));
