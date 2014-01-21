@@ -15,6 +15,7 @@ define ["jquery", "masonry.pkgd.min", "imagesloaded.pkgd.min", "handlebars"], ($
     imagesLoaded productList, ->
         productList.fadeTo("fast", 1)
         calling = false
+        masonry.layout()
 
     # Load products from a URL
     loadProducts = (url) ->
@@ -42,6 +43,7 @@ define ["jquery", "masonry.pkgd.min", "imagesloaded.pkgd.min", "handlebars"], ($
             productPager.fadeTo("slow", 1)
             # Avoid so many loops somehow!
             product.fadeTo(0, 1) for product in page
+            masonry.layout()
 
     # Load and append more products to the product list
     loadMore = ->
