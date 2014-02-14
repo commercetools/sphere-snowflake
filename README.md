@@ -1,7 +1,9 @@
 SPHERE.IO - Snowflake
 =====================
 
-This is a fully functional example web store for [SPHERE.IO](http://sphere.io).
+This is a fully functional example web store for the [SPHERE.IO](http://sphere.io) PaaS.
+
+http://snowflake.sphere.io/
 
 Have fun!
 
