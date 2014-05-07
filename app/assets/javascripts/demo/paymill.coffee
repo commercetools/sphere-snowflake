@@ -9,7 +9,7 @@ define ["paymill-bridge"], () ->
             @cardMonth = @form.inputs.filter('.card-expiry-month')
             @cardYear = @form.inputs.filter('.card-expiry-year')
             @cardHolder = @form.inputs.filter('.card-holdername')
-            @cardAmount = @form.inputs.filter('.card-amount')
+            @cardAmount = @form.inputs.filter('.card-amount-int')
             @cardCurrency = @form.inputs.filter('.card-currency')
 
             @elvNumber = @form.inputs.filter('.elv-account')
