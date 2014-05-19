@@ -3,18 +3,18 @@
     "name": "Sphere.IO snowflake example web store",
     "source": "git://github.com/commercetools/sphere-snowflake.git",
     "description": "Get started with Sphere.IO by building your own web store based on our snowflake example.",
-    "doc-url": "https://github.com/commercetools/sphere-snowflake/blob/master/README.md",    
-    "icon" : "http://sphere.io/img/sphere.beta_logo.png", 
+    "doc-url": "https://github.com/commercetools/sphere-snowflake/blob/master/README.md",
+    "icon" : "http://sphere.io/img/sphere.beta_logo.png",
     "disabled": false,
-    "supported-by" : "commercetools", 
+    "supported-by" : "support.sphere.io",
     "order" : 1,
 
     "runtime": {
         "type": "play2",
-        "app-parameters" : { 
+        "app-parameters" : {
             "runtime.java_version": "1.7"
         },
-        "app-variables" : { 
+        "app-variables" : {
             "proxyBuffering" : false
         }
     },
