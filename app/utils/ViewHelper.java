@@ -1,9 +1,7 @@
 package utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -17,7 +15,7 @@ import io.sphere.client.model.Money;
 import io.sphere.client.model.SearchResult;
 import io.sphere.client.shop.model.*;
 import org.apache.commons.lang3.text.WordUtils;
-import play.api.Play;
+import play.Play;
 import play.mvc.Call;
 import play.mvc.Http;
 import sphere.Sphere;
@@ -254,7 +252,9 @@ public class ViewHelper {
         return Http.Context.current().session().get("returnUrl");
     }
 
-
+    public static String paymillPublicKey() {
+        return Play.application().configuration().getString("paymill.key.public", "");
+    }
 
     /**
      *  PRODUCTS UTIL METHODS

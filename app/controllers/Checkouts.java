@@ -32,7 +32,7 @@ import static utils.ViewHelper.getPrice;
 
 public class Checkouts extends ShopController {
 
-    final static String paymillKey = Play.application().configuration().getString("paymill.apiKey");
+    final static String paymillKey = Play.application().configuration().getString("paymill.key.private", "");
 
     final static Form<SetAddress> setAddressForm = form(SetAddress.class);
     final static Form<SetShippingMethod> setShippingForm = form(SetShippingMethod.class);
@@ -111,7 +111,7 @@ public class Checkouts extends ShopController {
         DoCheckout doCheckout = form.get();
         if (!sphere().currentCart().isSafeToCreateOrder(doCheckout.cartSnapshot)) {
             doCheckout.displayCartChangedError();
-            redirect(routes.Checkouts.show());
+            redirect(controllers.routes.Checkouts.show());
         }
         // Case payment failure
         try {

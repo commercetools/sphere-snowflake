@@ -1,7 +1,7 @@
 @(cart: Cart, addressBook: List[Address], setAddressForm: Form[addressForm.SetAddress], setShippingForm: Form[checkoutForm.SetShippingMethod], section: Int = 1)
 
 @scripts = {
-    <script type="text/javascript">var PAYMILL_PUBLIC_KEY = '17371111561e758000fc6b195c6d5d53';</script>
+    <script type="text/javascript">var PAYMILL_PUBLIC_KEY = '@paymillPublicKey';</script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.9/require.min.js"
             data-main="@routes.Assets.at("javascripts/checkout-page.js")" ></script>
 
