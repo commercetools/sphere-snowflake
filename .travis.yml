@@ -10,8 +10,8 @@ env:
   global:
   - secure: GD6/Yoy4RrOzGoU6NvwoCTfELX87e7z07wRIiYR/+m48AXOnyuP2+Z7XXRPRvm24bM60EXsu2nMF5TH5re2Q9HJIU7x5uJRpHYhkkY+/IGA9pyZIizbPod8NHm4DOTepujvluB/hCLd7J6gwCJpp10CTY+5oy+HNo9DBeqHO7Dw=
   - secure: HvYVx+exrcqAWL02Klf+ndiyUCk9jwlPREwcBkRt0+CnJZx39PuWc3Q8sJGYNIdhln7rR0nCIctWh9E5DkIspcHIqT9FUP4pjOiKdnNqyJcR08ITbr1G6+gLbZe3WGPtfCfrGCHD5xMWusf1q0qWfNk1QwM0RqBHjfF9RljAcDg=
+  - secure: SQMy0cgafD1ASSlRwC0yuutFEObNFyke91+GV/md4Yf4Jv7A6micVne404QdvFvkAqeneEUEFXv2ly1jofaoAjtboAuxeXVPNbFVKfBeVULksH3HUvnX649m724cB0LLK0KNzELJo+DlJbHujPLTVZaaXdAwGeQBJKIHM42nTLc=
   - secure: fhVqeLhCQrJZsrdgp2P/K/CDy13dlyFCSW/sD9ZTWN+NC6muMLwSemzIG9gtUMlc6B6pbRBzdMfd1zI4vbjYhLf9EbZzxgEno6x1iuRei1qICxLS/2bfgdO+DQoSgk+2SajXIn2oNXb9ym9+FvZZxCtJRewJBCUh2JmI9v4Wmo8=
-  - secure: L/WnWKE1DJ0UfMovaDMtJYX4/whZ19oOAS0aLUoH63pmbAC3r7vvfmgklYw99OPnle5osuKnQO43IgOwclN19w34HZqzPwfu/o1OHkc8Vzn9Ifk8HLkgwrGPwAJuiJx88Zu7Sc1wMFPCQqbJ1UopHtpdOfPGGaWhUUTh5xOYvJI=
 notifications:
   email:
     on_success: never
