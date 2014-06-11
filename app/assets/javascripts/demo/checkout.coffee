@@ -205,6 +205,7 @@ define ["jquery", "demo/lib-form.min", "demo/paymill.min"], ($) ->
         # Remove alert messages
         billingMethod.removeAllMessages()
         billingMethod.reload()
+        paymill.reload()
         # Validate form client side
         return false unless paymill.validate()
         # Submit payment data to Paymill

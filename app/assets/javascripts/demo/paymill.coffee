@@ -16,6 +16,9 @@ define ["paymill-bridge"], () ->
             @elvBank = @form.inputs.filter('.elv-bankcode')
             @elvHolder = @form.inputs.filter('.elv-holdername')
 
+        reload: ->
+            @paymentType = @form.inputs.filter('.paymenttype.disabled').val() ? 'cc'
+
         # Method to update amount and currency for 3DS credit card
         updatePrice: (amount, currency) ->
             @cardAmount.val parseFloat(amount) * 100
