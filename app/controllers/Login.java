@@ -5,6 +5,7 @@ import forms.customerForm.LogIn;
 import forms.passwordForm.RecoverPassword;
 import forms.passwordForm.ResetPassword;
 import forms.customerForm.SignUp;
+import io.sphere.client.shop.SignUpBuilder;
 import io.sphere.client.exceptions.EmailAlreadyInUseException;
 import io.sphere.client.exceptions.SphereBackendException;
 import io.sphere.client.shop.model.Customer;
@@ -56,7 +57,10 @@ public class Login extends ShopController {
         }
         // Case already registered email
         try {
-            sphere().signup(signUp.email, signUp.password, signUp.getCustomerName());
+            String customerNumber = "C-" + System.currentTimeMillis();
+            SignUpBuilder builder = new SignUpBuilder(signUp.email, signUp.password, signUp.getCustomerName())
+                .setCustomerNumber(customerNumber);
+            sphere().signup(builder);
         } catch (EmailAlreadyInUseException e) {
             signUp.displayAlreadyRegisteredError();
             return badRequest(showPageSignUp(form));
