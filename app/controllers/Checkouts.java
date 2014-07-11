@@ -15,6 +15,7 @@ import forms.addressForm.SetAddress;
 import forms.checkoutForm.DoCheckout;
 import forms.checkoutForm.SetShippingMethod;
 import io.sphere.client.model.Money;
+import io.sphere.client.shop.CreateOrderBuilder;
 import io.sphere.client.shop.model.*;
 import play.Play;
 import play.data.Form;
@@ -137,7 +138,11 @@ public class Checkouts extends ShopController {
             return internalServerError(showPage(4));
         }
         // Case success purchase
-        Order order = sphere().currentCart().createOrder(doCheckout.cartSnapshot, PaymentState.Paid);
+        String orderNumber = "O-" + System.currentTimeMillis();
+        CreateOrderBuilder builder = new CreateOrderBuilder(getCurrentCart().getIdAndVersion(), PaymentState.Paid)
+            .setCartSnapshotId(doCheckout.cartSnapshot)
+            .setOrderNumber(orderNumber);
+        Order order = sphere().currentCart().createOrder(builder);
         play.Logger.debug("Cart " + doCheckout.cartSnapshot + " - Order created");
         flash("success", "Congratulations, you finished your order!");
         return ok(orders.render(order));
