@@ -17,7 +17,7 @@ To run this SPHERE.IO example web shop on [CloudBees](http://cloudbees.com) just
 
 Let's try it on heroku:
 
-<a href="https://heroku.com/deploy?template=https://github.com/mmoelli/sphere-snowflake"><img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy"></a>
+<a href="https://heroku.com/deploy?template=https://github.com/commercetools/sphere-snowflake"><img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy"></a>
 
 ## Development
 
