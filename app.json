@@ -19,6 +19,14 @@
       "description": "The clientSecret of your SPHERE.IO project.",
       "value": "lnkNveGqslWKwt-qVE5yqVE0KBKM-sQL",
       "required": true
+    },
+    "PAYMILL_PUBLIC_KEY": {
+      "description": "The public key for the paymill integration.",
+      "value": "your paymill public key",
+    },
+    "PAYMILL_PRIVATE_KEY": {
+      "description": "The private key for the paymill integration.",
+      "value": "your paymill private key",
     }
   }
 }
