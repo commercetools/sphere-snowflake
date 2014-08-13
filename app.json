@@ -22,11 +22,11 @@
     },
     "PAYMILL_PUBLIC_KEY": {
       "description": "The public key for the paymill integration.",
-      "value": "your paymill public key",
+      "value": "your paymill public key"
     },
     "PAYMILL_PRIVATE_KEY": {
       "description": "The private key for the paymill integration.",
-      "value": "your paymill private key",
+      "value": "your paymill private key"
     }
   }
 }
