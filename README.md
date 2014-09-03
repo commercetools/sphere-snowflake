@@ -1,33 +1,36 @@
 SPHERE.IO - Snowflake
 =====================
 
+[![Build Status](https://travis-ci.org/commercetools/sphere-snowflake.png)](https://travis-ci.org/commercetools/sphere-snowflake)
+
 This is a fully functional example web store for the [SPHERE.IO](http://sphere.io) PaaS.
 
 ## Live demo
-Visit a live demo of SPHERE-DONUT store at [snowflake.sphere.io](http://snowflake.sphere.io/).
+Visit a live demo of SPHERE.io snowflake store at [snowflake.sphere.io](http://snowflake.sphere.io/).
 
-## Getting started [![Build Status](https://travis-ci.org/commercetools/sphere-snowflake.png)](https://travis-ci.org/commercetools/sphere-snowflake)
+## Getting started
 
 ### Set it up
-- Install [Play 2.2.1](http://www.playframework.com/documentation/2.2.x/Installing).
-- [Clone](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) sphere-donut project from GitHub. or download it as [zip file](https://github.com/commercetools/sphere-snowflake/archive/master.zip).
-- Run `play run` command in root project directory.
+- Install at least Java6 on your machine. We recommend using [Java8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+- [Clone](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) sphere-snowflake project from GitHub. or download it as [zip file](https://github.com/commercetools/sphere-snowflake/archive/master.zip).
+- Run `./sbt run` or `sbt.bat run` (Windows) command in root project directory.
 - Open your browser and point it to [http://localhost:9000](http://localhost:9000).
 
 ### Configure it
 
-#### SPHERE.IO data
+#### SPHERE.IO data - mandatory
 - Point to [SPHERE Login](https://admin.sphere.io/login) or register a new account with [SPHERE Signup](https://admin.sphere.io/signup).
+- Create a new project, preferably with sample data.
 - Go to `Developers -> API Clients` to retrieve your project data.
-![API Backend](https://raw.github.com/commercetools/sphere-donut/master/public/images/mc_api.png)
-- To use your SPHERE.IO project, modify `sphere.project`, `sphere.clientId` and `sphere.clientSecret` in `conf/application.conf`.
+![API Backend](https://raw.github.com/commercetools/sphere-snowflake/master/public/images/mc_api.png)
+- To use your SPHERE.IO project, modify [sphere.project](https://github.com/commercetools/sphere-snowflake/blob/master/conf/application.conf#L24), [sphere.clientId](https://github.com/commercetools/sphere-snowflake/blob/master/conf/application.conf#L26) and [sphere.clientSecret](https://github.com/commercetools/sphere-snowflake/blob/master/conf/application.conf#L28) in [conf/application.conf](https://github.com/commercetools/sphere-snowflake/blob/master/conf/application.conf).
 
-[More about the ecommerce PaaS SPHERE.IO.](http://sphere.io)
+[More about the ecommerce PaaS SPHERE.IO.](http://dev.sphere.io)
 
-#### PAYMILL keys
+#### PAYMILL keys - optional
 - [Register at PAYMILL](https://app.paymill.com/en-gb/auth/register) to get the (test) API keys.
 - Go to `PAYMILL Cockpit -> My account -> Settings -> API keys` to retrieve your keys.
-- To use your PAYMILL account, modify `sphere.project`, `sphere.clientId` and `sphere.clientSecret` in `conf/application.conf`.
+- To use your PAYMILL account, modify [sphere.key.private](https://github.com/commercetools/sphere-snowflake/blob/master/conf/application.conf#L52) and [sphere.clientSecret](https://github.com/commercetools/sphere-snowflake/blob/master/conf/application.conf#L24) in [conf/application.conf](https://github.com/commercetools/sphere-snowflake/blob/master/conf/application.conf).
 
 [More about doing payments with PAYMILL.](http://www.paymill.com)
 
@@ -56,7 +59,14 @@ To run this SPHERE.IO example web shop on [heroku](https://www.heroku.com) just 
 
 ### Use Typesafe Activator
 
+- Typesafe Activator allows you to run and compile your code using a slick UI
 - Install your favourite IDE (preferably IntelliJ, Eclipse or Netbeans).
 - Download Typesafe Activator mini-package setup, following [this link](https://typesafe.com/platform/getstarted).
-- Run Typesafe Activator in root project directory using `~/path/to/activator/folder/activator ui`
+- Run Typesafe Activator in root project directory using `$ ~/path/to/activator/folder/activator ui`
 - Import project to your IDE using Activator GUI: `Code -> Settings -> Open Project in ...`
+- Currently supports [IntelliJ IDEA](http://www.jetbrains.com/idea/) and [Eclipse](https://www.eclipse.org/)
+
+### Special info: Eclipse
+
+- [Eclipse](https://www.eclipse.org/) has no native support of Scala/Play applications
+- Please use this prepackaged version of Eclipse: [Scala-IDE](http://scala-ide.org)
