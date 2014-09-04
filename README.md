@@ -56,6 +56,7 @@ To run this SPHERE.IO example web shop on [heroku](https://www.heroku.com) just 
 - Generate configuration files for your chosen IDE, following [these instructions](http://www.playframework.com/documentation/2.2.x/IDE).
 - Run `./sbt` command in root project directory.
 - Inside the SBT shell, type `clean test` for compiling and testing it.
+- Start SBT with `./sbt -jvm-debug 5005` to enable debugging with port 5005
 
 ### Use Typesafe Activator
 
