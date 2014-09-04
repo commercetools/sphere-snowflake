@@ -11,7 +11,7 @@ Visit a live demo of SPHERE.io snowflake store at [snowflake.sphere.io](http://s
 ## Getting started
 
 ### Set it up
-- Install at least Java6 on your machine. We recommend using [Java8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+- Install at least JDK 6 on your machine. We recommend using [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 - [Clone](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) sphere-snowflake project from GitHub. or download it as [zip file](https://github.com/commercetools/sphere-snowflake/archive/master.zip).
 - Run `./sbt run` or `sbt.bat run` (Windows) command in root project directory.
 - Open your browser and point it to [http://localhost:9000](http://localhost:9000).
@@ -54,8 +54,8 @@ To run this SPHERE.IO example web shop on [heroku](https://www.heroku.com) just 
 
 - Install your favourite IDE (preferably IntelliJ, Eclipse or Netbeans).
 - Generate configuration files for your chosen IDE, following [these instructions](http://www.playframework.com/documentation/2.2.x/IDE).
-- Run `play` command in root project directory.
-- Inside Play Shell, type `clean test` for compiling and testing it.
+- Run `./sbt` command in root project directory.
+- Inside the SBT shell, type `clean test` for compiling and testing it.
 
 ### Use Typesafe Activator
 
