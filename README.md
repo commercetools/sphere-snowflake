@@ -11,7 +11,7 @@ Visit a live demo of SPHERE.io snowflake store at [snowflake.sphere.io](http://s
 ## Getting started
 
 ### Set it up
-- Install at least JDK 6 on your machine. We recommend using [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+- Install at least JDK 6 on your machine. We recommend using [JDK 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).
 - [Clone](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) sphere-snowflake project from GitHub. or download it as [zip file](https://github.com/commercetools/sphere-snowflake/archive/master.zip).
 - Run `./sbt run` or `sbt.bat run` (Windows) command in root project directory.
 - Open your browser and point it to [http://localhost:9000](http://localhost:9000).
