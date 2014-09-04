@@ -60,7 +60,7 @@ To run this SPHERE.IO example web shop on [heroku](https://www.heroku.com) just 
 
 ### Use Typesafe Activator
 
-- Typesafe Activator allows you to run and compile your code using a slick UI
+- Typesafe Activator allows you to run and compile your code using a nice UI
 - Install your favourite IDE (preferably IntelliJ, Eclipse or Netbeans).
 - Download Typesafe Activator mini-package setup, following [this link](https://typesafe.com/platform/getstarted).
 - Run Typesafe Activator in root project directory using `$ ~/path/to/activator/folder/activator ui`
