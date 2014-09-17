@@ -28,8 +28,8 @@ Visit a live demo of SPHERE.io snowflake store at [snowflake.sphere.io](http://s
 [More about the ecommerce PaaS SPHERE.IO.](http://dev.sphere.io)
 
 #### PAYMILL keys - optional
-- [Register at PAYMILL](https://app.paymill.com/en-gb/auth/register) to get the (test) API keys.
-- Go to `PAYMILL Cockpit -> My account -> Settings -> API keys` to retrieve your keys.
+- [Login or register at PAYMILL](https://app.paymill.com/user/login) to get the (test) API keys.
+- Go to [your PAYMILL dashboard](https://app.paymill.com/dashboard), then `Development -> API keys` to retrieve your keys.
 - To use your PAYMILL account, modify [sphere.key.private](https://github.com/commercetools/sphere-snowflake/blob/master/conf/application.conf#L52) and [sphere.clientSecret](https://github.com/commercetools/sphere-snowflake/blob/master/conf/application.conf#L24) in [conf/application.conf](https://github.com/commercetools/sphere-snowflake/blob/master/conf/application.conf).
 
 [More about doing payments with PAYMILL.](http://www.paymill.com)
