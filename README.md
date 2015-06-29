@@ -3,6 +3,11 @@ SPHERE.IO - Snowflake
 
 [![Build Status](https://travis-ci.org/commercetools/sphere-snowflake.png)](https://travis-ci.org/commercetools/sphere-snowflake)
 
+:no_entry_sign: _**This shop template is deprecated!**_
+
+_This shop template is no longer maintained nor up to date, so please use [Sunrise](https://github.com/commercetools/sphere-sunrise) instead, the shop template for the [SPHERE JVM SDK](https://github.com/sphereio/sphere-jvm-sdk). If you are looking for a project using the older version [SPHERE Play SDK](https://github.com/commercetools/sphere-play-sdk), you can always check our [Fedora](https://github.com/commercetools/sphere-fedora) template._
+
+
 This is a fully functional example web store for the [SPHERE.IO](http://sphere.io) PaaS.
 
 ## Live demo
