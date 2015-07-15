@@ -5,7 +5,7 @@ SPHERE.IO - Snowflake
 
 :no_entry_sign: _**This shop template is deprecated!**_
 
-_This shop template is no longer maintained nor up to date, so please use [Sunrise](https://github.com/commercetools/sphere-sunrise) instead, the shop template for the new [SPHERE JVM SDK](https://github.com/sphereio/sphere-jvm-sdk). If you are looking for an example using the older, but deprecated  [SPHERE Play SDK](https://github.com/commercetools/sphere-play-sdk), please check our [Fedora](https://github.com/commercetools/sphere-fedora) template._
+_This shop template is no longer maintained nor up to date, so please use [Sunrise](https://github.com/sphereio/sphere-sunrise) instead, the shop template for the new [SPHERE JVM SDK](https://github.com/sphereio/sphere-jvm-sdk). If you are looking for an example using the older, but deprecated  [SPHERE Play SDK](https://github.com/commercetools/sphere-play-sdk), please check our [Fedora](https://github.com/commercetools/sphere-fedora) template._
 
 
 This is a fully functional example web store for the [SPHERE.IO](http://sphere.io) PaaS.
