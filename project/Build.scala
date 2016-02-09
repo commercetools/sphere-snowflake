@@ -27,7 +27,7 @@ object ApplicationBuild extends Build {
 
     object Libs {
         val appDependencies = Seq(
-            "io.sphere"             %%  "sphere-play-sdk"     %   "0.54.0" exclude("org.scala-stm", "scala-stm_2.10.0"),
+            "io.sphere"             %%  "sphere-play-sdk"     %   "0.72.0" exclude("org.scala-stm", "scala-stm_2.10.0"),
             "com.github.jknack"     %   "handlebars"          %   "1.2.1",
             "com.github.jknack"     %   "handlebars-jackson2" %   "1.2.1",
             "javax.mail"            %   "mail"                %   "1.4.7",
