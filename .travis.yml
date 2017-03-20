@@ -2,8 +2,8 @@ language: scala
 scala:
 - 2.10.0
 before_script:
-- "./adjust_config.sh"
-- "./create_version_info.sh"
+- ./adjust_config.sh
+- ./create_version_info.sh
 script:
 - sbt test
 env:
@@ -19,6 +19,6 @@ notifications:
 deploy:
   provider: heroku
   api_key:
-    secure: MPf11M7lbR32/EcmWqT577weGO4sWvOI5cAD5t7Sx+Bvzf2PFwuK7KXU/ab2N91tRi70JYDXokIoTSp2WUjzMiZNsLcfuJHEc+2of8wLIAzxnQKR6VgOlVhMm4oxv6bZcL/Xh4axIDyIQ5o/k7ROkaYFiaopJ9lYLDTCwsCpUjw=
+    secure: F7qbiAqX46enAXsky/YoI8CF108O6aBgaWnHKmqT59jLi5m1vGntcQAFj7TOcL3ZeItCu/x3Sva18yMSNqyWmI5/OzDpumDmvN0nHGuWofTWDMtenrUNlpijxRC0jlynCLXuqNxSnzwk+2a9SPfsIymMjI1+rcdfgEgGDplxiJo=
 dd:
   secure: aRC0d1xdku+2HlRUyGdMxDE5o7A+pCWyWBZAWpaxUjTmMSyB4bAT3xXy50yBiwhvOZftSh6QOVnPHqNDkMAF7S35+ISLXBQi2kyAqVuzb+2WLb6YGDGGeYslRnStZUsMPyalBNxRpyhOddIIZJqsOXSL/JmjxX+MuqtO1p4jz6Q=
