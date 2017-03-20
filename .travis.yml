@@ -19,6 +19,7 @@ notifications:
 deploy:
   provider: heroku
   api_key:
-    secure: F7qbiAqX46enAXsky/YoI8CF108O6aBgaWnHKmqT59jLi5m1vGntcQAFj7TOcL3ZeItCu/x3Sva18yMSNqyWmI5/OzDpumDmvN0nHGuWofTWDMtenrUNlpijxRC0jlynCLXuqNxSnzwk+2a9SPfsIymMjI1+rcdfgEgGDplxiJo=
+    secure: YJs30Cn6meO+NE1JBkBAMhYp+kayasMQq3gXSYng5YJ5KVkOQIfT8+1e8mNXRETSDmqZJLFn8L8y5VZVzEZFr3dhDsnbBo0y6JDhGAfvLSxr/E0df4fRzP3vE/RIg/wNP97YLmesWKKusf6mbS66r/kfJqqHSwNtmM8CC6U9zKA=
+  app: sphere-snowflake-new
 dd:
   secure: aRC0d1xdku+2HlRUyGdMxDE5o7A+pCWyWBZAWpaxUjTmMSyB4bAT3xXy50yBiwhvOZftSh6QOVnPHqNDkMAF7S35+ISLXBQi2kyAqVuzb+2WLb6YGDGGeYslRnStZUsMPyalBNxRpyhOddIIZJqsOXSL/JmjxX+MuqtO1p4jz6Q=
