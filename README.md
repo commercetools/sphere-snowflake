@@ -2,7 +2,7 @@ SPHERE.IO - Snowflake
 =====================
 
 [![Build Status](https://travis-ci.org/commercetools/sphere-snowflake.svg?branch=master)](https://travis-ci.org/commercetools/sphere-snowflake)
-[![Heroku](http://heroku-badge.herokuapp.com/?app=ct-snowflake-prod&style=flat&svg=1)](http://ct-snowflake-prod.herokuapp.com/)
+[![Heroku](http://heroku-badge.herokuapp.com/?style=flat&svg=1)](http://ct-snowflake-prod.herokuapp.com/)
 
 :no_entry_sign: _**This shop template is deprecated!**_
 
